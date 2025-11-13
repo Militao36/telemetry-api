@@ -19,7 +19,7 @@ export class TraceController {
 
     console.log(request.body)
 
-    await this.traceService.create(idEmpresa, resourceSpans)
+    // await this.traceService.create(idEmpresa, resourceSpans)
 
     return response.status(200).json({})
   }
