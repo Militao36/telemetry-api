@@ -1,9 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PORT = exports.CLICKHOUSE_DATABASE = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.AWILIX_CONTROLLERS = void 0;
+exports.LOG_LEVEL = exports.REDIS_PASSWORD = exports.REDIS_PORT = exports.REDIS_HOST = exports.PORT = exports.CLICKHOUSE_DATABASE = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.AWILIX_CONTROLLERS = void 0;
 exports.AWILIX_CONTROLLERS = process.env.AWILIX_CONTROLLERS || 'controllers/**/*.ts';
 exports.CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'http://localhost:8123';
 exports.CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'analytics_user';
 exports.CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'analytics_password';
 exports.CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
 exports.PORT = process.env.PORT ? parseInt(process.env.PORT) : 3333;
+exports.REDIS_HOST = process.env.REDIS_HOST || 'localhost';
+exports.REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
+exports.REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
+exports.LOG_LEVEL = process.env.LOG_LEVEL || 'info';

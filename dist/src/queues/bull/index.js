@@ -7,10 +7,11 @@ exports.queueTraces = void 0;
 const bull_1 = __importDefault(require("bull"));
 const traces_1 = require("./queues/traces");
 const clickhouse_1 = require("../../databases/clickhouse");
+const env_1 = require("../../env");
 const REDIS_CONFIG = {
-    host: process.env.REDIS_HOST || '',
-    port: Number(process.env.REDIS_PORT) || 6379,
-    password: process.env.REDIS_PASSWORD || undefined,
+    host: env_1.REDIS_HOST,
+    port: env_1.REDIS_PORT,
+    password: env_1.REDIS_PASSWORD,
 };
 exports.queueTraces = new bull_1.default('traces', {
     redis: REDIS_CONFIG,
