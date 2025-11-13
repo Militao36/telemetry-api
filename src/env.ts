@@ -4,3 +4,6 @@ export const CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'analytics_user';
 export const CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'analytics_password';
 export const CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
 export const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3333;
+export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
+export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
+export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
