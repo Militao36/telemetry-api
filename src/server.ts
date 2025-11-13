@@ -7,7 +7,7 @@ import './queues/bull/index'
 
 const server = express();
 
-server.use(express.json({ limit: '100mb' }));
+server.use(express.json({ limit: '500mb' }));
 server.use(scopePerRequest(container))
 server.use('/api/v1', loadControllers(AWILIX_CONTROLLERS, { cwd: __dirname }))
 
