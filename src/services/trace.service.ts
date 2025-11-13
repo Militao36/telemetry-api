@@ -16,6 +16,7 @@ export class TracesService {
     this.normalizeOTLP = normalizeOTLP
     this.clientRedis = clientRedis
     this.LIMIT_SPANS_QUEUE = 1000
+    this.logger = logger
   }
 
   async create(idEmpresa: string, resourceSpans: Array<Record<string, any>>) {
