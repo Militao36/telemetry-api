@@ -1,0 +1,150 @@
+version: '3.8'
+
+services:
+  # Aplicação AdonisJS
+  app:
+    build: .
+    container_name: telemetry-app
+    ports:
+      - '3333:3333'
+    environment:
+      - NODE_ENV=production
+      - PORT=3333
+      - HOST=0.0.0.0
+      - APP_KEY=your-super-secret-app-key-32-characters-long
+      - LOG_LEVEL=info
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=telemetry_user
+      - DB_PASSWORD=telemetry_password
+      - DB_DATABASE=telemetry_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=8123
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - telemetry-network
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: telemetry-postgres
+    environment:
+      - POSTGRES_DB=telemetry_db
+      - POSTGRES_USER=telemetry_user
+      - POSTGRES_PASSWORD=telemetry_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U telemetry_user -d telemetry_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - telemetry-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: telemetry-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - telemetry-network
+    restart: unless-stopped
+
+  # ClickHouse Database
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.1-alpine
+    container_name: telemetry-clickhouse
+    environment:
+      - CLICKHOUSE_DB=telemetry_analytics
+      - CLICKHOUSE_USER=analytics_user
+      - CLICKHOUSE_PASSWORD=analytics_password
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:8123/ping']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - telemetry-network
+    restart: unless-stopped
+
+  # PgAdmin (Opcional - para gerenciar PostgreSQL)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: telemetry-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@telemetry.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    ports:
+      - '8080:80'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - telemetry-network
+    restart: unless-stopped
+    profiles:
+      - tools
+
+  # Redis Commander (Opcional - para gerenciar Redis)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: telemetry-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - '8081:8081'
+    depends_on:
+      - redis
+    networks:
+      - telemetry-network
+    restart: unless-stopped
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  clickhouse_data:
+    driver: local
+  clickhouse_logs:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  telemetry-network:
+    driver: bridge
