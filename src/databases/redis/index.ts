@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../env';
+import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../../env';
 
 const clientRedis = createClient({
   username: 'default',

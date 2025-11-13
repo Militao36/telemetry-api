@@ -7,8 +7,8 @@ const clickhouse_1 = require("./databases/clickhouse");
 const bull_1 = require("./queues/bull");
 const traces_1 = require("./queues/bull/queues/traces");
 const normalizeOtlpHttpJsonTrace_1 = require("./queues/bull/utils/normalizeOtlpHttpJsonTrace");
-const redis_1 = require("./databases/redis");
 const logger_1 = require("./config/logger");
+const redis_1 = require("./databases/redis");
 const container = (0, awilix_1.createContainer)();
 exports.container = container;
 container.register({

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LOG_LEVEL = exports.REDIS_PASSWORD = exports.REDIS_PORT = exports.REDIS_HOST = exports.PORT = exports.CLICKHOUSE_DATABASE = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.AWILIX_CONTROLLERS = void 0;
+exports.LIMIT_SPANS_QUEUE_DEFAULT = exports.LOG_LEVEL = exports.REDIS_PASSWORD = exports.REDIS_PORT = exports.REDIS_HOST = exports.PORT = exports.CLICKHOUSE_DATABASE = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.AWILIX_CONTROLLERS = void 0;
 exports.AWILIX_CONTROLLERS = process.env.AWILIX_CONTROLLERS || 'controllers/**/*.ts';
 exports.CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'http://localhost:8123';
 exports.CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'analytics_user';
@@ -11,3 +11,4 @@ exports.REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 exports.REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
 exports.REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 exports.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+exports.LIMIT_SPANS_QUEUE_DEFAULT = process.env.LIMIT_SPANS_QUEUE_DEFAULT ? parseInt(process.env.LIMIT_SPANS_QUEUE_DEFAULT) : 1000;

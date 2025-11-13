@@ -4,13 +4,13 @@ import { Logger } from "pino";
 
 import { NormalizedSpan } from "../queues/bull/utils/normalizeOtlpHttpJsonTrace";
 import { LIMIT_SPANS_QUEUE_DEFAULT } from "../env";
+import { ADD_SPANS_SCRIPT } from "../databases/redis/lua";
 
 export class TracesService {
   queueTraces: Queue
   normalizeOTLP: (resourceSpans: any[]) => Array<NormalizedSpan>
   clientRedis: RedisClientType
   logger: Logger
-
   LIMIT_SPANS_QUEUE: number
 
   constructor({ queueTraces, logger, clientRedis, normalizeOTLP }) {
@@ -26,47 +26,49 @@ export class TracesService {
 
     const spans = this.normalizeOTLP(resourceSpans);
 
-    const redisKey = `trace_count:${idEmpresa}`;
-    const listSpans = await this.clientRedis.incr(redisKey);
+    if (spans.length === 0) {
+      this.logger.info(`No spans to process for company ${idEmpresa}`);
+      return;
+    }
 
-    if (listSpans >= this.LIMIT_SPANS_QUEUE) {
-      this.logger.info(`Limit of ${this.LIMIT_SPANS_QUEUE} spans reached for company ${idEmpresa}, sending to queue`);
+    const countKey = `trace_count:${idEmpresa}`;
+    const spansKey = `trace_spans:${idEmpresa}`;
 
-      const spansToQueue = await this.clientRedis.get(`trace_spans:${idEmpresa}`);
-      let parsedSpans = [];
+    try {
+      const result = await this.clientRedis.eval(
+        ADD_SPANS_SCRIPT,
+        {
+          keys: [countKey, spansKey],
+          arguments: [
+            this.LIMIT_SPANS_QUEUE.toString(),
+            JSON.stringify(spans),
+            spans.length.toString()
+          ]
+        }
+      ) as [number, string];
 
-      if (spansToQueue) {
-        parsedSpans = JSON.parse(spansToQueue as string);
-      }
+      const [shouldQueue, spansToQueue] = result;
 
-      if (parsedSpans.length > 0) {
-        await this.clientRedis.del(`trace_spans:${idEmpresa}`);
-        await this.clientRedis.set(redisKey, '0');
+      if (shouldQueue === 1 && spansToQueue) {
+        this.logger.info(`Limit of ${this.LIMIT_SPANS_QUEUE} spans reached for company ${idEmpresa}, sending to queue`);
         
-        await this.queueTraces.add({
-          idEmpresa,
-          spans: parsedSpans,
-        });
+        const parsedSpans = JSON.parse(spansToQueue);
+        
+        if (parsedSpans.length > 0) {
+          await this.queueTraces.add({
+            idEmpresa,
+            spans: parsedSpans,
+          });
+          
+          this.logger.info(`Sent ${parsedSpans.length} spans to queue for company ${idEmpresa}`);
+        }
       }
 
+      this.logger.info(`Successfully processed ${spans.length} spans for company ${idEmpresa}`);
+
+    } catch (error) {
+      this.logger.error(`Error processing spans for company ${idEmpresa}: ${error}`);
+      throw error;
     }
-
-    this.logger.info(`Storing ${spans.length} spans for company ${idEmpresa} in Redis`);
-
-    const existingSpans = await this.clientRedis.get(`trace_spans:${idEmpresa}`);
-
-    let spansArray = [];
-
-    if (existingSpans) {
-      spansArray = JSON.parse(existingSpans as string);
-    }
-
-    spansArray = spansArray.concat(spans);
-
-    await this.clientRedis.set(`trace_spans:${idEmpresa}`, JSON.stringify(spansArray));
-
-    await this.clientRedis.incrBy(redisKey, spans.length);
-
-    this.logger.info(`Stored ${spansArray.length} spans for company ${idEmpresa} in Redis`);
   }
 }

@@ -6,8 +6,8 @@ import { clientClickHouse } from "./databases/clickhouse";
 import { queueTraces } from "./queues/bull";
 import { TraceJobProcessor } from "./queues/bull/queues/traces";
 import { normalizeOTLP } from "./queues/bull/utils/normalizeOtlpHttpJsonTrace";
-import { clientRedis } from "./databases/redis";
 import { logger } from "./config/logger";
+import { clientRedis } from "./databases/redis";
 
 const container = createContainer();
 
