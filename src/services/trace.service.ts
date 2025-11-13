@@ -41,6 +41,8 @@ export class TracesService {
       }
 
       if (parsedSpans.length > 0) {
+        await this.clientRedis.del(`trace_spans:${idEmpresa}`);
+        await this.clientRedis.set(redisKey, '0');
         await this.queueTraces.add({
           idEmpresa,
           spans: parsedSpans,
