@@ -1,0 +1,1851 @@
+POST http://localhost:3333/api/v1/traces
+Content-Type: application/json
+
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "back-otica"
+            }
+          },
+          {
+            "key": "host.name",
+            "value": {
+              "stringValue": "matheus"
+            }
+          },
+          {
+            "key": "host.arch",
+            "value": {
+              "stringValue": "amd64"
+            }
+          },
+          {
+            "key": "host.id",
+            "value": {
+              "stringValue": "926baef39ec9466db3288471845ddba7"
+            }
+          },
+          {
+            "key": "process.pid",
+            "value": {
+              "intValue": 361279
+            }
+          },
+          {
+            "key": "process.executable.name",
+            "value": {
+              "stringValue": "/home/matheus/.nvm/versions/node/v20.19.5/bin/node"
+            }
+          },
+          {
+            "key": "process.executable.path",
+            "value": {
+              "stringValue": "/home/matheus/.nvm/versions/node/v20.19.5/bin/node"
+            }
+          },
+          {
+            "key": "process.command_args",
+            "value": {
+              "arrayValue": {
+                "values": [
+                  {
+                    "stringValue": "/home/matheus/.nvm/versions/node/v20.19.5/bin/node"
+                  },
+                  {
+                    "stringValue": "--require"
+                  },
+                  {
+                    "stringValue": "/home/matheus/www/back_optica/node_modules/tsx/dist/preflight.cjs"
+                  },
+                  {
+                    "stringValue": "--import"
+                  },
+                  {
+                    "stringValue": "file:///home/matheus/www/back_optica/node_modules/tsx/dist/loader.mjs"
+                  },
+                  {
+                    "stringValue": "/home/matheus/www/back_optica/src/server.ts"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "key": "process.runtime.version",
+            "value": {
+              "stringValue": "20.19.5"
+            }
+          },
+          {
+            "key": "process.runtime.name",
+            "value": {
+              "stringValue": "nodejs"
+            }
+          },
+          {
+            "key": "process.runtime.description",
+            "value": {
+              "stringValue": "Node.js"
+            }
+          },
+          {
+            "key": "process.command",
+            "value": {
+              "stringValue": "/home/matheus/www/back_optica/src/server.ts"
+            }
+          },
+          {
+            "key": "process.owner",
+            "value": {
+              "stringValue": "matheus"
+            }
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "nodejs"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "value": {
+              "stringValue": "2.2.0"
+            }
+          }
+        ],
+        "droppedAttributesCount": 0
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "@opentelemetry/instrumentation-http",
+            "version": "0.208.0"
+          },
+          "spans": [
+            {
+              "traceId": "fb6fbcd5802ca0fff9a5b3058214d1f7",
+              "spanId": "95787bb604ecb9f7",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864356269000000",
+              "endTimeUnixNano": "1762864356283622012",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44470
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 401
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "UNAUTHORIZED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "604a831b4bd040a0ac29870fbbbf8ab8",
+              "spanId": "96113bf37ba18f2c",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864356328000000",
+              "endTimeUnixNano": "1762864356330515892",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/favicon.ico"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/favicon.ico"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44470
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 401
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "UNAUTHORIZED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "ef8ad225c8afcfe74e6ccad20a9e3918",
+              "spanId": "29edc91cd4fa7331",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360383000000",
+              "endTimeUnixNano": "1762864360384454908",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/accounting-message/notification/messages"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/accounting-message/notification/messages"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44520
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "d122a6676e7f3d36612e2dbca455ed56",
+              "spanId": "c6c441042403b9d0",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360386000000",
+              "endTimeUnixNano": "1762864360387538944",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44534
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "c4b402fcede557c7f96a9fa03e81e254",
+              "spanId": "707d536acac1383d",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360387000000",
+              "endTimeUnixNano": "1762864360387454423",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/company"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/company"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44546
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "0f207f36946e1206aaec4263c4f75bf4",
+              "spanId": "0c2fdf9798019b55",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360388000000",
+              "endTimeUnixNano": "1762864360388983189",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/plans/verify"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/plans/verify"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44548
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "534def7811bda2b8ca7add114ec0bb2a",
+              "spanId": "f1ea993f1ef2b657",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360390000000",
+              "endTimeUnixNano": "1762864360390805719",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/settings/get/config"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/settings/get/config"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44558
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "f9b46c023cfbef7c837eb88c11d3555c",
+              "spanId": "83ea037d7b2695b6",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360427000000",
+              "endTimeUnixNano": "1762864360452777149",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/settings/get/config"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/settings/get/config"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44520
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 304
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NOT MODIFIED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "7430fd9d43179293f68b1983f11c2089",
+              "spanId": "c43736817ed46de8",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360392000000",
+              "endTimeUnixNano": "1762864360459843678",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/accounting-message/notification/messages"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/accounting-message/notification/messages"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44548
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 304
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NOT MODIFIED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "9a79a16e7c9bad36310545af662c2657",
+              "spanId": "50af0ac77d801328",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360398000000",
+              "endTimeUnixNano": "1762864360460628798",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44558
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 304
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NOT MODIFIED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "539abffb1dc84f54ce50d5001b08e991",
+              "spanId": "4a6128bde41883be",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360500000000",
+              "endTimeUnixNano": "1762864360500743647",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/bill-category/combobox"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/bill-category/combobox"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44558
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "7ccb3922a998009a9d734490914ea74b",
+              "spanId": "75875d41985a1bed",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360502000000",
+              "endTimeUnixNano": "1762864360505292652",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/bill-category/combobox"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/bill-category/combobox"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44558
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 304
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NOT MODIFIED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "942528e7d005b0a3196754baba3330e6",
+              "spanId": "1f5a7b784c8523d3",
+              "parentSpanId": "f274434a15c8c703",
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1762864360413000000",
+              "endTimeUnixNano": "1762864360856216390",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://bmsltda.com.br/customers/323bb670-b0d1-4e05-b630-251d0c8f87c7"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/customers/323bb670-b0d1-4e05-b630-251d0c8f87c7"
+                  }
+                },
+                {
+                  "key": "net.peer.name",
+                  "value": {
+                    "stringValue": "bmsltda.com.br"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "bmsltda.com.br:80"
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "164.92.122.113"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 80
+                  }
+                },
+                {
+                  "key": "http.response_content_length_uncompressed",
+                  "value": {
+                    "intValue": 930
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 200
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "OK"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "942528e7d005b0a3196754baba3330e6",
+              "spanId": "f274434a15c8c703",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360404000000",
+              "endTimeUnixNano": "1762864360861111862",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/company"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/company"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44546
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 304
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NOT MODIFIED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "0df98393fa0eb46488f190fe7e733819",
+              "spanId": "1ee9a3d02390ea86",
+              "parentSpanId": "01a0f4a4c5882911",
+              "name": "GET",
+              "kind": 3,
+              "startTimeUnixNano": "1762864360426000000",
+              "endTimeUnixNano": "1762864360862297356",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://bmsltda.com.br/plans/check/software-plan/is/available/323bb670-b0d1-4e05-b630-251d0c8f87c7?q=false"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/plans/check/software-plan/is/available/323bb670-b0d1-4e05-b630-251d0c8f87c7?q=false"
+                  }
+                },
+                {
+                  "key": "net.peer.name",
+                  "value": {
+                    "stringValue": "bmsltda.com.br"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "bmsltda.com.br:80"
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "164.92.122.113"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 80
+                  }
+                },
+                {
+                  "key": "http.response_content_length_uncompressed",
+                  "value": {
+                    "intValue": 106
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 200
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "OK"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "0df98393fa0eb46488f190fe7e733819",
+              "spanId": "01a0f4a4c5882911",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1762864360417000000",
+              "endTimeUnixNano": "1762864360864209953",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://localhost:3001/plans/verify"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "localhost:3001"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "localhost"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/plans/verify"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3001
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::1"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 44534
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 304
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NOT MODIFIED"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
