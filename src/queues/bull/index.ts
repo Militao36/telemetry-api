@@ -4,7 +4,6 @@ import { TraceJobProcessor } from './queues/traces';
 import { clientClickHouse } from '../../databases/clickhouse';
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../../env';
 
-
 const REDIS_CONFIG = {
   host: REDIS_HOST,
   port: REDIS_PORT,
