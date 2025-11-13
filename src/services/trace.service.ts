@@ -60,6 +60,8 @@ export class TracesService {
 
     await this.clientRedis.set(`trace_spans:${idEmpresa}`, JSON.stringify(spansArray));
 
+    this.clientRedis.incrBy(redisKey, spans.length);
+
     this.logger.info(`Stored ${spansArray.length} spans for company ${idEmpresa} in Redis`);
   }
 }
