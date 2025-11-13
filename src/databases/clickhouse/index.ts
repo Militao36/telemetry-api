@@ -5,7 +5,7 @@ import {
   CLICKHOUSE_PASSWORD,
   CLICKHOUSE_URL,
   CLICKHOUSE_USER,
-} from '../env';
+} from '../../env';
 
 export const clientClickHouse = createClient({
   url: CLICKHOUSE_URL,

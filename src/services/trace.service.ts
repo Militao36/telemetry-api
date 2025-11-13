@@ -3,21 +3,21 @@ import { RedisClientType } from "@redis/client";
 import { Logger } from "pino";
 
 import { NormalizedSpan } from "../queues/bull/utils/normalizeOtlpHttpJsonTrace";
-import { LIMIT_SPANS_QUEUE_DEFAULT } from "../env";
-import { ADD_SPANS_SCRIPT } from "../databases/redis/lua";
+import { LIMIT_ITEM_QUEUE_DEFAULT } from "../env";
+import { ADD_ITEM_SCRIPT } from "../databases/redis/lua";
 
 export class TracesService {
   queueTraces: Queue
   normalizeOTLP: (resourceSpans: any[]) => Array<NormalizedSpan>
   clientRedis: RedisClientType
   logger: Logger
-  LIMIT_SPANS_QUEUE: number
+  LIMIT_ITEM_QUEUE_DEFAULT: number
 
   constructor({ queueTraces, logger, clientRedis, normalizeOTLP }) {
     this.queueTraces = queueTraces
     this.normalizeOTLP = normalizeOTLP
     this.clientRedis = clientRedis
-    this.LIMIT_SPANS_QUEUE = LIMIT_SPANS_QUEUE_DEFAULT
+    this.LIMIT_ITEM_QUEUE_DEFAULT = LIMIT_ITEM_QUEUE_DEFAULT
     this.logger = logger
   }
 
@@ -36,11 +36,11 @@ export class TracesService {
 
     try {
       const result = await this.clientRedis.eval(
-        ADD_SPANS_SCRIPT,
+        ADD_ITEM_SCRIPT,
         {
           keys: [countKey, spansKey],
           arguments: [
-            this.LIMIT_SPANS_QUEUE.toString(),
+            this.LIMIT_ITEM_QUEUE_DEFAULT.toString(),
             JSON.stringify(spans),
             spans.length.toString()
           ]
@@ -50,7 +50,7 @@ export class TracesService {
       const [shouldQueue, spansToQueue] = result;
 
       if (shouldQueue === 1 && spansToQueue) {
-        this.logger.info(`Limit of ${this.LIMIT_SPANS_QUEUE} spans reached for company ${idEmpresa}, sending to queue`);
+        this.logger.info(`Limit of ${this.LIMIT_ITEM_QUEUE_DEFAULT} spans reached for company ${idEmpresa}, sending to queue`);
         
         const parsedSpans = JSON.parse(spansToQueue);
         

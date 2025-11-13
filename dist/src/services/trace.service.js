@@ -8,7 +8,7 @@ class TracesService {
         this.queueTraces = queueTraces;
         this.normalizeOTLP = normalizeOTLP;
         this.clientRedis = clientRedis;
-        this.LIMIT_SPANS_QUEUE = env_1.LIMIT_SPANS_QUEUE_DEFAULT;
+        this.LIMIT_ITEM_QUEUE_DEFAULT = env_1.LIMIT_ITEM_QUEUE_DEFAULT;
         this.logger = logger;
     }
     async create(idEmpresa, resourceSpans) {
@@ -21,17 +21,17 @@ class TracesService {
         const countKey = `trace_count:${idEmpresa}`;
         const spansKey = `trace_spans:${idEmpresa}`;
         try {
-            const result = await this.clientRedis.eval(lua_1.ADD_SPANS_SCRIPT, {
+            const result = await this.clientRedis.eval(lua_1.ADD_ITEM_SCRIPT, {
                 keys: [countKey, spansKey],
                 arguments: [
-                    this.LIMIT_SPANS_QUEUE.toString(),
+                    this.LIMIT_ITEM_QUEUE_DEFAULT.toString(),
                     JSON.stringify(spans),
                     spans.length.toString()
                 ]
             });
             const [shouldQueue, spansToQueue] = result;
             if (shouldQueue === 1 && spansToQueue) {
-                this.logger.info(`Limit of ${this.LIMIT_SPANS_QUEUE} spans reached for company ${idEmpresa}, sending to queue`);
+                this.logger.info(`Limit of ${this.LIMIT_ITEM_QUEUE_DEFAULT} spans reached for company ${idEmpresa}, sending to queue`);
                 const parsedSpans = JSON.parse(spansToQueue);
                 if (parsedSpans.length > 0) {
                     await this.queueTraces.add({

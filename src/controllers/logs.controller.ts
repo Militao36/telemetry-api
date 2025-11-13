@@ -2,7 +2,7 @@ import { POST, route } from "awilix-express"
 import { Request, Response } from "express";
 import { TracesService } from "../services/trace.service";
 
-@route('/traces')
+@route('/logs')
 export class TraceController {
   traceService: TracesService
 

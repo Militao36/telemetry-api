@@ -9,6 +9,7 @@ const traces_1 = require("./queues/bull/queues/traces");
 const normalizeOtlpHttpJsonTrace_1 = require("./queues/bull/utils/normalizeOtlpHttpJsonTrace");
 const logger_1 = require("./config/logger");
 const redis_1 = require("./databases/redis");
+const normalizeLog_1 = require("./queues/bull/utils/normalizeLog");
 const container = (0, awilix_1.createContainer)();
 exports.container = container;
 container.register({
@@ -19,4 +20,6 @@ container.register({
     traceJobProcessor: (0, awilix_1.asClass)(traces_1.TraceJobProcessor).singleton(),
     queueTraces: (0, awilix_1.asValue)(bull_1.queueTraces),
     normalizeOTLP: (0, awilix_1.asValue)(normalizeOtlpHttpJsonTrace_1.normalizeOTLP),
+    normalizeLog: (0, awilix_1.asValue)(normalizeLog_1.normalizeLog),
+    queueLogs: (0, awilix_1.asValue)(bull_1.queueLogs),
 });

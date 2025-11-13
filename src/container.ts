@@ -1,13 +1,13 @@
-import { ClickHouseClient } from "@clickhouse/client";
 import { TracesService } from "./services/trace.service";
 
 import { createContainer, asClass, asValue } from 'awilix';
 import { clientClickHouse } from "./databases/clickhouse";
-import { queueTraces } from "./queues/bull";
+import { queueLogs, queueTraces } from "./queues/bull";
 import { TraceJobProcessor } from "./queues/bull/queues/traces";
 import { normalizeOTLP } from "./queues/bull/utils/normalizeOtlpHttpJsonTrace";
 import { logger } from "./config/logger";
 import { clientRedis } from "./databases/redis";
+import { normalizeLog } from "./queues/bull/utils/normalizeLog";
 
 const container = createContainer();
 
@@ -26,6 +26,8 @@ container.register({
   traceJobProcessor: asClass(TraceJobProcessor).singleton(),
   queueTraces: asValue(queueTraces),
   normalizeOTLP: asValue(normalizeOTLP),
+  normalizeLog: asValue(normalizeLog),
+  queueLogs: asValue(queueLogs),
 })
 
 export { container }
