@@ -11,6 +11,10 @@ server.use(express.json());
 server.use(scopePerRequest(container))
 server.use('/api/v1', loadControllers(AWILIX_CONTROLLERS, { cwd: __dirname }))
 
+server.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

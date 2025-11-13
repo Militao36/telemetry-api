@@ -1,4 +1,4 @@
-POST http://localhost:3333/api/v1/traces
+POST https://telemetry-telemetry-api.auu75n.easypanel.host/api/v1/traces
 Content-Type: application/json
 
 {
