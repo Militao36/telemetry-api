@@ -27,6 +27,9 @@ export class TracesService {
     const redisKey = `trace_count:${idEmpresa}`;
     const listSpans = await this.clientRedis.incr(redisKey);
 
+
+    this.logger.info(`Current span count for company ${idEmpresa} is ${listSpans}`);
+
     if (listSpans >= this.LIMIT_SPANS_QUEUE) {
       this.logger.info(`Limit of ${this.LIMIT_SPANS_QUEUE} spans reached for company ${idEmpresa}, sending to queue`);
 
