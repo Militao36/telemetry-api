@@ -7,3 +7,4 @@ export const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3333;
 export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
+export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
