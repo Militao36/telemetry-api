@@ -94,6 +94,8 @@ export function normalizeOTLP(resourceSpans: any[]) {
           parent_span_id: parentSpanId ? Buffer.from(parentSpanId).toString("hex") : "0000000000000000",
 
           service_name: serviceName,
+          service_version: serviceVersion,
+          service_environment: environment,
           name: span.name,
           kind: toEnumKind(span.kind),
           start_time: start,
@@ -108,7 +110,7 @@ export function normalizeOTLP(resourceSpans: any[]) {
         //  SEPARAÇÃO DE SPANS POR TIPO
         // ------------------------------------------------------------------
 
-        if (spanType === "http") {
+        if (spanType === "HTTP") {
           const http_method = findAttr(span, "http.method");
 
           // pq eu quis se foda
@@ -127,7 +129,7 @@ export function normalizeOTLP(resourceSpans: any[]) {
           });
         }
 
-        else if (spanType === "database") {
+        else if (spanType === "Database") {
           const db_duration = findAttr(span, "db.duration");
           const db_statement = findAttr(span, "db.statement");
           const db_system = findAttr(span, "db.system");

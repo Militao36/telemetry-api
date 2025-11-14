@@ -1,7 +1,7 @@
 export const AWILIX_CONTROLLERS = process.env.AWILIX_CONTROLLERS || 'controllers/**/*.ts';
-export const CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'http://localhost:8123';
-export const CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'analytics_user';
-export const CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'analytics_password';
+export const CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'https://telemetry-clickhouse.qltz9y.easypanel.host';
+export const CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'telemetry';
+export const CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'C7cWwcV4qDnhNSw';
 export const CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
 export const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3333;
 export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';

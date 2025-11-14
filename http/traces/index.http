@@ -1,4 +1,4 @@
-POST https://telemetry-telemetry-api.auu75n.easypanel.host/api/v1/traces
+POST http://localhost:3333/api/v1/traces
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
           {
             "key": "host.name",
             "value": {
-              "stringValue": "matheus"
+              "stringValue": "577d0996e366"
             }
           },
           {
@@ -27,25 +27,25 @@ Content-Type: application/json
           {
             "key": "host.id",
             "value": {
-              "stringValue": "926baef39ec9466db3288471845ddba7"
+              "stringValue": "14aca931249e91fa842acc05691583b3"
             }
           },
           {
             "key": "process.pid",
             "value": {
-              "intValue": 361279
+              "intValue": 1
             }
           },
           {
             "key": "process.executable.name",
             "value": {
-              "stringValue": "/home/matheus/.nvm/versions/node/v20.19.5/bin/node"
+              "stringValue": "node"
             }
           },
           {
             "key": "process.executable.path",
             "value": {
-              "stringValue": "/home/matheus/.nvm/versions/node/v20.19.5/bin/node"
+              "stringValue": "/usr/local/bin/node"
             }
           },
           {
@@ -54,22 +54,10 @@ Content-Type: application/json
               "arrayValue": {
                 "values": [
                   {
-                    "stringValue": "/home/matheus/.nvm/versions/node/v20.19.5/bin/node"
+                    "stringValue": "/usr/local/bin/node"
                   },
                   {
-                    "stringValue": "--require"
-                  },
-                  {
-                    "stringValue": "/home/matheus/www/back_optica/node_modules/tsx/dist/preflight.cjs"
-                  },
-                  {
-                    "stringValue": "--import"
-                  },
-                  {
-                    "stringValue": "file:///home/matheus/www/back_optica/node_modules/tsx/dist/loader.mjs"
-                  },
-                  {
-                    "stringValue": "/home/matheus/www/back_optica/src/server.ts"
+                    "stringValue": "/usr/src/app/dist/src/server.js"
                   }
                 ]
               }
@@ -78,7 +66,7 @@ Content-Type: application/json
           {
             "key": "process.runtime.version",
             "value": {
-              "stringValue": "20.19.5"
+              "stringValue": "22.21.1"
             }
           },
           {
@@ -96,13 +84,13 @@ Content-Type: application/json
           {
             "key": "process.command",
             "value": {
-              "stringValue": "/home/matheus/www/back_optica/src/server.ts"
+              "stringValue": "/usr/src/app/dist/src/server.js"
             }
           },
           {
             "key": "process.owner",
             "value": {
-              "stringValue": "matheus"
+              "stringValue": "root"
             }
           },
           {
@@ -134,247 +122,29 @@ Content-Type: application/json
           },
           "spans": [
             {
-              "traceId": "fb6fbcd5802ca0fff9a5b3058214d1f7",
-              "spanId": "95787bb604ecb9f7",
-              "name": "GET",
-              "kind": 2,
-              "startTimeUnixNano": "1762864356269000000",
-              "endTimeUnixNano": "1762864356283622012",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "GET"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44470
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 401
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "UNAUTHORIZED"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "604a831b4bd040a0ac29870fbbbf8ab8",
-              "spanId": "96113bf37ba18f2c",
-              "name": "GET",
-              "kind": 2,
-              "startTimeUnixNano": "1762864356328000000",
-              "endTimeUnixNano": "1762864356330515892",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/favicon.ico"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "GET"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/favicon.ico"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44470
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 401
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "UNAUTHORIZED"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "ef8ad225c8afcfe74e6ccad20a9e3918",
-              "spanId": "29edc91cd4fa7331",
+              "traceId": "b957dc638b1fe5bbe89aa1b51d632cfd",
+              "spanId": "677840e3efd32361",
               "name": "OPTIONS",
               "kind": 2,
-              "startTimeUnixNano": "1762864360383000000",
-              "endTimeUnixNano": "1762864360384454908",
+              "startTimeUnixNano": "1763147319779000000",
+              "endTimeUnixNano": "1763147319780580610",
               "attributes": [
                 {
                   "key": "http.url",
                   "value": {
-                    "stringValue": "http://localhost:3001/accounting-message/notification/messages"
+                    "stringValue": "http://sistemas-novos-bms-otica.nk9iqz.easypanel.host/bills/list/bills/?startDate=2025-11-14&amp;endDate=2025-11-14&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
                   }
                 },
                 {
                   "key": "http.host",
                   "value": {
-                    "stringValue": "localhost:3001"
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
                   "key": "net.host.name",
                   "value": {
-                    "stringValue": "localhost"
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
@@ -390,15 +160,21 @@ Content-Type: application/json
                   }
                 },
                 {
+                  "key": "http.client_ip",
+                  "value": {
+                    "stringValue": "170.0.69.220"
+                  }
+                },
+                {
                   "key": "http.target",
                   "value": {
-                    "stringValue": "/accounting-message/notification/messages"
+                    "stringValue": "/bills/list/bills/?startDate=2025-11-14&amp;endDate=2025-11-14&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
                   }
                 },
                 {
                   "key": "http.user_agent",
                   "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                    "stringValue": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
                   }
                 },
                 {
@@ -416,25 +192,25 @@ Content-Type: application/json
                 {
                   "key": "net.host.ip",
                   "value": {
-                    "stringValue": "::1"
+                    "stringValue": "::ffff:10.11.10.246"
                   }
                 },
                 {
                   "key": "net.host.port",
                   "value": {
-                    "intValue": 3001
+                    "intValue": 3000
                   }
                 },
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "::1"
+                    "stringValue": "::ffff:10.11.0.4"
                   }
                 },
                 {
                   "key": "net.peer.port",
                   "value": {
-                    "intValue": 44520
+                    "intValue": 50144
                   }
                 },
                 {
@@ -461,465 +237,29 @@ Content-Type: application/json
               "flags": 257
             },
             {
-              "traceId": "d122a6676e7f3d36612e2dbca455ed56",
-              "spanId": "c6c441042403b9d0",
-              "name": "OPTIONS",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360386000000",
-              "endTimeUnixNano": "1762864360387538944",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "OPTIONS"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44534
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 204
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NO CONTENT"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "c4b402fcede557c7f96a9fa03e81e254",
-              "spanId": "707d536acac1383d",
-              "name": "OPTIONS",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360387000000",
-              "endTimeUnixNano": "1762864360387454423",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/company"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "OPTIONS"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/company"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44546
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 204
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NO CONTENT"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "0f207f36946e1206aaec4263c4f75bf4",
-              "spanId": "0c2fdf9798019b55",
-              "name": "OPTIONS",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360388000000",
-              "endTimeUnixNano": "1762864360388983189",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/plans/verify"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "OPTIONS"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/plans/verify"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44548
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 204
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NO CONTENT"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "534def7811bda2b8ca7add114ec0bb2a",
-              "spanId": "f1ea993f1ef2b657",
-              "name": "OPTIONS",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360390000000",
-              "endTimeUnixNano": "1762864360390805719",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/settings/get/config"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "OPTIONS"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/settings/get/config"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44558
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 204
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NO CONTENT"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "f9b46c023cfbef7c837eb88c11d3555c",
-              "spanId": "83ea037d7b2695b6",
+              "traceId": "5b910ea3bc7a308ebe71d8b39f37573a",
+              "spanId": "aaab66bea0e0562e",
               "name": "GET",
               "kind": 2,
-              "startTimeUnixNano": "1762864360427000000",
-              "endTimeUnixNano": "1762864360452777149",
+              "startTimeUnixNano": "1763147319954000000",
+              "endTimeUnixNano": "1763147320296595843",
               "attributes": [
                 {
                   "key": "http.url",
                   "value": {
-                    "stringValue": "http://localhost:3001/settings/get/config"
+                    "stringValue": "http://sistemas-novos-bms-otica.nk9iqz.easypanel.host/bills/list/bills/?startDate=2025-11-14&amp;endDate=2025-11-14&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
                   }
                 },
                 {
                   "key": "http.host",
                   "value": {
-                    "stringValue": "localhost:3001"
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
                   "key": "net.host.name",
                   "value": {
-                    "stringValue": "localhost"
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
@@ -935,15 +275,21 @@ Content-Type: application/json
                   }
                 },
                 {
+                  "key": "http.client_ip",
+                  "value": {
+                    "stringValue": "170.0.69.220"
+                  }
+                },
+                {
                   "key": "http.target",
                   "value": {
-                    "stringValue": "/settings/get/config"
+                    "stringValue": "/bills/list/bills/?startDate=2025-11-14&amp;endDate=2025-11-14&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
                   }
                 },
                 {
                   "key": "http.user_agent",
                   "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                    "stringValue": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
                   }
                 },
                 {
@@ -961,541 +307,25 @@ Content-Type: application/json
                 {
                   "key": "net.host.ip",
                   "value": {
-                    "stringValue": "::1"
+                    "stringValue": "::ffff:10.11.10.246"
                   }
                 },
                 {
                   "key": "net.host.port",
                   "value": {
-                    "intValue": 3001
+                    "intValue": 3000
                   }
                 },
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "::1"
+                    "stringValue": "::ffff:10.11.0.4"
                   }
                 },
                 {
                   "key": "net.peer.port",
                   "value": {
-                    "intValue": 44520
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 304
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NOT MODIFIED"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "7430fd9d43179293f68b1983f11c2089",
-              "spanId": "c43736817ed46de8",
-              "name": "GET",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360392000000",
-              "endTimeUnixNano": "1762864360459843678",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/accounting-message/notification/messages"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "GET"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/accounting-message/notification/messages"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44548
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 304
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NOT MODIFIED"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "9a79a16e7c9bad36310545af662c2657",
-              "spanId": "50af0ac77d801328",
-              "name": "GET",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360398000000",
-              "endTimeUnixNano": "1762864360460628798",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "GET"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/bills/list/bills/?startDate=2025-11-11&amp;endDate=2025-11-11&amp;typeBill=entrada&amp;q=&amp;collumnSearch=&amp;idCategoryBill=&amp;status=&amp;page=1"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44558
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 304
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NOT MODIFIED"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "539abffb1dc84f54ce50d5001b08e991",
-              "spanId": "4a6128bde41883be",
-              "name": "OPTIONS",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360500000000",
-              "endTimeUnixNano": "1762864360500743647",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/bill-category/combobox"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "OPTIONS"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/bill-category/combobox"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44558
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 204
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NO CONTENT"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "7ccb3922a998009a9d734490914ea74b",
-              "spanId": "75875d41985a1bed",
-              "name": "GET",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360502000000",
-              "endTimeUnixNano": "1762864360505292652",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://localhost:3001/bill-category/combobox"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "localhost:3001"
-                  }
-                },
-                {
-                  "key": "net.host.name",
-                  "value": {
-                    "stringValue": "localhost"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "GET"
-                  }
-                },
-                {
-                  "key": "http.scheme",
-                  "value": {
-                    "stringValue": "http"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/bill-category/combobox"
-                  }
-                },
-                {
-                  "key": "http.user_agent",
-                  "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 44558
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 304
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "NOT MODIFIED"
-                  }
-                }
-              ],
-              "droppedAttributesCount": 0,
-              "events": [],
-              "droppedEventsCount": 0,
-              "status": {
-                "code": 0
-              },
-              "links": [],
-              "droppedLinksCount": 0,
-              "flags": 257
-            },
-            {
-              "traceId": "942528e7d005b0a3196754baba3330e6",
-              "spanId": "1f5a7b784c8523d3",
-              "parentSpanId": "f274434a15c8c703",
-              "name": "GET",
-              "kind": 3,
-              "startTimeUnixNano": "1762864360413000000",
-              "endTimeUnixNano": "1762864360856216390",
-              "attributes": [
-                {
-                  "key": "http.url",
-                  "value": {
-                    "stringValue": "http://bmsltda.com.br/customers/323bb670-b0d1-4e05-b630-251d0c8f87c7"
-                  }
-                },
-                {
-                  "key": "http.method",
-                  "value": {
-                    "stringValue": "GET"
-                  }
-                },
-                {
-                  "key": "http.target",
-                  "value": {
-                    "stringValue": "/customers/323bb670-b0d1-4e05-b630-251d0c8f87c7"
-                  }
-                },
-                {
-                  "key": "net.peer.name",
-                  "value": {
-                    "stringValue": "bmsltda.com.br"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "bmsltda.com.br:80"
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "164.92.122.113"
-                  }
-                },
-                {
-                  "key": "net.peer.port",
-                  "value": {
-                    "intValue": 80
-                  }
-                },
-                {
-                  "key": "http.response_content_length_uncompressed",
-                  "value": {
-                    "intValue": 930
+                    "intValue": 50144
                   }
                 },
                 {
@@ -1509,18 +339,6 @@ Content-Type: application/json
                   "value": {
                     "stringValue": "OK"
                   }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
                 }
               ],
               "droppedAttributesCount": 0,
@@ -1534,35 +352,35 @@ Content-Type: application/json
               "flags": 257
             },
             {
-              "traceId": "942528e7d005b0a3196754baba3330e6",
-              "spanId": "f274434a15c8c703",
-              "name": "GET",
+              "traceId": "3894faa7c53b383313be7bdc4889d53c",
+              "spanId": "8f075fdfe45f33d1",
+              "name": "OPTIONS",
               "kind": 2,
-              "startTimeUnixNano": "1762864360404000000",
-              "endTimeUnixNano": "1762864360861111862",
+              "startTimeUnixNano": "1763147320480000000",
+              "endTimeUnixNano": "1763147320480908638",
               "attributes": [
                 {
                   "key": "http.url",
                   "value": {
-                    "stringValue": "http://localhost:3001/company"
+                    "stringValue": "http://sistemas-novos-bms-otica.nk9iqz.easypanel.host/bill-category/combobox"
                   }
                 },
                 {
                   "key": "http.host",
                   "value": {
-                    "stringValue": "localhost:3001"
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
                   "key": "net.host.name",
                   "value": {
-                    "stringValue": "localhost"
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
                   "key": "http.method",
                   "value": {
-                    "stringValue": "GET"
+                    "stringValue": "OPTIONS"
                   }
                 },
                 {
@@ -1572,15 +390,21 @@ Content-Type: application/json
                   }
                 },
                 {
+                  "key": "http.client_ip",
+                  "value": {
+                    "stringValue": "170.0.69.220"
+                  }
+                },
+                {
                   "key": "http.target",
                   "value": {
-                    "stringValue": "/company"
+                    "stringValue": "/bill-category/combobox"
                   }
                 },
                 {
                   "key": "http.user_agent",
                   "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                    "stringValue": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
                   }
                 },
                 {
@@ -1598,25 +422,140 @@ Content-Type: application/json
                 {
                   "key": "net.host.ip",
                   "value": {
-                    "stringValue": "::1"
+                    "stringValue": "::ffff:10.11.10.246"
                   }
                 },
                 {
                   "key": "net.host.port",
                   "value": {
-                    "intValue": 3001
+                    "intValue": 3000
                   }
                 },
                 {
                   "key": "net.peer.ip",
                   "value": {
-                    "stringValue": "::1"
+                    "stringValue": "::ffff:10.11.0.4"
                   }
                 },
                 {
                   "key": "net.peer.port",
                   "value": {
-                    "intValue": 44546
+                    "intValue": 50144
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "4d45a7a96e2d34408f30b35896879cef",
+              "spanId": "9a9999830363d5a2",
+              "name": "GET",
+              "kind": 2,
+              "startTimeUnixNano": "1763147320659000000",
+              "endTimeUnixNano": "1763147320667092771",
+              "attributes": [
+                {
+                  "key": "http.url",
+                  "value": {
+                    "stringValue": "http://sistemas-novos-bms-otica.nk9iqz.easypanel.host/bill-category/combobox"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
+                  }
+                },
+                {
+                  "key": "http.method",
+                  "value": {
+                    "stringValue": "GET"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.client_ip",
+                  "value": {
+                    "stringValue": "170.0.69.220"
+                  }
+                },
+                {
+                  "key": "http.target",
+                  "value": {
+                    "stringValue": "/bill-category/combobox"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::ffff:10.11.10.246"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3000
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::ffff:10.11.0.4"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 50144
                   }
                 },
                 {
@@ -1643,84 +582,189 @@ Content-Type: application/json
               "flags": 257
             },
             {
-              "traceId": "0df98393fa0eb46488f190fe7e733819",
-              "spanId": "1ee9a3d02390ea86",
-              "parentSpanId": "01a0f4a4c5882911",
-              "name": "GET",
-              "kind": 3,
-              "startTimeUnixNano": "1762864360426000000",
-              "endTimeUnixNano": "1762864360862297356",
+              "traceId": "3f5adbf12596a78bca47d1a1cd802244",
+              "spanId": "721cf64e29a3ebbd",
+              "name": "OPTIONS",
+              "kind": 2,
+              "startTimeUnixNano": "1763147322999000000",
+              "endTimeUnixNano": "1763147323000326648",
               "attributes": [
                 {
                   "key": "http.url",
                   "value": {
-                    "stringValue": "http://bmsltda.com.br/plans/check/software-plan/is/available/323bb670-b0d1-4e05-b630-251d0c8f87c7?q=false"
+                    "stringValue": "http://sistemas-novos-bms-otica.nk9iqz.easypanel.host/customers?q=alyne&amp;type=nome&amp;page=1&amp;filterType=includes"
+                  }
+                },
+                {
+                  "key": "http.host",
+                  "value": {
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
+                  }
+                },
+                {
+                  "key": "net.host.name",
+                  "value": {
+                    "stringValue": "sistemas-novos-bms-otica.nk9iqz.easypanel.host"
                   }
                 },
                 {
                   "key": "http.method",
                   "value": {
-                    "stringValue": "GET"
+                    "stringValue": "OPTIONS"
+                  }
+                },
+                {
+                  "key": "http.scheme",
+                  "value": {
+                    "stringValue": "http"
+                  }
+                },
+                {
+                  "key": "http.client_ip",
+                  "value": {
+                    "stringValue": "191.7.206.156"
                   }
                 },
                 {
                   "key": "http.target",
                   "value": {
-                    "stringValue": "/plans/check/software-plan/is/available/323bb670-b0d1-4e05-b630-251d0c8f87c7?q=false"
+                    "stringValue": "/customers?q=alyne&amp;type=nome&amp;page=1&amp;filterType=includes"
+                  }
+                },
+                {
+                  "key": "http.user_agent",
+                  "value": {
+                    "stringValue": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+                  }
+                },
+                {
+                  "key": "http.flavor",
+                  "value": {
+                    "stringValue": "1.1"
+                  }
+                },
+                {
+                  "key": "net.transport",
+                  "value": {
+                    "stringValue": "ip_tcp"
+                  }
+                },
+                {
+                  "key": "net.host.ip",
+                  "value": {
+                    "stringValue": "::ffff:10.11.10.246"
+                  }
+                },
+                {
+                  "key": "net.host.port",
+                  "value": {
+                    "intValue": 3000
+                  }
+                },
+                {
+                  "key": "net.peer.ip",
+                  "value": {
+                    "stringValue": "::ffff:10.11.0.4"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "intValue": 50144
+                  }
+                },
+                {
+                  "key": "http.status_code",
+                  "value": {
+                    "intValue": 204
+                  }
+                },
+                {
+                  "key": "http.status_text",
+                  "value": {
+                    "stringValue": "NO CONTENT"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            }
+          ]
+        },
+        {
+          "scope": {
+            "name": "@opentelemetry/instrumentation-knex",
+            "version": "0.53.0"
+          },
+          "spans": [
+            {
+              "traceId": "5b910ea3bc7a308ebe71d8b39f37573a",
+              "spanId": "ac3e3c3d2f22c65b",
+              "parentSpanId": "aaab66bea0e0562e",
+              "name": "select optica.contas",
+              "kind": 3,
+              "startTimeUnixNano": "1763147319960000000",
+              "endTimeUnixNano": "1763147319969099003",
+              "attributes": [
+                {
+                  "key": "knex.version",
+                  "value": {
+                    "stringValue": "2.5.1"
+                  }
+                },
+                {
+                  "key": "db.system",
+                  "value": {
+                    "stringValue": "mysql2"
+                  }
+                },
+                {
+                  "key": "db.sql.table",
+                  "value": {
+                    "stringValue": "contas"
+                  }
+                },
+                {
+                  "key": "db.operation",
+                  "value": {
+                    "stringValue": "select"
+                  }
+                },
+                {
+                  "key": "db.user",
+                  "value": {
+                    "stringValue": "doadmin"
+                  }
+                },
+                {
+                  "key": "db.name",
+                  "value": {
+                    "stringValue": "optica"
                   }
                 },
                 {
                   "key": "net.peer.name",
                   "value": {
-                    "stringValue": "bmsltda.com.br"
-                  }
-                },
-                {
-                  "key": "http.host",
-                  "value": {
-                    "stringValue": "bmsltda.com.br:80"
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "164.92.122.113"
+                    "stringValue": "mysql-do-user-7045040-0.b.db.ondigitalocean.com"
                   }
                 },
                 {
                   "key": "net.peer.port",
                   "value": {
-                    "intValue": 80
+                    "stringValue": "25060"
                   }
                 },
                 {
-                  "key": "http.response_content_length_uncompressed",
+                  "key": "db.statement",
                   "value": {
-                    "intValue": 106
-                  }
-                },
-                {
-                  "key": "http.status_code",
-                  "value": {
-                    "intValue": 200
-                  }
-                },
-                {
-                  "key": "http.status_text",
-                  "value": {
-                    "stringValue": "OK"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
+                    "stringValue": "select `contas`.`idEmpresa`, `clientes`.`nome`, `clientes`.`cpfCnpj`, `contas`.`tipo`, `contas`.`situacao`, `contas`.`data`, `contas`.`dataPagamento`, `contas`.`valorTotal`, `contas`.`valorPago`, `contas`.`valorRestante`, `contas`.`descricao`, `contas`.`idCategoria`, `contas`.`id`, `contas`.`idUnion`, `contas`.`idVenda`, `contas`.`idNota`, `contas`.`idNfse`, `contas`.`idConsulta`, `forma_pagamentos`.`tipo` as `formaPagamento`, `contas`.`numeracao`, `fornecedores`.`nomeFantasia` as `nomeFantasia`, `fornecedores`.`cpfCnpj` as `cnpjFornecedor`, `vendas`.`numero` as `numVenda`, `categorias_contas`.`nome` as `nomeCategoria`, (SELECT COUNT(c2.id) from contas c2 WHERE contas.idUnion = c2.idUnion) as totalContas, COALESCE((SELECT SUM(rgc.valor + rgc.juros + rgc.multa - rgc.desconto) FROM registro_contas rgc WHERE rgc.idConta = contas.id), 0) AS valorTotalRegistros, DATE_FORMAT(contas.data,'%Y-%m-%d') as data from `contas` left join `categorias_contas` on `categorias_contas`.`id` = `contas`.`idCategoria` left join `.."
                   }
                 }
               ],
@@ -1735,101 +779,362 @@ Content-Type: application/json
               "flags": 257
             },
             {
-              "traceId": "0df98393fa0eb46488f190fe7e733819",
-              "spanId": "01a0f4a4c5882911",
-              "name": "GET",
-              "kind": 2,
-              "startTimeUnixNano": "1762864360417000000",
-              "endTimeUnixNano": "1762864360864209953",
+              "traceId": "5b910ea3bc7a308ebe71d8b39f37573a",
+              "spanId": "ed3d35e0d59ec32b",
+              "parentSpanId": "aaab66bea0e0562e",
+              "name": "select optica.contas",
+              "kind": 3,
+              "startTimeUnixNano": "1763147319978000000",
+              "endTimeUnixNano": "1763147319982172739",
               "attributes": [
                 {
-                  "key": "http.url",
+                  "key": "knex.version",
                   "value": {
-                    "stringValue": "http://localhost:3001/plans/verify"
+                    "stringValue": "2.5.1"
                   }
                 },
                 {
-                  "key": "http.host",
+                  "key": "db.system",
                   "value": {
-                    "stringValue": "localhost:3001"
+                    "stringValue": "mysql2"
                   }
                 },
                 {
-                  "key": "net.host.name",
+                  "key": "db.sql.table",
                   "value": {
-                    "stringValue": "localhost"
+                    "stringValue": "contas"
                   }
                 },
                 {
-                  "key": "http.method",
+                  "key": "db.operation",
                   "value": {
-                    "stringValue": "GET"
+                    "stringValue": "select"
                   }
                 },
                 {
-                  "key": "http.scheme",
+                  "key": "db.user",
                   "value": {
-                    "stringValue": "http"
+                    "stringValue": "doadmin"
                   }
                 },
                 {
-                  "key": "http.target",
+                  "key": "db.name",
                   "value": {
-                    "stringValue": "/plans/verify"
+                    "stringValue": "optica"
                   }
                 },
                 {
-                  "key": "http.user_agent",
+                  "key": "net.peer.name",
                   "value": {
-                    "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-                  }
-                },
-                {
-                  "key": "http.flavor",
-                  "value": {
-                    "stringValue": "1.1"
-                  }
-                },
-                {
-                  "key": "net.transport",
-                  "value": {
-                    "stringValue": "ip_tcp"
-                  }
-                },
-                {
-                  "key": "net.host.ip",
-                  "value": {
-                    "stringValue": "::1"
-                  }
-                },
-                {
-                  "key": "net.host.port",
-                  "value": {
-                    "intValue": 3001
-                  }
-                },
-                {
-                  "key": "net.peer.ip",
-                  "value": {
-                    "stringValue": "::1"
+                    "stringValue": "mysql-do-user-7045040-0.b.db.ondigitalocean.com"
                   }
                 },
                 {
                   "key": "net.peer.port",
                   "value": {
-                    "intValue": 44534
+                    "stringValue": "25060"
                   }
                 },
                 {
-                  "key": "http.status_code",
+                  "key": "db.statement",
                   "value": {
-                    "intValue": 304
+                    "stringValue": "select sum(contas.valorRestante) from `contas` left join `clientes` on `clientes`.`id` = `contas`.`idCliente` left join `fornecedores` on `fornecedores`.`id` = `contas`.`idFornecedor` left join `forma_pagamentos` on `forma_pagamentos`.`id` = `contas`.`idFormaPagamento` where `contas`.`idEmpresa` = ? and `contas`.`data` &gt;= ? and `contas`.`data` &lt;= ? and (`contas`.`situacao` = ? or `contas`.`situacao` = ?) and `contas`.`tipo` = ?"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "5b910ea3bc7a308ebe71d8b39f37573a",
+              "spanId": "e31ce67683c78e5f",
+              "parentSpanId": "aaab66bea0e0562e",
+              "name": "select optica.contas",
+              "kind": 3,
+              "startTimeUnixNano": "1763147319980000000",
+              "endTimeUnixNano": "1763147319984406791",
+              "attributes": [
+                {
+                  "key": "knex.version",
+                  "value": {
+                    "stringValue": "2.5.1"
                   }
                 },
                 {
-                  "key": "http.status_text",
+                  "key": "db.system",
                   "value": {
-                    "stringValue": "NOT MODIFIED"
+                    "stringValue": "mysql2"
+                  }
+                },
+                {
+                  "key": "db.sql.table",
+                  "value": {
+                    "stringValue": "contas"
+                  }
+                },
+                {
+                  "key": "db.operation",
+                  "value": {
+                    "stringValue": "select"
+                  }
+                },
+                {
+                  "key": "db.user",
+                  "value": {
+                    "stringValue": "doadmin"
+                  }
+                },
+                {
+                  "key": "db.name",
+                  "value": {
+                    "stringValue": "optica"
+                  }
+                },
+                {
+                  "key": "net.peer.name",
+                  "value": {
+                    "stringValue": "mysql-do-user-7045040-0.b.db.ondigitalocean.com"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "stringValue": "25060"
+                  }
+                },
+                {
+                  "key": "db.statement",
+                  "value": {
+                    "stringValue": "select sum(contas.valorTotal) from `contas` left join `clientes` on `clientes`.`id` = `contas`.`idCliente` left join `fornecedores` on `fornecedores`.`id` = `contas`.`idFornecedor` left join `forma_pagamentos` on `forma_pagamentos`.`id` = `contas`.`idFormaPagamento` where `contas`.`idEmpresa` = ? and `contas`.`idEmpresa` = ? and `contas`.`tipo` = ? and `contas`.`data` &gt;= ? and `contas`.`data` &lt;= ?"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "5b910ea3bc7a308ebe71d8b39f37573a",
+              "spanId": "3fae834ae45d03b0",
+              "parentSpanId": "aaab66bea0e0562e",
+              "name": "select optica.contas",
+              "kind": 3,
+              "startTimeUnixNano": "1763147319977000000",
+              "endTimeUnixNano": "1763147320002899935",
+              "attributes": [
+                {
+                  "key": "knex.version",
+                  "value": {
+                    "stringValue": "2.5.1"
+                  }
+                },
+                {
+                  "key": "db.system",
+                  "value": {
+                    "stringValue": "mysql2"
+                  }
+                },
+                {
+                  "key": "db.sql.table",
+                  "value": {
+                    "stringValue": "contas"
+                  }
+                },
+                {
+                  "key": "db.operation",
+                  "value": {
+                    "stringValue": "select"
+                  }
+                },
+                {
+                  "key": "db.user",
+                  "value": {
+                    "stringValue": "doadmin"
+                  }
+                },
+                {
+                  "key": "db.name",
+                  "value": {
+                    "stringValue": "optica"
+                  }
+                },
+                {
+                  "key": "net.peer.name",
+                  "value": {
+                    "stringValue": "mysql-do-user-7045040-0.b.db.ondigitalocean.com"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "stringValue": "25060"
+                  }
+                },
+                {
+                  "key": "db.statement",
+                  "value": {
+                    "stringValue": "select sum(contas.valorRestante) from `contas` left join `clientes` on `clientes`.`id` = `contas`.`idCliente` left join `fornecedores` on `fornecedores`.`id` = `contas`.`idFornecedor` left join `forma_pagamentos` on `forma_pagamentos`.`id` = `contas`.`idFormaPagamento` where `contas`.`idEmpresa` = ? and `contas`.`data` &lt; ? and `contas`.`situacao` = ? and `contas`.`tipo` = ?"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "5b910ea3bc7a308ebe71d8b39f37573a",
+              "spanId": "e14b563bfbd8bddf",
+              "parentSpanId": "aaab66bea0e0562e",
+              "name": "select optica.registro_contas",
+              "kind": 3,
+              "startTimeUnixNano": "1763147319979000000",
+              "endTimeUnixNano": "1763147320295527776",
+              "attributes": [
+                {
+                  "key": "knex.version",
+                  "value": {
+                    "stringValue": "2.5.1"
+                  }
+                },
+                {
+                  "key": "db.system",
+                  "value": {
+                    "stringValue": "mysql2"
+                  }
+                },
+                {
+                  "key": "db.sql.table",
+                  "value": {
+                    "stringValue": "registro_contas"
+                  }
+                },
+                {
+                  "key": "db.operation",
+                  "value": {
+                    "stringValue": "select"
+                  }
+                },
+                {
+                  "key": "db.user",
+                  "value": {
+                    "stringValue": "doadmin"
+                  }
+                },
+                {
+                  "key": "db.name",
+                  "value": {
+                    "stringValue": "optica"
+                  }
+                },
+                {
+                  "key": "net.peer.name",
+                  "value": {
+                    "stringValue": "mysql-do-user-7045040-0.b.db.ondigitalocean.com"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "stringValue": "25060"
+                  }
+                },
+                {
+                  "key": "db.statement",
+                  "value": {
+                    "stringValue": "select sum(registro_contas.valor + registro_contas.juros + registro_contas.multa - registro_contas.desconto) from `registro_contas` inner join `contas` on `contas`.`id` = `registro_contas`.`idConta` left join `clientes` on `clientes`.`id` = `contas`.`idCliente` left join `fornecedores` on `fornecedores`.`id` = `contas`.`idFornecedor` left join `forma_pagamentos` on `forma_pagamentos`.`id` = `contas`.`idFormaPagamento` where `contas`.`idEmpresa` = ? and `registro_contas`.`dataPagamento` &gt;= ? and `registro_contas`.`dataPagamento` &lt;= ? and (`contas`.`situacao` = ? or `contas`.`situacao` = ?) and `contas`.`tipo` = ?"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 0,
+              "events": [],
+              "droppedEventsCount": 0,
+              "status": {
+                "code": 0
+              },
+              "links": [],
+              "droppedLinksCount": 0,
+              "flags": 257
+            },
+            {
+              "traceId": "4d45a7a96e2d34408f30b35896879cef",
+              "spanId": "d05d1d1485040370",
+              "parentSpanId": "9a9999830363d5a2",
+              "name": "select optica.categorias_contas",
+              "kind": 3,
+              "startTimeUnixNano": "1763147320664000000",
+              "endTimeUnixNano": "1763147320666271326",
+              "attributes": [
+                {
+                  "key": "knex.version",
+                  "value": {
+                    "stringValue": "2.5.1"
+                  }
+                },
+                {
+                  "key": "db.system",
+                  "value": {
+                    "stringValue": "mysql2"
+                  }
+                },
+                {
+                  "key": "db.sql.table",
+                  "value": {
+                    "stringValue": "categorias_contas"
+                  }
+                },
+                {
+                  "key": "db.operation",
+                  "value": {
+                    "stringValue": "select"
+                  }
+                },
+                {
+                  "key": "db.user",
+                  "value": {
+                    "stringValue": "doadmin"
+                  }
+                },
+                {
+                  "key": "db.name",
+                  "value": {
+                    "stringValue": "optica"
+                  }
+                },
+                {
+                  "key": "net.peer.name",
+                  "value": {
+                    "stringValue": "mysql-do-user-7045040-0.b.db.ondigitalocean.com"
+                  }
+                },
+                {
+                  "key": "net.peer.port",
+                  "value": {
+                    "stringValue": "25060"
+                  }
+                },
+                {
+                  "key": "db.statement",
+                  "value": {
+                    "stringValue": "select `id`, `nome` from `categorias_contas` where `idEmpresa` = ?"
                   }
                 }
               ],
