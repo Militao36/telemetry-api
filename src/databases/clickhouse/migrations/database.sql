@@ -15,7 +15,7 @@ CREATE TABLE telemetry.spans_http (
   http_url       LowCardinality(String),
   http_method    LowCardinality(String),
   http_target    String,
-  http_status    UInt16,
+  http_status    UInt32,
 
   attributes     String,
   ingestion_time DateTime64(9) DEFAULT now()

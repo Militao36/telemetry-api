@@ -89,9 +89,9 @@ export function normalizeOTLP(resourceSpans: any[]) {
         const duration_ns = Number(endNano) - Number(startNano);
 
         const baseFields = {
-          trace_id: Buffer.from(traceId).toString("hex"),
-          span_id: Buffer.from(spanId).toString("hex"),
-          parent_span_id: parentSpanId ? Buffer.from(parentSpanId).toString("hex") : "0000000000000000",
+          trace_id: traceId,
+          span_id: spanId,
+          parent_span_id: parentSpanId || "0000000000000000",
 
           service_name: serviceName,
           service_version: serviceVersion,
