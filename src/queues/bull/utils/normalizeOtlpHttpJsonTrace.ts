@@ -114,13 +114,13 @@ export function normalizeOTLP(resourceSpans: any[]) {
           // pq eu quis se foda
           if(http_method === 'OPTIONS') continue;
 
-          const http_route = findAttr(span, "http.route");
+          const http_url = findAttr(span, "http.url");
           const http_target = findAttr(span, "http.target");
           const http_status = findAttr(span, "http.status_code") as number;
 
           spans_http.push({
             ...baseFields,
-            http_url: http_route as any,
+            http_url: http_url as any,
             http_method: http_method as any,
             http_target: http_target as any,
             http_status: Number.isFinite(http_status) && (http_status || 0) >= 0 ? http_status : 0,
