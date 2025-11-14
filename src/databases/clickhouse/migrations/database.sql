@@ -5,7 +5,9 @@ CREATE TABLE telemetry.spans_http (
   parent_span_id FixedString(16),
 
   service_name   LowCardinality(String),
-  name           String,
+  service_version LowCardinality(String),
+  service_environment LowCardinality(String),
+
   start_time     DateTime64(9),
   end_time       DateTime64(9),
   duration_ns    UInt64,
@@ -30,7 +32,9 @@ CREATE TABLE telemetry.spans_database (
   parent_span_id FixedString(16),
 
   service_name   LowCardinality(String),
-  name           String,
+  service_version LowCardinality(String),
+  service_environment LowCardinality(String),
+
   start_time     DateTime64(9),
   end_time       DateTime64(9),
   duration_ns    UInt64,

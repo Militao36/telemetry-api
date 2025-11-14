@@ -2,13 +2,16 @@ import { Queue } from "bull";
 import { RedisClientType } from "@redis/client";
 import { Logger } from "pino";
 
-import { NormalizedSpan } from "../queues/bull/utils/normalizeOtlpHttpJsonTrace";
+import { NormalizedSpanDatabase, NormalizedSpanHttp } from "../queues/bull/utils/normalizeOtlpHttpJsonTrace";
 import { LIMIT_ITEM_QUEUE_DEFAULT } from "../env";
 import { ADD_ITEM_SCRIPT } from "../databases/redis/lua";
 
 export class TracesService {
   queueTraces: Queue
-  normalizeOTLP: (resourceSpans: any[]) => Array<NormalizedSpan>
+  normalizeOTLP: (resourceSpans: any[]) => {
+    spans_http: Partial<NormalizedSpanHttp>[];
+    spans_database: Partial<NormalizedSpanDatabase>[];
+  }
   clientRedis: RedisClientType
   logger: Logger
   LIMIT_ITEM_QUEUE_DEFAULT: number
@@ -26,13 +29,15 @@ export class TracesService {
 
     const spans = this.normalizeOTLP(resourceSpans);
 
-    if (spans.length === 0) {
+    if (spans?.spans_database?.length === 0 && spans?.spans_http?.length === 0) {
       this.logger.info(`No spans to process for company ${idEmpresa}`);
       return;
     }
 
     const countKey = `trace_count:${idEmpresa}`;
     const spansKey = `trace_spans:${idEmpresa}`;
+
+    const length = ((spans.spans_database.length || 0) + (spans?.spans_http?.length || 0))
 
     try {
       const result = await this.clientRedis.eval(
@@ -42,7 +47,7 @@ export class TracesService {
           arguments: [
             this.LIMIT_ITEM_QUEUE_DEFAULT.toString(),
             JSON.stringify(spans),
-            spans.length.toString()
+            length.toString()
           ]
         }
       ) as [number, string];
@@ -51,20 +56,21 @@ export class TracesService {
 
       if (shouldQueue === 1 && spansToQueue) {
         this.logger.info(`Limit of ${this.LIMIT_ITEM_QUEUE_DEFAULT} spans reached for company ${idEmpresa}, sending to queue`);
-        
+
         const parsedSpans = JSON.parse(spansToQueue);
-        
+
         if (parsedSpans.length > 0) {
           await this.queueTraces.add({
             idEmpresa,
-            spans: parsedSpans,
+            spans_database: parsedSpans.spans_database,
+             spans_http: parsedSpans.spans_http
           });
-          
+
           this.logger.info(`Sent ${parsedSpans.length} spans to queue for company ${idEmpresa}`);
         }
       }
 
-      this.logger.info(`Successfully processed ${spans.length} spans for company ${idEmpresa}`);
+      this.logger.info(`Successfully processed ${length} spans for company ${idEmpresa}`);
 
     } catch (error) {
       this.logger.error(`Error processing spans for company ${idEmpresa}: ${error}`);

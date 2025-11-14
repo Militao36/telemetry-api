@@ -6,45 +6,21 @@ class TraceJobProcessor {
         this.clickHouseClient = clickHouseClient;
     }
     async handle(job) {
-        const { spans, idEmpresa } = job.data;
-        if (!spans.length)
-            return;
-        const rows = spans.map((span) => {
-            var _a, _b, _c;
-            const trace_id = this.padHex(span.trace_id, 32);
-            const span_id = this.padHex(span.span_id, 16);
-            const parent_span_id = this.padHex(span.parent_span_id || '', 16) || '0000000000000000';
-            const { method, status } = this.extractHttpFromArray(JSON.parse(span.attributes || '{}'));
-            return {
-                id_empresa: idEmpresa,
-                service_name: span.service_name || 'unknown',
-                service_version: (_a = span.service_version) !== null && _a !== void 0 ? _a : null,
-                service_environment: (_b = span.service_environment) !== null && _b !== void 0 ? _b : null,
-                trace_id,
-                span_id,
-                parent_span_id,
-                name: span.name || '',
-                kind: this.toEnumKind(span.kind ? String(span.kind) : 'UNSPECIFIED'),
-                start_time: this.toDateTime64String(new Date(span.start_time)),
-                end_time: this.toDateTime64String(new Date(span.end_time)),
-                duration_ns: Number.isFinite(span.duration_ns) ? span.duration_ns : 0,
-                status_code: this.toUInt8Status(span.status_code),
-                status_message: span.status_message || '',
-                http_method: method,
-                http_status: Number.isFinite(status) && (status || 0) >= 0 ? status : 0,
-                http_target: span.http_target || '',
-                http_route: span.http_route || '',
-                db_system: span.db_system || '',
-                db_statement: span.db_statement || '',
-                db_duration: (_c = span.db_duration) !== null && _c !== void 0 ? _c : 0,
-                attributes: span.attributes,
-            };
-        });
-        await this.clickHouseClient.insert({
-            table: 'telemetry.spans_raw',
-            values: rows,
-            format: 'JSONEachRow'
-        });
+        const { spans_database, spans_http } = job.data;
+        if (spans_database.length) {
+            await this.clickHouseClient.insert({
+                table: 'telemetry.spans_http',
+                values: spans_database,
+                format: 'JSONEachRow'
+            });
+        }
+        else if (spans_http.length) {
+            await this.clickHouseClient.insert({
+                table: 'telemetry.spans_database',
+                values: spans_http,
+                format: 'JSONEachRow'
+            });
+        }
     }
     toEnumKind(kind) {
         const valid = new Set(['UNSPECIFIED', 'INTERNAL', 'SERVER', 'CLIENT', 'PRODUCER', 'CONSUMER']);

@@ -2,7 +2,7 @@ import Queue from 'bull'
 import { container } from '../../container';
 import { TraceJobProcessor } from './queues/traces';
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../../env';
-import { LogJobProcessor } from './queues/logs';
+// import { LogJobProcessor } from './queues/logs';
 import { clientClickHouse } from '../../databases/clickhouse';
 
 const REDIS_CONFIG = {
@@ -28,9 +28,9 @@ queueTraces.process(traceJobProcessor.handle.bind(traceJobProcessor));
 //#endregion Trace Processor
 
 //#region Log Processor
-const logJobProcessor = new LogJobProcessor({
-  clickHouseClient: clientClickHouse
-})
+// const logJobProcessor = new LogJobProcessor({
+//   clickHouseClient: clientClickHouse
+// })
 
-queueLogs.process(logJobProcessor.handle.bind(logJobProcessor));
+// queueLogs.process(logJobProcessor.handle.bind(logJobProcessor));
 //#endregion Log Processor
