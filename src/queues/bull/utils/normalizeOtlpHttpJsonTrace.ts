@@ -132,7 +132,6 @@ export function normalizeOTLP(resourceSpans: any[]) {
         const db_system = findAttr(span, "db.system");
 
         const spanType = getSpanType(span);
-        console.log('Determined span type:', spanType);
 
         const duration_ns = Number(endNano) - Number(startNano);
 

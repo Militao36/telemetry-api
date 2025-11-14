@@ -44,6 +44,7 @@ export class TraceJobProcessor implements QueueInterface {
         end_time: this.toDateTime64String(new Date(span.end_time)),
         duration_ns: Number.isFinite(span.duration_ns) ? span.duration_ns : 0,
 
+        span_type: span.span_type,
         status_code: this.toUInt8Status(span.status_code),
         status_message: span.status_message || '',
 
