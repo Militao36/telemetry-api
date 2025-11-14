@@ -25,13 +25,15 @@ CREATE TABLE IF NOT EXISTS telemetry.spans_raw (
   http_target    String,
   http_status    UInt16,
 
+  span_type LowCardinality(String),
+
   db_system      LowCardinality(String),
   db_statement   String,
   db_duration    UInt64,
 
   attributes     String,
 
-  ingestion_time DateTime DEFAULT now()
+  ingestion_time DateTime64(9) DEFAULT now()
 )
 ENGINE = MergeTree()
 ORDER BY (trace_id, start_time)

@@ -14,6 +14,8 @@ export interface NormalizedSpan {
   end_time: Date;
   duration_ns: number;
 
+  span_type: 'Database' | 'HTTP' | 'Messaging' | 'RPC' | 'Internal' | 'Unknown',
+
   status_code: number;
   status_message: string;
 
@@ -51,6 +53,42 @@ function findAttr(span: any, key: any) {
   return null;
 }
 
+function getSpanType(span: any): string {
+  const db_system = findAttr(span, "db.system");
+  const http_method = findAttr(span, "http.method");
+  const messaging_system = findAttr(span, "messaging.system");
+  const rpc_system = findAttr(span, "rpc.system");
+
+  // 1. Database
+  if (db_system) {
+    return 'Database';
+  }
+
+  // 2. HTTP
+  if (http_method || findAttr(span, "http.status_code")) {
+    return 'HTTP';
+  }
+
+  // 3. Messaging (Fila, Tópicos)
+  if (messaging_system) {
+    return 'Messaging';
+  }
+
+  // 4. RPC (gRPC, Thrift, etc.)
+  if (rpc_system) {
+    return 'RPC';
+  }
+
+  // 5. Internal (Lógica de Negócio, Funções internas)
+  // O valor 1 corresponde a SPAN_KIND_INTERNAL
+  if (span.kind === 1 || span.kind === "SPAN_KIND_INTERNAL") {
+    return 'Internal';
+  }
+
+  // Se não for classificado, ou se o KIND for CLIENT/SERVER mas sem atributos específicos
+  return 'Unknown';
+}
+
 export function normalizeOTLP(resourceSpans: any[]) {
   const all: Array<NormalizedSpan> = [];
 
@@ -76,10 +114,9 @@ export function normalizeOTLP(resourceSpans: any[]) {
 
     for (const scope of rs.scope_spans || rs.scopeSpans || []) {
       for (const span of scope.spans || []) {
-        
-        // ✅ gRPC vs HTTP name differences
+
         const traceId = span.trace_id || span.traceId;
-        const spanId  = span.span_id  || span.spanId;
+        const spanId = span.span_id || span.spanId;
         const parentSpanId = span.parent_span_id || span.parentSpanId || "0000000000000000";
 
         const startNano = span.start_time_unix_nano || span.startTimeUnixNano;
@@ -88,8 +125,15 @@ export function normalizeOTLP(resourceSpans: any[]) {
         const start = nanosToDate(startNano);
         const end = nanosToDate(endNano);
 
-        // STATUS gRPC vs HTTP
         const status = span.status || {};
+
+        const db_duration = findAttr(span, "db.duration");
+        const db_statement = findAttr(span, "db.statement");
+        const db_system = findAttr(span, "db.system");
+
+        const spanType = getSpanType(span);
+
+        const duration_ns = Number(endNano) - Number(startNano);
 
         all.push({
           trace_id: Buffer.from(traceId).toString("hex"),
@@ -105,9 +149,10 @@ export function normalizeOTLP(resourceSpans: any[]) {
 
           start_time: start,
           end_time: end,
-          duration_ns: Number(endNano) - Number(startNano),
+          duration_ns,
 
-         	status_code: status.code ?? 0,
+          span_type: spanType as any,
+          status_code: status.code ?? 0,
           status_message: status.message ?? "",
 
           http_method: findAttr(span, "http.method"),
@@ -115,13 +160,13 @@ export function normalizeOTLP(resourceSpans: any[]) {
           http_target: findAttr(span, "http.target"),
           http_status: findAttr(span, "http.status_code"),
 
-          db_system: findAttr(span, "db.system"),
-          db_statement: findAttr(span, "db.statement"),
-          db_duration: findAttr(span, "db.duration"),
+          db_system,
+          db_statement,
+          db_duration: db_duration || duration_ns,
 
           attributes: JSON.stringify(span.attributes || []),
 
-          ingestion_time: new Date()
+          ingestion_time: new Date() // quero colocar com precisão de 9 casas
         });
       }
     }
