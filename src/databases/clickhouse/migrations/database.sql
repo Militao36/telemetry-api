@@ -35,9 +35,10 @@ CREATE TABLE IF NOT EXISTS telemetry.spans_raw (
 )
 ENGINE = MergeTree()
 ORDER BY (trace_id, start_time)
-PARTITION BY toDate(timestamp)
-TTL timestamp + INTERVAL 30 DAY DELETE
+PARTITION BY toDate(start_time)
+TTL start_time + INTERVAL 30 DAY DELETE
 SETTINGS index_granularity = 8192;
+
 
 -- Tabela de logs
 CREATE TABLE IF NOT EXISTS telemetry.logs
