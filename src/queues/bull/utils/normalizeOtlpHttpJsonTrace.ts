@@ -112,7 +112,7 @@ export function normalizeOTLP(resourceSpans: any[]) {
           const http_method = findAttr(span, "http.method");
 
           // pq eu quis se foda
-          if(http_method === 'OPTIONS') continue;
+          if (http_method === 'OPTIONS') continue;
 
           const http_url = findAttr(span, "http.url");
           const http_target = findAttr(span, "http.target");
@@ -151,6 +151,7 @@ export function normalizeOTLP(resourceSpans: any[]) {
     }
   }
 
+  console.log(spans_http, spans_database);
   return { spans_http, spans_database };
 }
 
