@@ -153,7 +153,6 @@ export function normalizeOTLP(resourceSpans: any[]) {
     }
   }
 
-  console.log(spans_http, spans_database);
   return { spans_http, spans_database };
 }
 
