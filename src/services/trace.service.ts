@@ -59,7 +59,7 @@ export class TracesService {
 
         const parsedSpans = JSON.parse(spansToQueue);
 
-        if (parsedSpans.length > 0) {
+        if (parsedSpans?.spans_database?.length || parsedSpans?.spans_http?.length) {
           await this.queueTraces.add({
             idEmpresa,
             spans_database: parsedSpans.spans_database,

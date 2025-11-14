@@ -8,4 +8,4 @@ export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
-export const LIMIT_ITEM_QUEUE_DEFAULT = process.env.LIMIT_ITEM_QUEUE_DEFAULT ? parseInt(process.env.LIMIT_ITEM_QUEUE_DEFAULT) : 1000;
+export const LIMIT_ITEM_QUEUE_DEFAULT = process.env.LIMIT_ITEM_QUEUE_DEFAULT ? parseInt(process.env.LIMIT_ITEM_QUEUE_DEFAULT) : 10;
