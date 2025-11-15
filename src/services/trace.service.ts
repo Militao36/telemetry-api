@@ -8,7 +8,7 @@ import { ADD_ITEM_SCRIPT } from "../databases/redis/lua";
 
 export class TracesService {
   queueTraces: Queue
-  normalizeOTLP: (resourceSpans: any[]) => {
+  normalizeOTLP: (idEmpresa: string, resourceSpans: any[]) => {
     spans_http: Partial<NormalizedSpanHttp>[];
     spans_database: Partial<NormalizedSpanDatabase>[];
   }
@@ -27,7 +27,7 @@ export class TracesService {
   async create(idEmpresa: string, resourceSpans: Array<Record<string, any>>) {
     this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans`);
 
-    const spans = this.normalizeOTLP(resourceSpans);
+    const spans = this.normalizeOTLP(idEmpresa, resourceSpans);
 
     if (spans?.spans_database?.length === 0 && spans?.spans_http?.length === 0) {
       this.logger.info(`No spans to process for company ${idEmpresa}`);
@@ -63,7 +63,7 @@ export class TracesService {
           await this.queueTraces.add({
             idEmpresa,
             spans_database: parsedSpans.spans_database,
-             spans_http: parsedSpans.spans_http
+            spans_http: parsedSpans.spans_http
           });
 
           this.logger.info(`Sent ${parsedSpans.length} spans to queue for company ${idEmpresa}`);

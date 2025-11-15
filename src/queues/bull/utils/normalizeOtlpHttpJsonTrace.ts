@@ -8,8 +8,8 @@ export interface NormalizedSpanHttp {
   service_name: string;
   name: string;
 
-  start_time: Date;
-  end_time: Date;
+  start_time: string;
+  end_time: string;
   duration_ns: number;
 
   http_url: string;
@@ -32,8 +32,8 @@ export interface NormalizedSpanDatabase {
   service_name: string;
   name: string;
 
-  start_time: Date;
-  end_time: Date;
+  start_time: string;
+  end_time: string;
   duration_ns: number;
 
   db_system: string;
@@ -49,7 +49,7 @@ export interface NormalizedSpanDatabase {
   ingestion_time: Date;
 }
 
-export function normalizeOTLP(resourceSpans: any[]) {
+export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
   const spans_http: Partial<NormalizedSpanHttp>[] = [];
   const spans_database: Partial<NormalizedSpanDatabase>[] = [];
 
@@ -81,14 +81,15 @@ export function normalizeOTLP(resourceSpans: any[]) {
         const startNano = span.start_time_unix_nano || span.startTimeUnixNano;
         const endNano = span.end_time_unix_nano || span.endTimeUnixNano;
 
-        const start = nanosToDate(startNano);
-        const end = nanosToDate(endNano);
+        const start = toCHDateTime64(startNano);
+        const end = toCHDateTime64(endNano);
 
         const spanType = getSpanType(span);
 
         const duration_ns = Number(endNano) - Number(startNano);
 
         const baseFields = {
+          id_empresa: idEmpresa,
           trace_id: traceId,
           span_id: spanId,
           parent_span_id: parentSpanId || "0000000000000000",
@@ -101,9 +102,7 @@ export function normalizeOTLP(resourceSpans: any[]) {
           start_time: start,
           end_time: end,
           duration_ns,
-          attributes: JSON.stringify(span.attributes || []),
-
-          ingestion_time: new Date()
+          attributes: span.attributes,
         };
 
         // ------------------------------------------------------------------
@@ -156,8 +155,14 @@ export function normalizeOTLP(resourceSpans: any[]) {
   return { spans_http, spans_database };
 }
 
-function nanosToDate(nanos: string) {
-  return new Date(Number(nanos) / 1e6);
+function formatCHDate(date: Date) {
+  return date.toISOString().replace('T', ' ').replace('Z', ' UTC');
+}
+
+function toCHDateTime64(nanos: string) {
+  const date = new Date(Number(nanos) / 1e6);
+  const iso = date.toISOString();
+  return iso.replace('T', ' ').replace('Z', '');
 }
 
 function toEnumKind(kind: string): string {
