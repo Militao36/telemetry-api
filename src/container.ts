@@ -8,6 +8,8 @@ import { normalizeOTLP } from "./queues/bull/utils/normalizeOtlpHttpJsonTrace";
 import { logger } from "./config/logger";
 import { clientRedis } from "./databases/redis";
 import { normalizeLog } from "./queues/bull/utils/normalizeLog";
+import { DashService } from "./services/dash.service";
+import { DashRepository } from "./repositories/dash.repository";
 
 const container = createContainer();
 
@@ -21,6 +23,10 @@ container.register({
 
   // services
   traceService: asClass(TracesService).singleton(),
+  dashService: asClass(DashService).singleton(),
+
+  // repositories
+  dashRepository: asClass(DashRepository).singleton(),
 
   // queues - processors
   traceJobProcessor: asClass(TraceJobProcessor).singleton(),
