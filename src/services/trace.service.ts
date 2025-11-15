@@ -59,6 +59,7 @@ export class TracesService {
 
         const parsedSpans = JSON.parse(spansToQueue);
 
+        const totalLen = (parsedSpans?.spans_database?.length || 0) + (parsedSpans?.spans_http?.length || 0);
         if (parsedSpans?.spans_database?.length || parsedSpans?.spans_http?.length) {
           await this.queueTraces.add({
             idEmpresa,
@@ -66,7 +67,7 @@ export class TracesService {
             spans_http: parsedSpans.spans_http
           });
 
-          this.logger.info(`Sent ${parsedSpans.length} spans to queue for company ${idEmpresa}`);
+          this.logger.info(`Sent ${totalLen} spans to queue for company ${idEmpresa}`);
         }
       }
 
