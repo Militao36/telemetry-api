@@ -19,10 +19,10 @@ CREATE TABLE
     attributes String,
     ingestion_time DateTime64 (9) DEFAULT now ()
   ) ENGINE = MergeTree ()
-ORDER BY
-  (trace_id, start_time)
-PARTITION BY
-  toDate (start_time);
+PARTITION BY toDate(start_time)
+ORDER BY (id_empresa, start_time)
+TTL start_time + INTERVAL 30 DAY
+SETTINGS index_granularity = 8192;
 
 CREATE TABLE
   telemetry.spans_database (
@@ -48,52 +48,7 @@ CREATE TABLE
     attributes String,
     ingestion_time DateTime64 (9) DEFAULT now ()
   ) ENGINE = MergeTree ()
-ORDER BY
-  (trace_id, start_time)
-PARTITION BY
-  toDate (start_time);
-
-INSERT INTO
-  telemetry.spans_http
-SELECT
-  id_empresa,
-  trace_id,
-  span_id,
-  parent_span_id,
-  service_name,
-  name,
-  start_time,
-  end_time,
-  duration_ns,
-  http_method,
-  http_route,
-  http_target,
-  http_status,
-  attributes,
-  ingestion_time
-FROM
-  telemetry.spans_raw
-WHERE
-  span_type = 'http';
-
-INSERT INTO
-  telemetry.spans_database
-SELECT
-  id_empresa,
-  trace_id,
-  span_id,
-  parent_span_id,
-  service_name,
-  name,
-  start_time,
-  end_time,
-  duration_ns,
-  db_system,
-  db_statement,
-  db_duration,
-  attributes,
-  ingestion_time
-FROM
-  telemetry.spans_raw
-WHERE
-  span_type = 'db';
+PARTITION BY toDate(start_time)
+ORDER BY (id_empresa, start_time)
+TTL start_time + INTERVAL 30 DAY
+SETTINGS index_granularity = 8192;
