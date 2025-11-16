@@ -10,6 +10,8 @@ import { clientRedis } from "./databases/redis";
 import { normalizeLog } from "./queues/bull/utils/normalizeLog";
 import { DashService } from "./services/dash.service";
 import { DashRepository } from "./repositories/dash.repository";
+import { QueriesService } from "./services/queries.service";
+import { QueriesRepository } from "./repositories/queries.repository";
 
 const container = createContainer();
 
@@ -24,9 +26,11 @@ container.register({
   // services
   traceService: asClass(TracesService).singleton(),
   dashService: asClass(DashService).singleton(),
+  queriesService: asClass(QueriesService).singleton(),
 
   // repositories
   dashRepository: asClass(DashRepository).singleton(),
+  queriesRepository: asClass(QueriesRepository).singleton(),
 
   // queues - processors
   traceJobProcessor: asClass(TraceJobProcessor).singleton(),
