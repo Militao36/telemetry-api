@@ -65,7 +65,7 @@ export class DashRepository {
       AND id_empresa = '${idEmpresa}'
       GROUP BY path, http_method
       ORDER BY total_requests DESC
-      LIMIT 20
+      LIMIT 10
     `;
 
     const result = await this.clickHouseClient.query({
@@ -145,5 +145,26 @@ export class DashRepository {
         endTime: row.end_time
       }
     });
+  }
+
+  public async getTotalQueries(idEmpresa: string, hour: number): Promise<number> {
+    const queries = `
+      SELECT
+        count(*) AS total_queries
+      FROM telemetry.spans_database
+      WHERE start_time >= now() - INTERVAL ${hour} HOUR
+      AND id_empresa = '${idEmpresa}'
+    `;
+
+    const result = await this.clickHouseClient.query({
+      query: queries,
+      format: 'JSON'
+    });
+
+    const rows = await result.json();
+
+    const row = rows.data[0] as any;
+
+    return +row.total_queries;
   }
 }
