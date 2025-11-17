@@ -11,6 +11,8 @@ export class QueriesService {
     const averageTime = await this.queriesRepository.avgQueryTimeByType(idEmpresa, hour, queryType);
     const slowesTypeSelect = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'select', 10);
     const slowesTypeInsert = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'insert', 10);
+    // como eu passo all ele pesquisa dentro todas as queries, e o limit 1 ele pega apenas a primeira, dessa forma eu pego a mais lenta com limit 1
+    const slowestQuery = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'all', 1);
     const queryVolumeByType = await this.queriesRepository.queryVolumeByType(idEmpresa, hour);
     const queryVolumeByHours = await this.queriesRepository.getQueryVolumeByHours(idEmpresa, hour);
 
@@ -19,7 +21,8 @@ export class QueriesService {
       slowesTypeSelect,
       slowesTypeInsert,
       queryVolumeByType,
-      queryVolumeByHours
+      queryVolumeByHours,
+      slowestQuery
     }
   }
 
