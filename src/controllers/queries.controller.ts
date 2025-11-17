@@ -13,8 +13,9 @@ export class DashController {
   @GET()
   async reportQueries(request: Request, response: Response) {
     const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9'
+    const { hour, queryTy } = request.query
 
-    const data = await this.queriesService.reportQueries(idEmpresa, +'12', 'all')
+    const data = await this.queriesService.reportQueries(idEmpresa, +(hour || 12), queryTy as 'select' | 'insert' | 'update' | 'delete' | 'all')
 
     return response.status(200).json(data)
   }
