@@ -12,9 +12,9 @@ class TracesService {
         this.logger = logger;
     }
     async create(idEmpresa, resourceSpans) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g;
         this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans`);
-        const spans = this.normalizeOTLP(resourceSpans);
+        const spans = this.normalizeOTLP(idEmpresa, resourceSpans);
         if (((_a = spans === null || spans === void 0 ? void 0 : spans.spans_database) === null || _a === void 0 ? void 0 : _a.length) === 0 && ((_b = spans === null || spans === void 0 ? void 0 : spans.spans_http) === null || _b === void 0 ? void 0 : _b.length) === 0) {
             this.logger.info(`No spans to process for company ${idEmpresa}`);
             return;
@@ -35,13 +35,16 @@ class TracesService {
             if (shouldQueue === 1 && spansToQueue) {
                 this.logger.info(`Limit of ${this.LIMIT_ITEM_QUEUE_DEFAULT} spans reached for company ${idEmpresa}, sending to queue`);
                 const parsedSpans = JSON.parse(spansToQueue);
-                if (parsedSpans.length > 0) {
+                const totalLen = (((_d = parsedSpans === null || parsedSpans === void 0 ? void 0 : parsedSpans.spans_database) === null || _d === void 0 ? void 0 : _d.length) || 0) + (((_e = parsedSpans === null || parsedSpans === void 0 ? void 0 : parsedSpans.spans_http) === null || _e === void 0 ? void 0 : _e.length) || 0);
+                if (((_f = parsedSpans === null || parsedSpans === void 0 ? void 0 : parsedSpans.spans_database) === null || _f === void 0 ? void 0 : _f.length) || ((_g = parsedSpans === null || parsedSpans === void 0 ? void 0 : parsedSpans.spans_http) === null || _g === void 0 ? void 0 : _g.length)) {
                     await this.queueTraces.add({
                         idEmpresa,
                         spans_database: parsedSpans.spans_database,
                         spans_http: parsedSpans.spans_http
+                    }, {
+                        removeOnComplete: true,
                     });
-                    this.logger.info(`Sent ${parsedSpans.length} spans to queue for company ${idEmpresa}`);
+                    this.logger.info(`Sent ${totalLen} spans to queue for company ${idEmpresa}`);
                 }
             }
             this.logger.info(`Successfully processed ${length} spans for company ${idEmpresa}`);

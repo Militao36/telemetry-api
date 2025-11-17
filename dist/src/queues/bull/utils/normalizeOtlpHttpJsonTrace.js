@@ -1,7 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.normalizeOTLP = normalizeOTLP;
-function normalizeOTLP(resourceSpans) {
+const EXCLUDES_ROUTES = [
+    '/health',
+    '/favicon.ico',
+];
+function normalizeOTLP(idEmpresa, resourceSpans) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     const spans_http = [];
     const spans_database = [];
@@ -23,33 +27,38 @@ function normalizeOTLP(resourceSpans) {
                 const parentSpanId = span.parent_span_id || span.parentSpanId || "0000000000000000";
                 const startNano = span.start_time_unix_nano || span.startTimeUnixNano;
                 const endNano = span.end_time_unix_nano || span.endTimeUnixNano;
-                const start = nanosToDate(startNano);
-                const end = nanosToDate(endNano);
+                const start = toCHDateTime64(startNano);
+                const end = toCHDateTime64(endNano);
                 const spanType = getSpanType(span);
                 const duration_ns = Number(endNano) - Number(startNano);
                 const baseFields = {
-                    trace_id: Buffer.from(traceId).toString("hex"),
-                    span_id: Buffer.from(spanId).toString("hex"),
-                    parent_span_id: parentSpanId ? Buffer.from(parentSpanId).toString("hex") : "0000000000000000",
+                    id_empresa: idEmpresa,
+                    trace_id: traceId,
+                    span_id: spanId,
+                    parent_span_id: parentSpanId || "0000000000000000",
                     service_name: serviceName,
+                    service_version: serviceVersion,
+                    service_environment: environment,
                     name: span.name,
                     kind: toEnumKind(span.kind),
                     start_time: start,
                     end_time: end,
                     duration_ns,
-                    attributes: JSON.stringify(span.attributes || []),
-                    ingestion_time: new Date()
+                    attributes: span.attributes,
                 };
-                if (spanType === "http") {
+                if (spanType === "HTTP") {
                     const http_method = findAttr(span, "http.method");
+                    const http_target = findAttr(span, "http.target");
                     if (http_method === 'OPTIONS')
                         continue;
+                    if (EXCLUDES_ROUTES.includes(http_target)) {
+                        continue;
+                    }
                     const http_url = findAttr(span, "http.url");
-                    const http_target = findAttr(span, "http.target");
                     const http_status = findAttr(span, "http.status_code");
                     spans_http.push(Object.assign(Object.assign({}, baseFields), { http_url: http_url, http_method: http_method, http_target: http_target, http_status: Number.isFinite(http_status) && (http_status || 0) >= 0 ? http_status : 0 }));
                 }
-                else if (spanType === "database") {
+                else if (spanType === "Database") {
                     const db_duration = findAttr(span, "db.duration");
                     const db_statement = findAttr(span, "db.statement");
                     const db_system = findAttr(span, "db.system");
@@ -63,8 +72,13 @@ function normalizeOTLP(resourceSpans) {
     }
     return { spans_http, spans_database };
 }
-function nanosToDate(nanos) {
-    return new Date(Number(nanos) / 1e6);
+function formatCHDate(date) {
+    return date.toISOString().replace('T', ' ').replace('Z', ' UTC');
+}
+function toCHDateTime64(nanos) {
+    const date = new Date(Number(nanos) / 1e6);
+    const iso = date.toISOString();
+    return iso.replace('T', ' ').replace('Z', '');
 }
 function toEnumKind(kind) {
     const valid = new Set(['UNSPECIFIED', 'INTERNAL', 'SERVER', 'CLIENT', 'PRODUCER', 'CONSUMER']);

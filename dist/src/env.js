@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LIMIT_ITEM_QUEUE_DEFAULT = exports.LOG_LEVEL = exports.REDIS_PASSWORD = exports.REDIS_PORT = exports.REDIS_HOST = exports.PORT = exports.CLICKHOUSE_DATABASE = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.AWILIX_CONTROLLERS = void 0;
 exports.AWILIX_CONTROLLERS = process.env.AWILIX_CONTROLLERS || 'controllers/**/*.ts';
-exports.CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'http://localhost:8123';
-exports.CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'analytics_user';
-exports.CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'analytics_password';
+exports.CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'https://telemetry-clickhouse.qltz9y.easypanel.host';
+exports.CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'telemetry';
+exports.CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'C7cWwcV4qDnhNSw';
 exports.CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
 exports.PORT = process.env.PORT ? parseInt(process.env.PORT) : 3333;
 exports.REDIS_HOST = process.env.REDIS_HOST || 'localhost';
