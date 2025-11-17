@@ -65,6 +65,8 @@ export class TracesService {
             idEmpresa,
             spans_database: parsedSpans.spans_database,
             spans_http: parsedSpans.spans_http
+          }, {
+            removeOnComplete: true,
           });
 
           this.logger.info(`Sent ${totalLen} spans to queue for company ${idEmpresa}`);

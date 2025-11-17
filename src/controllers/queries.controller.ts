@@ -14,10 +14,18 @@ export class DashController {
   async reportQueries(request: Request, response: Response) {
     const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9'
 
-    const data = await this.queriesService.reportQueries(idEmpresa, +'12','all')
+    const data = await this.queriesService.reportQueries(idEmpresa, +'12', 'all')
 
-    return response.status(200).json({
-      data
-    })
+    return response.status(200).json(data)
+  }
+
+  @route('/dashboard')
+  @GET()
+  async dashboardQueries(request: Request, response: Response) {
+    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9'
+
+    const data = await this.queriesService.dashboardQueries(idEmpresa, +'12')
+
+    return response.status(200).json(data)
   }
 }

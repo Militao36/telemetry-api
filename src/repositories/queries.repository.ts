@@ -34,7 +34,7 @@ export class QueriesRepository {
       p90_ms: number;
       p95_ms: number;
       p99_ms: number;
-     }>();
+    }>();
 
     return result.data.map(item => ({
       totalQueries: item.total_queries,
@@ -74,7 +74,7 @@ export class QueriesRepository {
       format: "JSON"
     });
 
-    const result = await resultSet.json<{ 
+    const result = await resultSet.json<{
       trace_id: string;
       span_id: string;
       parent_span_id: string;
@@ -105,7 +105,6 @@ export class QueriesRepository {
     }));
   }
 
-  // Query Volume by Type 
   async queryVolumeByType(idEmpresa: string, hour: number) {
     const query = `
       SELECT 
@@ -126,7 +125,7 @@ export class QueriesRepository {
     const resultSet = await this.clickHouseClient.query({
       query: query,
       format: "JSON"
-    }); 
+    });
 
     const result = await resultSet.json<{ query_type: string; total: number }>();
 
@@ -136,19 +135,19 @@ export class QueriesRepository {
     }));
   }
 
-  async getQueryVolumeByFourHours(idEmpresa: string) {
+  async getQueryVolumeByHours(idEmpresa: string, hour: number) {
     const query = `
       SELECT
-          toStartOfInterval(start_time, INTERVAL 4 hour) AS interval_4h,
+          toStartOfInterval(start_time, INTERVAL 1 hour) AS interva_hour,
           countIf(db_operation = 'select') AS selects,
           countIf(db_operation = 'insert') AS inserts,
           countIf(db_operation = 'update') AS updates,
           countIf(db_operation = 'delete') AS deletes
       FROM telemetry.spans_database
-      WHERE start_time >= now() - toIntervalDay(1)
+      WHERE start_time >= now() - INTERVAL ${hour} HOUR
       AND id_empresa = '${idEmpresa}'
-      GROUP BY interval_4h
-      ORDER BY interval_4h ASC;
+      GROUP BY interva_hour
+      ORDER BY interva_hour ASC;
     `
 
     const resultSet = await this.clickHouseClient.query({
@@ -157,7 +156,7 @@ export class QueriesRepository {
     });
 
     const result = await resultSet.json<{
-      interval_4h: string;
+      interva_hour: string;
       selects: number;
       inserts: number;
       updates: number;
@@ -165,11 +164,40 @@ export class QueriesRepository {
     }>();
 
     return result.data.map(item => ({
-      interval: item.interval_4h,
+      interval: item.interva_hour,
       selects: item.selects,
       inserts: item.inserts,
       updates: item.updates,
       deletes: item.deletes,
     }));
+  }
+
+   public async getQueriesPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
+    const query = `
+      SELECT
+          toStartOfInterval(start_time, INTERVAL 1 HOUR) AS time,
+          count(*) AS total_queries,
+          avg(duration_ns) / 1e6 AS avg_ms
+      FROM telemetry.spans_database
+      WHERE start_time >= now() - INTERVAL ${hour} HOUR
+      AND id_empresa = '${idEmpresa}'
+      GROUP BY time
+      ORDER BY time ASC;
+    `;
+
+    const result = await this.clickHouseClient.query({
+      query,
+      format: 'JSON'
+    });
+
+    const rows = await result.json();
+
+    return rows.data.map((row: any) => {
+      return {
+        time: row.time,
+        totalQueries: +row.total_queries,
+        avgMs: row.avg_ms
+      }
+    })
   }
 }
