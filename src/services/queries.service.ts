@@ -16,7 +16,7 @@ export class QueriesService {
     const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'delete', 10);
     const queryVolumeByType = await this.queriesRepository.queryVolumeByType(idEmpresa, hour);
     const queryVolumeByHours = await this.queriesRepository.getQueryVolumeByFourHours(idEmpresa);
-    const avgQueryTimeByHour = await this.queriesRepository.avgQueryTimeByType(idEmpresa, hour, queryType);
+    // const avgQueryTimeByHour = await this.queriesRepository.avgQueryTimeByType(idEmpresa, hour, queryType);
     
     return {
       metrics: averageTime,
@@ -27,7 +27,7 @@ export class QueriesService {
       slowestQuery,
       queryVolumeByType,
       queryVolumeByHours,
-      avgQueryTimeByHour,
+      // avgQueryTimeByHour,
     }
   }
 
