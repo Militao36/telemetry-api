@@ -107,7 +107,7 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
           start_time: start,
           end_time: end,
           duration_ns,
-          attributes: span.attributes,
+          attributes: JSON.stringify(span.attributes),
         };
 
         // ------------------------------------------------------------------

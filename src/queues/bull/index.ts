@@ -4,6 +4,7 @@ import { TraceJobProcessor } from './queues/traces';
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../../env';
 // import { LogJobProcessor } from './queues/logs';
 import { clientClickHouse } from '../../databases/clickhouse';
+import { database } from '../../databases/postgres';
 
 const REDIS_CONFIG = {
   host: REDIS_HOST,
@@ -21,7 +22,7 @@ export const queueLogs = new Queue('logs', {
 
 //#region Trace Processor
 const traceJobProcessor = new TraceJobProcessor({
-  clickHouseClient: clientClickHouse
+  database,
 });
 
 queueTraces.process(traceJobProcessor.handle.bind(traceJobProcessor));

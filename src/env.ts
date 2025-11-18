@@ -3,6 +3,13 @@ export const CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'https://telemetry-c
 export const CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'telemetry';
 export const CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'C7cWwcV4qDnhNSw';
 export const CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
+
+export const POSTGRES_HOST = process.env.PG_HOST || '72.61.52.216';
+export const POSTGRES_PORT = process.env.PG_PORT ? parseInt(process.env.PG_PORT) : 5433;
+export const POSTGRES_USER = process.env.PG_USER || 'admin';
+export const POSTGRES_PASSWORD = process.env.PG_PASSWORD || 'admin123';
+export const POSTGRES_DATABASE = process.env.PG_DATABASE || 'metrics';
+
 export const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3333;
 export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;

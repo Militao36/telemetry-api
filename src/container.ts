@@ -12,6 +12,7 @@ import { DashService } from "./services/dash.service";
 import { DashRepository } from "./repositories/dash.repository";
 import { QueriesService } from "./services/queries.service";
 import { QueriesRepository } from "./repositories/queries.repository";
+import { database } from "./databases/postgres";
 
 const container = createContainer();
 
@@ -22,6 +23,7 @@ container.register({
   // database
   clickHouseClient: asValue(clientClickHouse),
   clientRedis: asValue(clientRedis),
+  database: asValue(database),
 
   // services
   traceService: asClass(TracesService).singleton(),

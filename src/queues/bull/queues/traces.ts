@@ -1,7 +1,7 @@
 import Bull from 'bull';
 import { NormalizedSpanDatabase, NormalizedSpanHttp } from '../utils/normalizeOtlpHttpJsonTrace.js';
 import { QueueInterface } from '../queue.interface.js';
-import { ClickHouseClient } from '@clickhouse/client';
+import { Knex } from 'knex';
 
 export interface TraceJobData {
   spans_http: NormalizedSpanHttp[],
@@ -9,28 +9,21 @@ export interface TraceJobData {
 }
 
 export class TraceJobProcessor implements QueueInterface {
-  clickHouseClient: ClickHouseClient
+  database: Knex
 
-  constructor({ clickHouseClient }) {
-    this.clickHouseClient = clickHouseClient;
+  constructor({ database }) {
+    this.database = database;
   }
 
   async handle(job: Bull.Job<TraceJobData>): Promise<void> {
     const { spans_database, spans_http } = job.data as TraceJobData;
-
+    
     if (spans_database.length) {
-      await this.clickHouseClient.insert({
-        table: 'telemetry.spans_database',
-        values: spans_database,
-        format: 'JSONEachRow'
-      });
+      await this.database.table('spans_database').insert(spans_database);
     }
+
     if (spans_http.length) {
-      await this.clickHouseClient.insert({
-        table: 'telemetry.spans_http',
-        values: spans_http,
-        format: 'JSONEachRow'
-      });
+      await this.database.table('spans_http').insert(spans_http);
     }
   }
 }
