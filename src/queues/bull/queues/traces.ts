@@ -19,23 +19,11 @@ export class TraceJobProcessor implements QueueInterface {
     const { spans_database, spans_http } = job.data as TraceJobData;
 
     if (spans_database.length) {
-      const originalArray = spans_database;
-      const targetLength = 1000;
-
-      const expandedArray = Array.from({ length: targetLength }, (_, i) => originalArray[i % originalArray.length]);
-      console.log(expandedArray.length);
-      await this.database.table('spans_database').insert(expandedArray);
+      await this.database.table('spans_database').insert(spans_database);
     }
 
     if (spans_http.length) {
-      const originalArray = spans_http;
-      const targetLength = 1000;
-
-      const expandedArray = Array.from({ length: targetLength }, (_, i) => originalArray[i % originalArray.length]);
-
-      console.log(expandedArray.length);
-
-      await this.database.table('spans_http').insert(expandedArray);
+      await this.database.table('spans_http').insert(spans_http);
     }
   }
 }
