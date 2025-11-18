@@ -49,6 +49,11 @@ export interface NormalizedSpanDatabase {
   ingestion_time: Date;
 }
 
+const EXCLUDES_ROUTES = [
+  '/health',
+  '/favicon.ico',
+]
+
 export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
   const spans_http: Partial<NormalizedSpanHttp>[] = [];
   const spans_database: Partial<NormalizedSpanDatabase>[] = [];
@@ -111,12 +116,14 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
 
         if (spanType === "HTTP") {
           const http_method = findAttr(span, "http.method");
+          const http_target = findAttr(span, "http.target");
 
-          // pq eu quis se foda
           if (http_method === 'OPTIONS') continue;
+          if(EXCLUDES_ROUTES.includes(http_target as string)) {
+            continue;
+          }
 
           const http_url = findAttr(span, "http.url");
-          const http_target = findAttr(span, "http.target");
           const http_status = findAttr(span, "http.status_code") as number;
 
           spans_http.push({

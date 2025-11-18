@@ -34,7 +34,7 @@ export class QueriesRepository {
       p90_ms: number;
       p95_ms: number;
       p99_ms: number;
-     }>();
+    }>();
 
     return result.data.map(item => ({
       totalQueries: item.total_queries,
@@ -74,7 +74,7 @@ export class QueriesRepository {
       format: "JSON"
     });
 
-    const result = await resultSet.json<{ 
+    const result = await resultSet.json<{
       trace_id: string;
       span_id: string;
       parent_span_id: string;
@@ -126,7 +126,7 @@ export class QueriesRepository {
     const resultSet = await this.clickHouseClient.query({
       query: query,
       format: "JSON"
-    }); 
+    });
 
     const result = await resultSet.json<{ query_type: string; total: number }>();
 
@@ -170,6 +170,37 @@ export class QueriesRepository {
       inserts: item.inserts,
       updates: item.updates,
       deletes: item.deletes,
+    }));
+  }
+
+  public async getQueriesPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
+    const query = `
+      SELECT
+          date_trunc('hour', start_time) AS time,
+          count(*) AS total_queries,
+          avg(duration_ns) / 1e6 AS avg_ms
+      FROM spans_database
+      WHERE start_time >= now() - interval '${hour} hour'
+      AND id_empresa = '${idEmpresa}'
+      GROUP BY time
+      ORDER BY time ASC;
+    `;
+
+    const resultSet = await this.clickHouseClient.query({
+      query: query,
+      format: "JSON"
+    });
+
+    const result = await resultSet.json<{
+      time: string;
+      total_queries: number;
+      avg_ms: number;
+    }>();
+
+    return result.data.map(item => ({
+      time: item.time,
+      totalQueries: item.total_queries,
+      avgMs: item.avg_ms,
     }));
   }
 }

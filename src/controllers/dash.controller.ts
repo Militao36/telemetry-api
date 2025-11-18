@@ -16,8 +16,6 @@ export class DashController {
 
     const data = await this.dashService.reportRequests(idEmpresa, +'12')
 
-    return response.status(200).json({
-      data
-    })
+    return response.status(200).json(data)
   }
 }
