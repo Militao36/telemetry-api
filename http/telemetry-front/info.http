@@ -1,0 +1,5 @@
+### Get API Info - O que a API pode fazer?
+GET http://localhost:3333/api/v1/info
+
+### Get API Capabilities - Lista de endpoints
+GET http://localhost:3333/api/v1/info/capabilities
