@@ -2,4 +2,4 @@
 GET http://localhost:3333/api/v1/dashboard
 
 ### Dash de queries
-GET http://localhost:3333/api/v1/queries
+GET http://localhost:3333/api/v1/queries/dashboard
