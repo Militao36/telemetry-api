@@ -103,14 +103,16 @@ export class QueriesRepository {
         duration_ns / 1e6 AS duration_ms,
         db_statement,
         db_table,
-        db_name
-      FROM "telemetry"."spans_database"
+        db_name,
+        count() OVER (PARTITION BY db_statement) AS executions,
+        avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms
+      FROM telemetry.spans_database
       WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      ${queryType !== 'all' ? `and db_statement like '${queryType}%'` : ''}
-      and id_empresa = '${idEmpresa}'
+        ${queryType !== 'all' ? `AND db_statement LIKE '${queryType}%'` : ''}
+        AND id_empresa = '${idEmpresa}'
       ORDER BY duration_ms DESC
-      LIMIT ${limit}
-    `;
+      LIMIT ${limit};
+  `;
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
@@ -130,6 +132,8 @@ export class QueriesRepository {
       db_statement: string;
       db_table: string;
       db_name: string;
+      executions: number;
+      avg_duration_ms: number;
     }>();
 
     return result.data.map(item => ({
@@ -145,6 +149,8 @@ export class QueriesRepository {
       dbStatement: item.db_statement,
       dbTable: item.db_table,
       dbName: item.db_name,
+      executions: +item.executions,
+      avgDurationMs: item.avg_duration_ms,
     }));
   }
 
@@ -215,7 +221,7 @@ export class QueriesRepository {
     }));
   }
 
-   public async getQueriesPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
+  public async getQueriesPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
     const query = `
       SELECT
           toStartOfInterval(start_time, INTERVAL 1 HOUR) AS time,
