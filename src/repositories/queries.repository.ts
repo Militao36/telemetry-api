@@ -7,7 +7,7 @@ export class QueriesRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all') {
+  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all' = 'all') {
     const query = `
       SELECT 
         count(*) AS total_queries,
