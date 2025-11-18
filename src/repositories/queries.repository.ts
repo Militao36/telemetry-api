@@ -46,6 +46,49 @@ export class QueriesRepository {
     }))[0];
   }
 
+  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all') {
+    const query = `
+      SELECT 
+        toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,
+        avg(duration_ns) / 1e6 AS avg_ms,
+        quantile(0.5)(duration_ns)  / 1e6 AS p50_ms,
+        quantile(0.9)(duration_ns)  / 1e6 AS p90_ms,
+        quantile(0.95)(duration_ns) / 1e6 AS p95_ms,
+        quantile(0.99)(duration_ns) / 1e6 AS p99_ms
+      FROM "telemetry"."spans_database"
+      WHERE start_time >= now() - INTERVAL ${hour} HOUR
+      ${queryType !== 'all' ? `and db_statement like '${queryType}%'` : ''}
+      and id_empresa = '${idEmpresa}'
+      GROUP BY interval_hour
+      ORDER BY interval_hour ASC
+    `;
+
+    const resultSet = await this.clickHouseClient.query({
+      query: query,
+      format: "JSON"
+    });
+
+    const result = await resultSet.json<{
+      interval_hour: string;
+      total_queries: number;
+      avg_ms: number;
+      p50_ms: number;
+      p90_ms: number;
+      p95_ms: number;
+      p99_ms: number;
+    }>();
+
+    return result.data.map(item => ({
+      intervalHour: item.interval_hour,
+      totalQueries: item.total_queries,
+      avgMs: item.avg_ms,
+      p50Ms: item.p50_ms,
+      p90Ms: item.p90_ms,
+      p95Ms: item.p95_ms,
+      p99Ms: item.p99_ms,
+    }));
+  }
+
   async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all', limit: number = 10) {
     const query = `
       SELECT 
