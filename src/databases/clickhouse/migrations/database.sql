@@ -53,63 +53,63 @@ ORDER BY (id_empresa, start_time)
 TTL start_time + INTERVAL 30 DAY
 SETTINGS index_granularity = 8192;
 
--- --- Inicio para tabela materializada para sumarização hourly
--- CREATE TABLE IF NOT EXISTS telemetry.spans_database_hourly_summary
--- (
---     start_time DateTime,
---     id_empresa   String,
---     query_type   String,
+--- Inicio para tabela materializada para sumarização hourly
+CREATE TABLE IF NOT EXISTS telemetry.spans_database_hourly_summary
+(
+    start_time DateTime,
+    id_empresa   String,
+    query_type   String,
 
---     total_queries  AggregateFunction(count),
---     duration_state AggregateFunction(avg, UInt64),
---     p50_state      AggregateFunction(quantile(0.5), UInt64),
---     p90_state      AggregateFunction(quantile(0.9), UInt64),
---     p95_state      AggregateFunction(quantile(0.95), UInt64),
---     p99_state      AggregateFunction(quantile(0.99), UInt64)
+    total_queries  AggregateFunction(count),
+    duration_state AggregateFunction(avg, UInt64),
+    p50_state      AggregateFunction(quantile(0.5), UInt64),
+    p90_state      AggregateFunction(quantile(0.9), UInt64),
+    p95_state      AggregateFunction(quantile(0.95), UInt64),
+    p99_state      AggregateFunction(quantile(0.99), UInt64)
 
--- ) ENGINE = AggregatingMergeTree()
--- PARTITION BY toYYYYMM(start_time)
--- ORDER BY (id_empresa, query_type, start_time);
+) ENGINE = AggregatingMergeTree()
+PARTITION BY toYYYYMM(start_time)
+ORDER BY (id_empresa, query_type, start_time);
 
 
--- CREATE MATERIALIZED VIEW IF NOT EXISTS telemetry.spans_database_mv TO telemetry.spans_database_hourly_summary AS
--- SELECT
---     toStartOfHour(start_time) AS start_time,
---     id_empresa,
+CREATE MATERIALIZED VIEW IF NOT EXISTS telemetry.spans_database_mv TO telemetry.spans_database_hourly_summary AS
+SELECT
+    toStartOfHour(start_time) AS start_time,
+    id_empresa,
 
---     multiIf(
---         db_statement LIKE 'SELECT%', 'SELECT',
---         db_statement LIKE 'INSERT%', 'INSERT',
---         db_statement LIKE 'UPDATE%', 'UPDATE',
---         db_statement LIKE 'DELETE%', 'DELETE',
---         'OTHER'
---     ) AS query_type,
+    multiIf(
+        db_statement LIKE 'SELECT%', 'SELECT',
+        db_statement LIKE 'INSERT%', 'INSERT',
+        db_statement LIKE 'UPDATE%', 'UPDATE',
+        db_statement LIKE 'DELETE%', 'DELETE',
+        'OTHER'
+    ) AS query_type,
 
---     countState()                    AS total_queries,
---     avgState(duration_ns)           AS duration_state,
---     quantileState(0.5)(duration_ns) AS p50_state,
---     quantileState(0.9)(duration_ns) AS p90_state,
---     quantileState(0.95)(duration_ns)AS p95_state,
---     quantileState(0.99)(duration_ns)AS p99_state
--- FROM
---     telemetry.spans_database
--- GROUP BY
---     start_time,
---     id_empresa,
---     query_type;
+    countState()                    AS total_queries,
+    avgState(duration_ns)           AS duration_state,
+    quantileState(0.5)(duration_ns) AS p50_state,
+    quantileState(0.9)(duration_ns) AS p90_state,
+    quantileState(0.95)(duration_ns)AS p95_state,
+    quantileState(0.99)(duration_ns)AS p99_state
+FROM
+    telemetry.spans_database
+GROUP BY
+    start_time,
+    id_empresa,
+    query_type;
 
--- --- Fim para tabela materializada para sumarização hourly
+--- Fim para tabela materializada para sumarização hourly
 
--- CREATE TABLE IF NOT EXISTS telemetry.spans_database_by_duration
--- (
---     start_time   DateTime,
---     id_empresa   String,
---     trace_id     String,
---     db_statement String,
---     duration_ns  UInt64
--- ) ENGINE = MergeTree()
--- PARTITION BY toYYYYMM(start_time)
--- ORDER BY (id_empresa, duration_ns DESC, start_time); 
+CREATE TABLE IF NOT EXISTS telemetry.spans_database_by_duration
+(
+    start_time   DateTime,
+    id_empresa   String,
+    trace_id     String,
+    db_statement String,
+    duration_ns  UInt64
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(start_time)
+ORDER BY (id_empresa, duration_ns DESC, start_time); 
 
 
 
