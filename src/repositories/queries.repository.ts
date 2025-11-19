@@ -90,53 +90,91 @@ export class QueriesRepository {
   }
 
   async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all', limit: number = 10) {
-    const query = `
-    SELECT
-      db_statement,
-      executions,
-      avg_duration_ms,
-      argMax(trace_id, duration_ns) AS trace_id,
-      argMax(span_id, duration_ns) AS span_id,
-      argMax(parent_span_id, duration_ns) AS parent_span_id,
-      argMax(service_name, duration_ns) AS service_name,
-      argMax(service_version, duration_ns) AS service_version,
-      argMax(service_environment, duration_ns) AS service_environment,
-      argMax(start_time, duration_ns) AS start_time,
-      argMax(end_time, duration_ns) AS end_time,
-      argMax(duration_ns, duration_ns) / 1e6 AS duration_ms,
-      argMax(db_table, duration_ns) AS db_table,
-      argMax(db_name, duration_ns) AS db_name,
-      argMax(db_operation, duration_ns) AS db_operation
-    FROM
-      (
+    const query = ` 
+      SELECT
+        trace_id,
+        span_id,
+        parent_span_id,
+        service_name,
+        service_version,
+        service_environment,
+        start_time,
+        end_time,
+        duration_ns,
+        duration_ns / 1e6 AS duration_ms,
+        db_statement,
+        db_operation,
+        db_table,
+        db_name,
+        executions,
+        avg_duration_ms
+      FROM (
           SELECT
-              trace_id,
-              span_id,
-              parent_span_id,
-              service_name,
-              service_version,
-              service_environment,
-              start_time,
-              end_time,
-              duration_ns,
-              duration_ns / 1e6 AS duration_ms,
-              db_statement,
-              db_operation,
-              db_table,
-              db_name,
-              count(*) OVER (PARTITION BY db_statement) AS executions,
-              avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms
+              *,
+              COUNT(*) OVER (PARTITION BY db_statement) AS executions,
+              avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms,
+              ROW_NUMBER() OVER (
+                  PARTITION BY db_statement
+                  ORDER BY duration_ns DESC
+              ) AS rn
           FROM telemetry.spans_database
           WHERE start_time >= now() - INTERVAL ${hour} HOUR
-            AND db_statement <> ''
+            AND db_statement <> '' 
             ${queryType !== 'all' ? `AND db_operation = '${queryType}'` : ''}
-        AND id_empresa = '${idEmpresa}'
-      )
+            AND id_empresa = '${idEmpresa}'
+      ) t
+      WHERE rn = 1
+      ORDER BY duration_ns DESC
+      limit ${limit};
 
-      GROUP BY db_statement, executions, avg_duration_ms
-      ORDER BY avg_duration_ms DESC
-      LIMIT ${limit};
     `
+    // const query = `
+    // SELECT
+    //   db_statement,
+    //   executions,
+    //   avg_duration_ms,
+    //   argMax(trace_id, duration_ns) AS trace_id,
+    //   argMax(span_id, duration_ns) AS span_id,
+    //   argMax(parent_span_id, duration_ns) AS parent_span_id,
+    //   argMax(service_name, duration_ns) AS service_name,
+    //   argMax(service_version, duration_ns) AS service_version,
+    //   argMax(service_environment, duration_ns) AS service_environment,
+    //   argMax(start_time, duration_ns) AS start_time,
+    //   argMax(end_time, duration_ns) AS end_time,
+    //   argMax(duration_ns, duration_ns) / 1e6 AS duration_ms,
+    //   argMax(db_table, duration_ns) AS db_table,
+    //   argMax(db_name, duration_ns) AS db_name,
+    //   argMax(db_operation, duration_ns) AS db_operation
+    // FROM
+    //   (
+    //       SELECT
+    //           trace_id,
+    //           span_id,
+    //           parent_span_id,
+    //           service_name,
+    //           service_version,
+    //           service_environment,
+    //           start_time,
+    //           end_time,
+    //           duration_ns,
+    //           duration_ns / 1e6 AS duration_ms,
+    //           db_statement,
+    //           db_operation,
+    //           db_table,
+    //           db_name,
+    //           count(*) OVER (PARTITION BY db_statement) AS executions,
+    //           avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms
+    //       FROM telemetry.spans_database
+    //       WHERE start_time >= now() - INTERVAL ${hour} HOUR
+    //         AND db_statement <> ''
+    //         ${queryType !== 'all' ? `AND db_operation = '${queryType}'` : ''}
+    //     AND id_empresa = '${idEmpresa}'
+    //   )
+
+    //   GROUP BY db_statement, executions, avg_duration_ms
+    //   ORDER BY avg_duration_ms DESC
+    //   LIMIT ${limit};
+    // `
     //   const query = `
     //     SELECT 
     //       trace_id,
