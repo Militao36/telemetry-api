@@ -1,10 +1,14 @@
 import { Queue } from "bull";
 import { RedisClientType } from "@redis/client";
 import { Logger } from "pino";
+import _ from "lodash";
 
 import { NormalizedSpanDatabase, NormalizedSpanHttp } from "../queues/bull/utils/normalizeOtlpHttpJsonTrace";
 import { LIMIT_ITEM_QUEUE_DEFAULT } from "../env";
 import { ADD_ITEM_SCRIPT } from "../databases/redis/lua";
+import { QueriesRepository } from "../repositories/queries.repository";
+import { QueriesService } from "./queries.service";
+import { RequestsService } from "./requests.service";
 
 export class TracesService {
   queueTraces: Queue
@@ -15,13 +19,17 @@ export class TracesService {
   clientRedis: RedisClientType
   logger: Logger
   LIMIT_ITEM_QUEUE_DEFAULT: number
+  queriesService: QueriesService
+  requestsService: RequestsService
 
-  constructor({ queueTraces, logger, clientRedis, normalizeOTLP }) {
+  constructor({ queriesService, requestsService, queueTraces, logger, clientRedis, normalizeOTLP }) {
     this.queueTraces = queueTraces
     this.normalizeOTLP = normalizeOTLP
     this.clientRedis = clientRedis
     this.LIMIT_ITEM_QUEUE_DEFAULT = LIMIT_ITEM_QUEUE_DEFAULT
     this.logger = logger
+    this.queriesService = queriesService
+    this.requestsService = requestsService
   }
 
   async create(idEmpresa: string, resourceSpans: Array<Record<string, any>>) {
@@ -79,5 +87,20 @@ export class TracesService {
       this.logger.error(`Error processing spans for company ${idEmpresa}: ${error}`);
       throw error;
     }
+  }
+
+  public async getTraces(idEmpresa: string, traceId: string) {
+    const tracesQueries = await this.queriesService.getTraces(idEmpresa, traceId);
+    const tracesRequests = await this.requestsService.getTraces(idEmpresa, traceId);
+
+    const tracesQueriesOrdered = _.orderBy(tracesQueries, ['startTime'], ['asc']);
+    const tracesRequestsOrdered = _.orderBy(tracesRequests, ['startTime'], ['asc']);
+
+    const unionTraces = _.sortBy([
+      ...(tracesQueriesOrdered.map(e => ({ ...e, typeTrace: 'query' }))),
+      ...(tracesRequestsOrdered.map(e => ({ ...e, typeTrace: 'request' })))
+    ], ['startTime']);
+
+    return unionTraces;
   }
 }

@@ -38,4 +38,10 @@ export class QueriesService {
       queriesPerTimeSeries
     }
   }
+
+  public async getTraces(idEmpresa: string, traceId: string) {
+    const traces = await this.queriesRepository.getTraces(idEmpresa, traceId);
+
+    return traces;
+  }
 }

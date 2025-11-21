@@ -42,4 +42,15 @@ export class DashController {
 
     return response.status(200).json(data)
   }
+
+  @route('/traces/:traceId')
+  @GET()
+  async getTraces(request: Request, response: Response) {
+    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9'
+    const { traceId } = request.params
+
+    const data = await this.queriesService.getTraces(idEmpresa, traceId)
+
+    return response.status(200).json(data)
+  }
 }

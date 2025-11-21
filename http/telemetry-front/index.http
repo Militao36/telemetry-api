@@ -3,3 +3,6 @@ GET http://localhost:3333/api/v1/dashboard
 
 ### Dash de queries
 GET http://localhost:3333/api/v1/queries
+
+### Get traces
+GET http://localhost:3333/api/v1/traces/328ee43e4fe9bcc33cfe74838f8d8ff9

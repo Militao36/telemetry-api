@@ -12,6 +12,8 @@ import { DashService } from "./services/dash.service";
 import { DashRepository } from "./repositories/dash.repository";
 import { QueriesService } from "./services/queries.service";
 import { QueriesRepository } from "./repositories/queries.repository";
+import { RequestsRepository } from "./repositories/requests.repository";
+import { RequestsService } from "./services/requests.service";
 
 const container = createContainer();
 
@@ -27,10 +29,12 @@ container.register({
   traceService: asClass(TracesService).singleton(),
   dashService: asClass(DashService).singleton(),
   queriesService: asClass(QueriesService).singleton(),
+  requestsService: asClass(RequestsService).singleton(),
 
   // repositories
   dashRepository: asClass(DashRepository).singleton(),
   queriesRepository: asClass(QueriesRepository).singleton(),
+  requestsRepository: asClass(RequestsRepository).singleton(),
 
   // queues - processors
   traceJobProcessor: asClass(TraceJobProcessor).singleton(),

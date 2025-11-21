@@ -334,4 +334,40 @@ export class QueriesRepository {
       }
     })
   }
+
+  public async getTraces(idEmpresa: string, traceId: string): Promise<any> {
+    const query = `
+      SELECT
+         *
+      FROM telemetry.spans_database
+      WHERE id_empresa = '${idEmpresa}'
+      AND trace_id = '${traceId}'
+      or parent_span_id = '${traceId}'
+      or span_id = '${traceId}';
+    `;
+
+    const result = await this.clickHouseClient.query({
+      query,
+      format: 'JSON'
+    });
+
+    const rows = await result.json();
+
+    return rows.data.map((row: any) => ({
+      traceId: row.trace_id,
+      spanId: row.span_id,
+      parentSpanId: row.parent_span_id,
+      serviceName: row.service_name,
+      serviceVersion: row.service_version,
+      serviceEnvironment: row.service_environment,
+      startTime: row.start_time,
+      endTime: row.end_time,
+      durationNs: row.duration_ns,
+      durationMs: row.duration_ns / 1e6,
+      dbStatement: row.db_statement,
+      dbOperation: row.db_operation,
+      dbTable: row.db_table,
+      dbName: row.db_name,
+    }));
+  }
 }
