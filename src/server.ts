@@ -7,11 +7,13 @@ import { loadControllers, scopePerRequest } from 'awilix-express';
 import { AWILIX_CONTROLLERS, PORT } from './env';
 import './queues/bull/index';
 import { errorHandler } from './middlewares/errorHandler';
+import { auth } from './middlewares/auth';
 
 const server = express();
 
 server.use(express.json({ limit: '500mb' }));
 server.use(cors());
+server.use(auth);
 server.use(scopePerRequest(container));
 server.use('/api/v1', loadControllers(AWILIX_CONTROLLERS, { cwd: __dirname }));
 
