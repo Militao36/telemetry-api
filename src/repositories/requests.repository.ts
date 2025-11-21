@@ -7,12 +7,18 @@ export class RequestsRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  public async recentRequests(idEmpresa: string): Promise<any> {
+  public async recentRequests(
+    idEmpresa: string,
+    hour: number,
+    httpMethod: string = 'ALL',
+  ): Promise<any> {
     const query = `
       SELECT
          *
       FROM telemetry.spans_http
       WHERE id_empresa = '${idEmpresa}'
+      ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
+      and start_time >= now() - toIntervalHour(${hour})
       ORDER BY start_time DESC
       LIMIT 10;
     `;
@@ -45,7 +51,11 @@ export class RequestsRepository {
     }));
   }
 
-  public async getSlowestRequests(idEmpresa: string): Promise<any[]> {
+  public async getSlowestRequests(
+    idEmpresa: string,
+    hour: number,
+    httpMethod: string = 'ALL',
+  ): Promise<any[]> {
     const query = `
       SELECT *
       FROM (
@@ -57,11 +67,12 @@ export class RequestsRepository {
               ) AS rnk
           FROM telemetry.spans_http
           WHERE id_empresa = '${idEmpresa}'
+          ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
+          and start_time >= now() - toIntervalHour(${hour})
       )
       WHERE rnk = 1
       ORDER BY duration_ns DESC
       LIMIT 10;
-
     `;
 
     const result = await this.clickHouseClient.query({
@@ -70,7 +81,6 @@ export class RequestsRepository {
     });
 
     const rows = await result.json();
-    console.log(rows);
 
     return rows.data.map((row: any) => {
       return {
@@ -122,5 +132,39 @@ export class RequestsRepository {
       attributes: row.attributes,
       ingestionTime: row.ingestion_time,
     }));
+  }
+
+  public async getResponseStatusDistribution(
+    idEmpresa: string,
+    hour: number,
+    httpMethod: string = 'ALL',
+  ): Promise<any[]> {
+    const query = `
+      SELECT
+          http_status,
+          count() AS count,
+          avg(duration_ns) AS avg_ms
+      FROM telemetry.spans_http
+      WHERE id_empresa = '${idEmpresa}'
+      and start_time >= now() - toIntervalHour(${hour})
+       ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
+      GROUP BY http_status
+      ORDER BY count DESC;
+    `;
+
+    const result = await this.clickHouseClient.query({
+      query,
+      format: 'JSON',
+    });
+
+    const rows = await result.json();
+
+    return rows.data.map((row: any) => {
+      return {
+        httpStatus: row.http_status,
+        count: row.count,
+        avgMs: row.avg_ms,
+      };
+    });
   }
 }

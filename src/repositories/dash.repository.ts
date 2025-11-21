@@ -84,7 +84,11 @@ export class DashRepository {
     });
   }
 
-  public async getRequestPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
+  public async getRequestPerTimeSeries(
+    idEmpresa: string,
+    hour: number,
+    httpMethod?: string,
+  ): Promise<any[]> {
     const query = `
       SELECT
           toStartOfInterval(start_time, INTERVAL 1 HOUR) AS time,
@@ -93,6 +97,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL ${hour} HOUR
       AND id_empresa = '${idEmpresa}'
+      ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
       GROUP BY time
       ORDER BY time ASC;
     `;
