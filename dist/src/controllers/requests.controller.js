@@ -16,25 +16,25 @@ let RequestsController = class RequestsController {
         this.requestsService = requestsService;
     }
     async recentRequests(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { httpMethod, hour } = request.query;
         const data = await this.requestsService.recentRequests(idEmpresa, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
         return response.status(200).json(data);
     }
     async getSlowestRequests(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { httpMethod, hour } = request.query;
         const data = await this.requestsService.getSlowestRequests(idEmpresa, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
         return response.status(200).json(data);
     }
     async getMetrics(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { httpMethod, hour } = request.query;
         const data = await this.requestsService.getMetrics(idEmpresa, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
         return response.status(200).json(data);
     }
     async getTraces(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { traceId } = request.params;
         const data = await this.requestsService.getTraces(idEmpresa, traceId);
         return response.status(200).json(data);

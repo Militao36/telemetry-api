@@ -16,7 +16,7 @@ let TraceController = class TraceController {
         this.traceService = traceService;
     }
     async create(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { resourceSpans } = request.body;
         await this.traceService.create(idEmpresa, request.idProject, resourceSpans);
         return response.status(200).json({});

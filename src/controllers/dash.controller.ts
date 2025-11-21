@@ -15,7 +15,7 @@ export class DashController {
 
   @GET()
   async reportRequests(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
 
     const { hour = '12' } = request.query as { hour?: string };
 

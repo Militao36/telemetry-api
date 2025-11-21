@@ -12,7 +12,7 @@ export class ProjectController {
   @route('/:id')
   @GET()
   async findById(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const { id } = request.params;
 
     const user = await this.projectService.findById(idEmpresa, id);
@@ -22,7 +22,7 @@ export class ProjectController {
 
   @GET()
   async list(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
 
     const projects = await this.projectService.list(idEmpresa);
 
@@ -31,7 +31,7 @@ export class ProjectController {
 
   @POST()
   async create(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const data = request.body;
 
     data.idEmpresa = idEmpresa;
@@ -44,7 +44,7 @@ export class ProjectController {
   @route('/:id')
   @DELETE()
   async delete(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const { id } = request.params;
 
     await this.projectService.delete(idEmpresa, id);

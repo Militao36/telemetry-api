@@ -14,7 +14,7 @@ export class UserController {
   @route('/:id')
   @GET()
   async findById(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const { id } = request.params;
 
     const user = await this.userService.findById(idEmpresa, id);
@@ -24,10 +24,7 @@ export class UserController {
 
   @POST()
   async create(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
     const data = request.body;
-
-    data.idEmpresa = idEmpresa;
 
     const user = await this.userService.create(data);
 
@@ -37,7 +34,7 @@ export class UserController {
   @route('/:id/password')
   @POST()
   async updatePassword(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const { id } = request.params;
     const { newPassword } = request.body;
 
@@ -49,7 +46,7 @@ export class UserController {
   @route('/:id')
   @DELETE()
   async delete(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const { id } = request.params;
 
     await this.userService.delete(idEmpresa, id);

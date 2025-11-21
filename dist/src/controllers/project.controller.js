@@ -16,25 +16,25 @@ let ProjectController = class ProjectController {
         this.projectService = projectService;
     }
     async findById(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { id } = request.params;
         const user = await this.projectService.findById(idEmpresa, id);
         return response.status(200).json(user);
     }
     async list(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const projects = await this.projectService.list(idEmpresa);
         return response.status(200).json(projects);
     }
     async create(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const data = request.body;
         data.idEmpresa = idEmpresa;
         const user = await this.projectService.create(data);
         return response.status(201).json(user);
     }
     async delete(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { id } = request.params;
         await this.projectService.delete(idEmpresa, id);
         return response.status(204).send();

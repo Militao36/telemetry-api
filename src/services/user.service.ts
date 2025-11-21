@@ -1,4 +1,6 @@
 import { RedisClientType } from 'redis';
+import { randomUUID } from 'crypto';
+
 import { UserEntity } from '../entities/user.entity';
 import { UserRepository } from '../repositories/user.repository';
 import { HashService } from './hash.service';
@@ -17,7 +19,10 @@ export class UserService {
   }
 
   async create(data: UserEntity) {
-    const user = new UserEntity(data);
+    const user = new UserEntity({
+      ...data,
+      idEmpresa: randomUUID(),
+    });
 
     user.password = await this.hashPassword(data.password);
 

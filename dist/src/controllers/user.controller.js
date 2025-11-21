@@ -16,27 +16,27 @@ let UserController = class UserController {
         this.userService = userService;
     }
     async findById(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { id } = request.params;
         const user = await this.userService.findById(idEmpresa, id);
         return response.status(200).json(user);
     }
     async create(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const data = request.body;
         data.idEmpresa = idEmpresa;
         const user = await this.userService.create(data);
         return response.status(201).json(user);
     }
     async updatePassword(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { id } = request.params;
         const { newPassword } = request.body;
         await this.userService.updatePassword(idEmpresa, id, newPassword);
         return response.status(204).send();
     }
     async delete(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { id } = request.params;
         await this.userService.delete(idEmpresa, id);
         return response.status(204).send();

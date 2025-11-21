@@ -17,7 +17,7 @@ let DashController = class DashController {
         this.clientRedis = clientRedis;
     }
     async reportRequests(request, response) {
-        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const idEmpresa = request.idEmpresa
         const { hour = '12' } = request.query;
         const data = await this.dashService.reportRequests(idEmpresa, +hour);
         return response.status(200).json(data);

@@ -13,7 +13,7 @@ export class TraceController {
   @route('/')
   @POST()
   async create(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
 
     const { resourceSpans } = request.body;
 
@@ -25,7 +25,7 @@ export class TraceController {
   @route('/:traceId')
   @GET()
   async getTraces(request: Request, response: Response) {
-    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+    const idEmpresa = request.idEmpresa;
     const { traceId } = request.params;
 
     const data = await this.traceService.getTraces(idEmpresa, traceId);
