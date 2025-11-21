@@ -13,7 +13,8 @@ Content-Type: application/json
 }
 
 ### List Projects
-GET {{baseUrl}}/projects
+GET {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
 
 ### Get Project By ID
 GET {{baseUrl}}/projects/{{projectId}}
