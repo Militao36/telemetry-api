@@ -6,6 +6,7 @@ declare global {
   namespace Express {
     export interface Request {
       idEmpresa?: string;
+      idProject?: string;
       idUser?: string;
       user: UserEntity;
     }

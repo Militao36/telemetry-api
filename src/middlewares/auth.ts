@@ -31,6 +31,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
       }
 
       req.idEmpresa = project.idEmpresa;
+      req.idProject = project.id;
       req.idUser = null;
       req.user = null;
 

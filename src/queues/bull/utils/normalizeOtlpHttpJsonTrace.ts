@@ -51,7 +51,7 @@ export interface NormalizedSpanDatabase {
 
 const EXCLUDES_ROUTES = ['/health', '/favicon.ico'];
 
-export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
+export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpans: any[]) {
   const spans_http: Partial<NormalizedSpanHttp>[] = [];
   const spans_database: Partial<NormalizedSpanDatabase>[] = [];
 
@@ -91,6 +91,7 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
 
         const baseFields = {
           id_empresa: idEmpresa,
+          project_id: idProject,
           trace_id: traceId,
           span_id: spanId,
           parent_span_id: parentSpanId || '0000000000000000',

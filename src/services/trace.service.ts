@@ -14,6 +14,7 @@ export class TracesService {
   queueTraces: Queue;
   normalizeOTLP: (
     idEmpresa: string,
+    idProject: string,
     resourceSpans: any[],
   ) => {
     spans_http: Partial<NormalizedSpanHttp>[];
@@ -35,10 +36,10 @@ export class TracesService {
     this.requestsService = requestsService;
   }
 
-  async create(idEmpresa: string, resourceSpans: Array<Record<string, any>>) {
-    this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans`);
+  async create(idEmpresa: string, idProject: string, resourceSpans: Array<Record<string, any>>) {
+    this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans, for project ${idProject}`);
 
-    const spans = this.normalizeOTLP(idEmpresa, resourceSpans);
+    const spans = this.normalizeOTLP(idEmpresa, idProject, resourceSpans);
 
     if (spans?.spans_database?.length === 0 && spans?.spans_http?.length === 0) {
       this.logger.info(`No spans to process for company ${idEmpresa}`);
