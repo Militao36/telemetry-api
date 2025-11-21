@@ -12,7 +12,7 @@ export class DashService {
 
     const topRequests = await this.dashRepository.getTopRequests(idEmpresa, hour);
     const totalQueries = await this.dashRepository.getTotalQueries(idEmpresa, hour);
-    const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(idEmpresa, hour);
+    const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(idEmpresa, hour, 'ALL');
     const slowestRequests = await this.dashRepository.getSlowestRequests(idEmpresa, hour);
 
     return {
