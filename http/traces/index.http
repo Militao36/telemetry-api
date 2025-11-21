@@ -1,5 +1,6 @@
 POST http://localhost:3333/api/v1/traces
 Content-Type: application/json
+Authorization: Bearer proj_577sg-f0y2r79a5ba2-1b-8z9da6edf5-39d7ef8d98baekde470ee73
 
 {
   "resourceSpans": [
