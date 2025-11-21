@@ -16,7 +16,17 @@ export class RequestsController {
   async recentRequests(request: Request, response: Response) {
     const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
 
-    const data = await this.requestsService.recentRequests(idEmpresa, 10);
+    const data = await this.requestsService.recentRequests(idEmpresa);
+
+    return response.status(200).json(data);
+  }
+
+  @route('/slowest')
+  @GET()
+  async getSlowestRequests(request: Request, response: Response) {
+    const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+
+    const data = await this.requestsService.getSlowestRequests(idEmpresa);
 
     return response.status(200).json(data);
   }

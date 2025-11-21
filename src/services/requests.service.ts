@@ -8,8 +8,14 @@ export class RequestsService {
     this.requestsRepository = requestsRepository;
   }
 
-  public async recentRequests(idEmpresa: string, limit: number) {
-    const requests = await this.requestsRepository.recentRequests(idEmpresa, limit);
+  public async recentRequests(idEmpresa: string) {
+    const requests = await this.requestsRepository.recentRequests(idEmpresa);
+
+    return requests;
+  }
+
+  public async getSlowestRequests(idEmpresa: string) {
+    const requests = await this.requestsRepository.getSlowestRequests(idEmpresa);
 
     return requests;
   }
