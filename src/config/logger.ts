@@ -1,5 +1,5 @@
-import LoggerPino from 'pino'
-import { LOG_LEVEL } from '../env'
+import LoggerPino from 'pino';
+import { LOG_LEVEL } from '../env';
 
 export const logger = LoggerPino({
   level: LOG_LEVEL,
@@ -11,4 +11,4 @@ export const logger = LoggerPino({
       ignore: 'pid,hostname',
     },
   },
-})
+});

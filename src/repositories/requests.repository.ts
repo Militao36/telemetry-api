@@ -1,4 +1,4 @@
-import { ClickHouseClient } from "@clickhouse/client";
+import { ClickHouseClient } from '@clickhouse/client';
 
 export class RequestsRepository {
   clickHouseClient: ClickHouseClient;
@@ -19,7 +19,7 @@ export class RequestsRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();
@@ -58,7 +58,7 @@ export class RequestsRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();

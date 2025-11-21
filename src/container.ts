@@ -1,19 +1,19 @@
-import { TracesService } from "./services/trace.service";
+import { TracesService } from './services/trace.service';
 
 import { createContainer, asClass, asValue } from 'awilix';
-import { clientClickHouse } from "./databases/clickhouse";
-import { queueLogs, queueTraces } from "./queues/bull";
-import { TraceJobProcessor } from "./queues/bull/queues/traces";
-import { normalizeOTLP } from "./queues/bull/utils/normalizeOtlpHttpJsonTrace";
-import { logger } from "./config/logger";
-import { clientRedis } from "./databases/redis";
-import { normalizeLog } from "./queues/bull/utils/normalizeLog";
-import { DashService } from "./services/dash.service";
-import { DashRepository } from "./repositories/dash.repository";
-import { QueriesService } from "./services/queries.service";
-import { QueriesRepository } from "./repositories/queries.repository";
-import { RequestsRepository } from "./repositories/requests.repository";
-import { RequestsService } from "./services/requests.service";
+import { clientClickHouse } from './databases/clickhouse';
+import { queueLogs, queueTraces } from './queues/bull';
+import { TraceJobProcessor } from './queues/bull/queues/traces';
+import { normalizeOTLP } from './queues/bull/utils/normalizeOtlpHttpJsonTrace';
+import { logger } from './config/logger';
+import { clientRedis } from './databases/redis';
+import { normalizeLog } from './queues/bull/utils/normalizeLog';
+import { DashService } from './services/dash.service';
+import { DashRepository } from './repositories/dash.repository';
+import { QueriesService } from './services/queries.service';
+import { QueriesRepository } from './repositories/queries.repository';
+import { RequestsRepository } from './repositories/requests.repository';
+import { RequestsService } from './services/requests.service';
 
 const container = createContainer();
 
@@ -42,6 +42,6 @@ container.register({
   normalizeOTLP: asValue(normalizeOTLP),
   normalizeLog: asValue(normalizeLog),
   queueLogs: asValue(queueLogs),
-})
+});
 
-export { container }
+export { container };

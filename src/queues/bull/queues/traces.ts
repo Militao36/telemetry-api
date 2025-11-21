@@ -4,12 +4,12 @@ import { QueueInterface } from '../queue.interface.js';
 import { ClickHouseClient } from '@clickhouse/client';
 
 export interface TraceJobData {
-  spans_http: NormalizedSpanHttp[],
-  spans_database: NormalizedSpanDatabase[]
+  spans_http: NormalizedSpanHttp[];
+  spans_database: NormalizedSpanDatabase[];
 }
 
 export class TraceJobProcessor implements QueueInterface {
-  clickHouseClient: ClickHouseClient
+  clickHouseClient: ClickHouseClient;
 
   constructor({ clickHouseClient }) {
     this.clickHouseClient = clickHouseClient;
@@ -22,14 +22,14 @@ export class TraceJobProcessor implements QueueInterface {
       await this.clickHouseClient.insert({
         table: 'telemetry.spans_database',
         values: spans_database,
-        format: 'JSONEachRow'
+        format: 'JSONEachRow',
       });
     }
     if (spans_http.length) {
       await this.clickHouseClient.insert({
         table: 'telemetry.spans_http',
         values: spans_http,
-        format: 'JSONEachRow'
+        format: 'JSONEachRow',
       });
     }
   }

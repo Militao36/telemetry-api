@@ -1,4 +1,4 @@
-import { DashRepository } from "../repositories/dash.repository";
+import { DashRepository } from '../repositories/dash.repository';
 
 export class DashService {
   dashRepository: DashRepository;
@@ -15,7 +15,7 @@ export class DashService {
       p50Ms,
       p90Ms,
       p95Ms,
-      p99Ms
+      p99Ms,
     } = await this.dashRepository.getMetrics(idEmpresa, hour);
 
     const topRequests = await this.dashRepository.getTopRequests(idEmpresa, hour);
@@ -34,7 +34,7 @@ export class DashService {
       topRequests,
       requestPerTimeSeries,
       slowestRequests,
-      totalQueries
-    }
+      totalQueries,
+    };
   }
 }

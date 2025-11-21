@@ -1,15 +1,14 @@
-import { ClickHouseClient } from "@clickhouse/client";
-
+import { ClickHouseClient } from '@clickhouse/client';
 
 export type MetricsResult = {
-  totalRequests: number,
-  totalErrors: number,
-  avgMs: number,
-  p50Ms: number,
-  p90Ms: number,
-  p95Ms: number,
-  p99Ms: number
-}
+  totalRequests: number;
+  totalErrors: number;
+  avgMs: number;
+  p50Ms: number;
+  p90Ms: number;
+  p95Ms: number;
+  p99Ms: number;
+};
 
 export class DashRepository {
   clickHouseClient: ClickHouseClient;
@@ -35,7 +34,7 @@ export class DashRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();
@@ -49,8 +48,8 @@ export class DashRepository {
       p50Ms: row.p50_ms,
       p90Ms: row.p90_ms,
       p95Ms: row.p95_ms,
-      p99Ms: row.p99_ms
-    }
+      p99Ms: row.p99_ms,
+    };
   }
 
   public async getTopRequests(idEmpresa: string, hour: number): Promise<any[]> {
@@ -70,7 +69,7 @@ export class DashRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();
@@ -80,9 +79,9 @@ export class DashRepository {
         httpMethod: row.http_method,
         path: row.path,
         totalRequests: +row.total_requests,
-        avgMs: row.avg_ms
-      }
-    })
+        avgMs: row.avg_ms,
+      };
+    });
   }
 
   public async getRequestPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
@@ -100,7 +99,7 @@ export class DashRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();
@@ -109,9 +108,9 @@ export class DashRepository {
       return {
         time: row.time,
         totalRequests: +row.total_requests,
-        avgMs: row.avg_ms
-      }
-    })
+        avgMs: row.avg_ms,
+      };
+    });
   }
 
   public async getSlowestRequests(idEmpresa: string, hour: number): Promise<any[]> {
@@ -131,19 +130,19 @@ export class DashRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();
 
     return rows.data.map((row: any) => {
       return {
-        httpMethod: row.http_method,  
+        httpMethod: row.http_method,
         path: row.path,
         durationMs: row.duration_ms,
         startTime: row.start_time,
-        endTime: row.end_time
-      }
+        endTime: row.end_time,
+      };
     });
   }
 
@@ -158,7 +157,7 @@ export class DashRepository {
 
     const result = await this.clickHouseClient.query({
       query: queries,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();

@@ -1,4 +1,4 @@
-import { ClickHouseClient } from "@clickhouse/client";
+import { ClickHouseClient } from '@clickhouse/client';
 
 export class QueriesRepository {
   clickHouseClient: ClickHouseClient;
@@ -7,7 +7,11 @@ export class QueriesRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all') {
+  async avgQueryTimeByType(
+    idEmpresa: string,
+    hour: number,
+    queryType: 'select' | 'insert' | 'update' | 'delete' | 'all',
+  ) {
     const query = `
       SELECT 
         count(*) AS total_queries,
@@ -24,7 +28,7 @@ export class QueriesRepository {
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
-      format: "JSON"
+      format: 'JSON',
     });
 
     const result = await resultSet.json<{
@@ -36,7 +40,7 @@ export class QueriesRepository {
       p99_ms: number;
     }>();
 
-    return result.data.map(item => ({
+    return result.data.map((item) => ({
       totalQueries: item.total_queries,
       avgMs: item.avg_ms,
       p50Ms: item.p50_ms,
@@ -46,7 +50,11 @@ export class QueriesRepository {
     }))[0];
   }
 
-  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all') {
+  async avgQueryTimeByHour(
+    idEmpresa: string,
+    hour: number,
+    queryType: 'select' | 'insert' | 'update' | 'delete' | 'all',
+  ) {
     const query = `
       SELECT 
         toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,
@@ -65,7 +73,7 @@ export class QueriesRepository {
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
-      format: "JSON"
+      format: 'JSON',
     });
 
     const result = await resultSet.json<{
@@ -78,7 +86,7 @@ export class QueriesRepository {
       p99_ms: number;
     }>();
 
-    return result.data.map(item => ({
+    return result.data.map((item) => ({
       intervalHour: item.interval_hour,
       totalQueries: item.total_queries,
       avgMs: item.avg_ms,
@@ -89,7 +97,12 @@ export class QueriesRepository {
     }));
   }
 
-  async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all', limit: number = 10) {
+  async slowestQueries(
+    idEmpresa: string,
+    hour: number,
+    queryType: 'select' | 'insert' | 'update' | 'delete' | 'all',
+    limit: number = 10,
+  ) {
     const query = ` 
       SELECT
         trace_id,
@@ -127,7 +140,7 @@ export class QueriesRepository {
       ORDER BY duration_ns DESC
       limit ${limit};
 
-    `
+    `;
     // const query = `
     // SELECT
     //   db_statement,
@@ -176,7 +189,7 @@ export class QueriesRepository {
     //   LIMIT ${limit};
     // `
     //   const query = `
-    //     SELECT 
+    //     SELECT
     //       trace_id,
     //       span_id,
     //       parent_span_id,
@@ -201,7 +214,7 @@ export class QueriesRepository {
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
-      format: "JSON"
+      format: 'JSON',
     });
 
     const result = await resultSet.json<{
@@ -221,7 +234,7 @@ export class QueriesRepository {
       avg_duration_ms: number;
     }>();
 
-    return result.data.map(item => ({
+    return result.data.map((item) => ({
       traceId: item.trace_id,
       spanId: item.span_id,
       parentSpanId: item.parent_span_id,
@@ -258,12 +271,12 @@ export class QueriesRepository {
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
-      format: "JSON"
+      format: 'JSON',
     });
 
     const result = await resultSet.json<{ query_type: string; total: number }>();
 
-    return result.data.map(item => ({
+    return result.data.map((item) => ({
       queryType: item.query_type,
       total: item.total,
     }));
@@ -282,11 +295,11 @@ export class QueriesRepository {
       AND id_empresa = '${idEmpresa}'
       GROUP BY interva_hour
       ORDER BY interva_hour ASC;
-    `
+    `;
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
-      format: "JSON"
+      format: 'JSON',
     });
 
     const result = await resultSet.json<{
@@ -297,7 +310,7 @@ export class QueriesRepository {
       deletes: number;
     }>();
 
-    return result.data.map(item => ({
+    return result.data.map((item) => ({
       interval: item.interva_hour,
       selects: item.selects,
       inserts: item.inserts,
@@ -321,7 +334,7 @@ export class QueriesRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();
@@ -330,9 +343,9 @@ export class QueriesRepository {
       return {
         time: row.time,
         totalQueries: +row.total_queries,
-        avgMs: row.avg_ms
-      }
-    })
+        avgMs: row.avg_ms,
+      };
+    });
   }
 
   public async getTraces(idEmpresa: string, traceId: string): Promise<any> {
@@ -348,7 +361,7 @@ export class QueriesRepository {
 
     const result = await this.clickHouseClient.query({
       query,
-      format: 'JSON'
+      format: 'JSON',
     });
 
     const rows = await result.json();

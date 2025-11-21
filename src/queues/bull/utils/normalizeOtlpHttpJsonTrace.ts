@@ -49,10 +49,7 @@ export interface NormalizedSpanDatabase {
   ingestion_time: Date;
 }
 
-const EXCLUDES_ROUTES = [
-  '/health',
-  '/favicon.ico',
-]
+const EXCLUDES_ROUTES = ['/health', '/favicon.ico'];
 
 export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
   const spans_http: Partial<NormalizedSpanHttp>[] = [];
@@ -62,26 +59,25 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
     const attrs = rs.resource?.attributes || [];
 
     const serviceName =
-      attrs.find((a: any) => a.key === "service.name")?.value?.string_value ||
-      attrs.find((a: any) => a.key === "service.name")?.value?.stringValue ||
-      "unknown";
+      attrs.find((a: any) => a.key === 'service.name')?.value?.string_value ||
+      attrs.find((a: any) => a.key === 'service.name')?.value?.stringValue ||
+      'unknown';
 
     const serviceVersion =
-      attrs.find((a: any) => a.key === "service.version")?.value?.string_value ||
-      attrs.find((a: any) => a.key === "service.version")?.value?.stringValue ||
+      attrs.find((a: any) => a.key === 'service.version')?.value?.string_value ||
+      attrs.find((a: any) => a.key === 'service.version')?.value?.stringValue ||
       null;
 
     const environment =
-      attrs.find((a: any) => a.key === "deployment.environment")?.value?.string_value ||
-      attrs.find((a: any) => a.key === "deployment.environment")?.value?.stringValue ||
-      "unknown";
+      attrs.find((a: any) => a.key === 'deployment.environment')?.value?.string_value ||
+      attrs.find((a: any) => a.key === 'deployment.environment')?.value?.stringValue ||
+      'unknown';
 
     for (const scope of rs.scope_spans || rs.scopeSpans || []) {
       for (const span of scope.spans || []) {
-
         const traceId = span.trace_id || span.traceId;
         const spanId = span.span_id || span.spanId;
-        const parentSpanId = span.parent_span_id || span.parentSpanId || "0000000000000000";
+        const parentSpanId = span.parent_span_id || span.parentSpanId || '0000000000000000';
 
         const startNano = span.start_time_unix_nano || span.startTimeUnixNano;
         const endNano = span.end_time_unix_nano || span.endTimeUnixNano;
@@ -97,7 +93,7 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
           id_empresa: idEmpresa,
           trace_id: traceId,
           span_id: spanId,
-          parent_span_id: parentSpanId || "0000000000000000",
+          parent_span_id: parentSpanId || '0000000000000000',
 
           service_name: serviceName,
           service_version: serviceVersion,
@@ -114,17 +110,17 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
         //  SEPARAÇÃO DE SPANS POR TIPO
         // ------------------------------------------------------------------
 
-        if (spanType === "HTTP") {
-          const http_method = findAttr(span, "http.method");
-          const http_target = findAttr(span, "http.target");
+        if (spanType === 'HTTP') {
+          const http_method = findAttr(span, 'http.method');
+          const http_target = findAttr(span, 'http.target');
 
           if (http_method === 'OPTIONS') continue;
-          if(EXCLUDES_ROUTES.includes(http_target as string)) {
+          if (EXCLUDES_ROUTES.includes(http_target as string)) {
             continue;
           }
 
-          const http_url = findAttr(span, "http.url");
-          const http_status = findAttr(span, "http.status_code") as number;
+          const http_url = findAttr(span, 'http.url');
+          const http_status = findAttr(span, 'http.status_code') as number;
 
           spans_http.push({
             ...baseFields,
@@ -133,28 +129,25 @@ export function normalizeOTLP(idEmpresa: string, resourceSpans: any[]) {
             http_target: http_target as any,
             http_status: Number.isFinite(http_status) && (http_status || 0) >= 0 ? http_status : 0,
           });
-        }
-
-        else if (spanType === "Database") {
-          const db_duration = findAttr(span, "db.duration");
-          const db_statement = findAttr(span, "db.statement");
-          const db_system = findAttr(span, "db.system");
-          const db_table = findAttr(span, "db.sql.table");
-          const db_user = findAttr(span, "db.user");
-          const db_name = findAttr(span, "db.name");
+        } else if (spanType === 'Database') {
+          const db_duration = findAttr(span, 'db.duration');
+          const db_statement = findAttr(span, 'db.statement');
+          const db_system = findAttr(span, 'db.system');
+          const db_table = findAttr(span, 'db.sql.table');
+          const db_user = findAttr(span, 'db.user');
+          const db_name = findAttr(span, 'db.name');
 
           spans_database.push({
             ...baseFields,
             db_system: db_system as any as any,
-            db_statement: db_statement || null as any,
-            db_duration: db_duration ? Number(db_duration) : duration_ns as any,
-            db_table: db_table || null as any,
-            db_operation: findAttr(span, "db.operation") || null as any,
-            db_user: db_user || null as any,
-            db_name: db_name || null as any,
+            db_statement: db_statement || (null as any),
+            db_duration: db_duration ? Number(db_duration) : (duration_ns as any),
+            db_table: db_table || (null as any),
+            db_operation: findAttr(span, 'db.operation') || (null as any),
+            db_user: db_user || (null as any),
+            db_name: db_name || (null as any),
           });
         }
-
       }
     }
   }
@@ -208,10 +201,10 @@ function toUInt8Status(code: number | string | undefined): number {
 }
 
 function getSpanType(span: any): string {
-  const db_system = findAttr(span, "db.system");
-  const http_method = findAttr(span, "http.method");
-  const messaging_system = findAttr(span, "messaging.system");
-  const rpc_system = findAttr(span, "rpc.system");
+  const db_system = findAttr(span, 'db.system');
+  const http_method = findAttr(span, 'http.method');
+  const messaging_system = findAttr(span, 'messaging.system');
+  const rpc_system = findAttr(span, 'rpc.system');
 
   // 1. Database
   if (db_system) {
@@ -219,7 +212,7 @@ function getSpanType(span: any): string {
   }
 
   // 2. HTTP
-  if (http_method || findAttr(span, "http.status_code")) {
+  if (http_method || findAttr(span, 'http.status_code')) {
     return 'HTTP';
   }
 
@@ -235,12 +228,10 @@ function getSpanType(span: any): string {
 
   // 5. Internal (Lógica de Negócio, Funções internas)
   // O valor 1 corresponde a SPAN_KIND_INTERNAL
-  if (span.kind === 1 || span.kind === "SPAN_KIND_INTERNAL") {
+  if (span.kind === 1 || span.kind === 'SPAN_KIND_INTERNAL') {
     return 'Internal';
   }
 
   // Se não for classificado, ou se o KIND for CLIENT/SERVER mas sem atributos específicos
   return 'Unknown';
 }
-
-

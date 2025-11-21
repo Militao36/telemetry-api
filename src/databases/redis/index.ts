@@ -9,4 +9,4 @@ const clientRedis = createClient({
 
 clientRedis.connect();
 
-export { clientRedis }
+export { clientRedis };

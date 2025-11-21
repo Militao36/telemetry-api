@@ -1,5 +1,5 @@
-import { QueriesRepository } from "../repositories/queries.repository";
-import { RequestsRepository } from "../repositories/requests.repository";
+import { QueriesRepository } from '../repositories/queries.repository';
+import { RequestsRepository } from '../repositories/requests.repository';
 
 export class RequestsService {
   requestsRepository: RequestsRepository;

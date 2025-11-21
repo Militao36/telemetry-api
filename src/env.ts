@@ -1,5 +1,6 @@
 export const AWILIX_CONTROLLERS = process.env.AWILIX_CONTROLLERS || 'controllers/**/*.ts';
-export const CLICKHOUSE_URL = process.env.CLICKHOUSE_URL || 'https://qdc9d94b1o.westus3.azure.clickhouse.cloud:8443';
+export const CLICKHOUSE_URL =
+  process.env.CLICKHOUSE_URL || 'https://qdc9d94b1o.westus3.azure.clickhouse.cloud:8443';
 export const CLICKHOUSE_USER = process.env.CLICKHOUSE_USER || 'default';
 export const CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || 'PN~m_1RpdhSgI';
 export const CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
@@ -8,4 +9,6 @@ export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
-export const LIMIT_ITEM_QUEUE_DEFAULT = process.env.LIMIT_ITEM_QUEUE_DEFAULT ? parseInt(process.env.LIMIT_ITEM_QUEUE_DEFAULT) : 1000;
+export const LIMIT_ITEM_QUEUE_DEFAULT = process.env.LIMIT_ITEM_QUEUE_DEFAULT
+  ? parseInt(process.env.LIMIT_ITEM_QUEUE_DEFAULT)
+  : 1000;
