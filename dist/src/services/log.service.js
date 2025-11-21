@@ -19,14 +19,10 @@ class LogService {
         const countKey = `log_count:${idEmpresa}`;
         const logsKey = `log_logs:${idEmpresa}`;
         try {
-            const result = await this.clientRedis.eval(lua_1.ADD_ITEM_SCRIPT, {
+            const result = (await this.clientRedis.eval(lua_1.ADD_ITEM_SCRIPT, {
                 keys: [countKey, logsKey],
-                arguments: [
-                    this.LIMIT_ITEM_QUEUE.toString(),
-                    JSON.stringify(logs),
-                    logs.length.toString()
-                ]
-            });
+                arguments: [this.LIMIT_ITEM_QUEUE.toString(), JSON.stringify(logs), logs.length.toString()],
+            }));
             const [shouldQueue, logsToQueue] = result;
             if (shouldQueue === 1 && logsToQueue) {
                 const parsedSpans = JSON.parse(logsToQueue);

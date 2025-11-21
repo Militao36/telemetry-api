@@ -9,41 +9,53 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TraceController = void 0;
+exports.DashController = void 0;
 const awilix_express_1 = require("awilix-express");
-let TraceController = class TraceController {
-    constructor({ traceService }) {
-        this.traceService = traceService;
+let DashController = class DashController {
+    constructor({ queriesService, clientRedis }) {
+        this.queriesService = queriesService;
+        this.clientRedis = clientRedis;
     }
-    async create(request, response) {
+    async reportQueries(request, response) {
         const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
-        const { resourceSpans } = request.body;
-        await this.traceService.create(idEmpresa, request.idProject, resourceSpans);
-        return response.status(200).json({});
+        const { hour, queryTy } = request.query;
+        const data = await this.queriesService.reportQueries(idEmpresa, +(hour || 720), queryTy);
+        return response.status(200).json(data);
+    }
+    async dashboardQueries(request, response) {
+        const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
+        const data = await this.queriesService.dashboardQueries(idEmpresa, +'12');
+        return response.status(200).json(data);
     }
     async getTraces(request, response) {
         const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
         const { traceId } = request.params;
-        const data = await this.traceService.getTraces(idEmpresa, traceId);
+        const data = await this.queriesService.getTraces(idEmpresa, traceId);
         return response.status(200).json(data);
     }
 };
-exports.TraceController = TraceController;
+exports.DashController = DashController;
 __decorate([
-    (0, awilix_express_1.route)('/'),
-    (0, awilix_express_1.POST)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], TraceController.prototype, "create", null);
-__decorate([
-    (0, awilix_express_1.route)('/:traceId'),
     (0, awilix_express_1.GET)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], TraceController.prototype, "getTraces", null);
-exports.TraceController = TraceController = __decorate([
-    (0, awilix_express_1.route)('/traces'),
+], DashController.prototype, "reportQueries", null);
+__decorate([
+    (0, awilix_express_1.route)('/dashboard'),
+    (0, awilix_express_1.GET)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], DashController.prototype, "dashboardQueries", null);
+__decorate([
+    (0, awilix_express_1.route)('/traces/:traceId'),
+    (0, awilix_express_1.GET)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], DashController.prototype, "getTraces", null);
+exports.DashController = DashController = __decorate([
+    (0, awilix_express_1.route)('/queries'),
     __metadata("design:paramtypes", [Object])
-], TraceController);
+], DashController);

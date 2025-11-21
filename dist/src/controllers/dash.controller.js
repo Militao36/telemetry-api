@@ -9,28 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TraceController = void 0;
+exports.DashController = void 0;
 const awilix_express_1 = require("awilix-express");
-let TraceController = class TraceController {
-    constructor({ traceService }) {
-        this.traceService = traceService;
+let DashController = class DashController {
+    constructor({ dashService, clientRedis }) {
+        this.dashService = dashService;
+        this.clientRedis = clientRedis;
     }
-    async create(request, response) {
+    async reportRequests(request, response) {
         const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
-        const { resourceSpans } = request.body;
-        await this.traceService.create(idEmpresa, request.idProject, resourceSpans);
-        return response.status(200).json({});
+        const { hour = '12' } = request.query;
+        const data = await this.dashService.reportRequests(idEmpresa, +hour);
+        return response.status(200).json(data);
     }
 };
-exports.TraceController = TraceController;
+exports.DashController = DashController;
 __decorate([
-    (0, awilix_express_1.route)('/'),
-    (0, awilix_express_1.POST)(),
+    (0, awilix_express_1.GET)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], TraceController.prototype, "create", null);
-exports.TraceController = TraceController = __decorate([
-    (0, awilix_express_1.route)('/logs'),
+], DashController.prototype, "reportRequests", null);
+exports.DashController = DashController = __decorate([
+    (0, awilix_express_1.route)('/dashboard'),
     __metadata("design:paramtypes", [Object])
-], TraceController);
+], DashController);

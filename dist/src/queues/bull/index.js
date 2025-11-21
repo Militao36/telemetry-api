@@ -20,6 +20,6 @@ exports.queueLogs = new bull_1.default('logs', {
     redis: REDIS_CONFIG,
 });
 const traceJobProcessor = new traces_1.TraceJobProcessor({
-    clickHouseClient: clickhouse_1.clientClickHouse
+    clickHouseClient: clickhouse_1.clientClickHouse,
 });
 exports.queueTraces.process(traceJobProcessor.handle.bind(traceJobProcessor));
