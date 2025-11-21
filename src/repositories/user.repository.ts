@@ -24,6 +24,16 @@ export class UserRepository {
     return new UserEntity(user, user.id);
   }
 
+  async findByIdWithoutIdEmpresa(id: string) {
+    const user = await this.databaseKnex<UserEntity>('users').where({ id }).first();
+
+    if (!user) {
+      return null;
+    }
+
+    return new UserEntity(user, user.id);
+  }
+
   async findById(idEmpresa: string, id: string) {
     const user = await this.databaseKnex<UserEntity>('users').where({ idEmpresa: idEmpresa, id }).first();
 

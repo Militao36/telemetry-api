@@ -1,0 +1,23 @@
+@baseUrl = http://localhost:3333/api/v1
+@projectId = {{createProject.response.body.id}}
+
+### Create Project
+# @name createProject
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "name": "Projeto Teste",
+  "description": "Descrição do projeto de teste",
+  "enviroment": "production",
+  "languageOrFramework": "Node.js"
+}
+
+### List Projects
+GET {{baseUrl}}/projects
+
+### Get Project By ID
+GET {{baseUrl}}/projects/{{projectId}}
+
+### Delete Project
+DELETE {{baseUrl}}/projects/{{projectId}}

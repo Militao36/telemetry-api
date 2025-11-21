@@ -15,12 +15,18 @@ import { QueriesRepository } from './repositories/queries.repository';
 import { RequestsRepository } from './repositories/requests.repository';
 import { RequestsService } from './services/requests.service';
 import { databaseKnex } from './databases/knex';
+import { ProjectService } from './services/project.service';
+import { UserService } from './services/user.service';
+import { UserRepository } from './repositories/user.repository';
+import { ProjectsRepository } from './repositories/projects.repository';
+import { HashService } from './services/hash.service';
 
 const container = createContainer();
 
 container.register({
   // utils
   logger: asValue(logger),
+  hashService: asClass(HashService).singleton(),
 
   // database
   clickHouseClient: asValue(clientClickHouse),
@@ -32,11 +38,15 @@ container.register({
   dashService: asClass(DashService).singleton(),
   queriesService: asClass(QueriesService).singleton(),
   requestsService: asClass(RequestsService).singleton(),
+  projectService: asClass(ProjectService).singleton(),
+  userService: asClass(UserService).singleton(),
 
   // repositories
   dashRepository: asClass(DashRepository).singleton(),
   queriesRepository: asClass(QueriesRepository).singleton(),
   requestsRepository: asClass(RequestsRepository).singleton(),
+  userRepository: asClass(UserRepository).singleton(),
+  projectsRepository: asClass(ProjectsRepository).singleton(),
 
   // queues - processors
   traceJobProcessor: asClass(TraceJobProcessor).singleton(),

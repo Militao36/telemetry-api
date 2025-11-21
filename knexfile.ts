@@ -1,20 +1,20 @@
-import 'dotenv/config'
+import 'dotenv/config';
 
 const config = {
-  client: "pg",
+  client: 'pg',
   connection: {
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    user: process.env.PG_USER,
+    password: process.env.PG_PASSWORD,
   },
   pool: {
     min: 2,
-    max: 10
+    max: 10,
   },
   migrations: {
-    tableName: "knex_migrations"
-  }
+    tableName: 'knex_migrations',
+  },
 };
 
-export default config
+export default config;

@@ -7,6 +7,7 @@ export class ProjectEntity extends Entity {
   description: string;
   enviroment: string;
   languageOrFramework: string;
+  token: string;
 
   constructor(body: Omit<ProjectEntity, 'id'>, id?: string) {
     super(body, id);
@@ -15,5 +16,6 @@ export class ProjectEntity extends Entity {
     this.description = body.description;
     this.enviroment = body.enviroment;
     this.languageOrFramework = body.languageOrFramework;
+    this.token = body.token;
   }
 }

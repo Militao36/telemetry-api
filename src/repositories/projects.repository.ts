@@ -14,11 +14,18 @@ export class ProjectsRepository {
   }
 
   async update(idEmpresa: string, id: string, updateData: Partial<ProjectEntity>) {
-    const [project] =  await this.databaseKnex<ProjectEntity>('projects')
-      .where({ idEmpresa: idEmpresa, id })
-      .update(updateData)
-      .returning('*');
-      
+    const [project] = await this.databaseKnex<ProjectEntity>('projects').where({ idEmpresa: idEmpresa, id }).update(updateData).returning('*');
+
+    return new ProjectEntity(project, project.id);
+  }
+
+  async findByToken(token: string) {
+    const project = await this.databaseKnex<ProjectEntity>('projects').where({ token }).first();
+
+    if (!project) {
+      return null;
+    }
+
     return new ProjectEntity(project, project.id);
   }
 
