@@ -84,11 +84,7 @@ export class DashRepository {
     });
   }
 
-  public async getRequestPerTimeSeries(
-    idEmpresa: string,
-    hour: number,
-    httpMethod?: string,
-  ): Promise<any[]> {
+  public async getRequestPerTimeSeries(idEmpresa: string, hour: number, httpMethod?: string): Promise<any[]> {
     const query = `
       SELECT
           toStartOfInterval(start_time, INTERVAL 1 HOUR) AS time,

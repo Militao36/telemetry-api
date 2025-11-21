@@ -14,6 +14,7 @@ import { QueriesService } from './services/queries.service';
 import { QueriesRepository } from './repositories/queries.repository';
 import { RequestsRepository } from './repositories/requests.repository';
 import { RequestsService } from './services/requests.service';
+import { databaseKnex } from './databases/knex';
 
 const container = createContainer();
 
@@ -24,6 +25,7 @@ container.register({
   // database
   clickHouseClient: asValue(clientClickHouse),
   clientRedis: asValue(clientRedis),
+  databaseKnex: asValue(databaseKnex),
 
   // services
   traceService: asClass(TracesService).singleton(),

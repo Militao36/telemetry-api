@@ -1,8 +1,9 @@
-import { container } from './container';
-import { loadControllers, scopePerRequest } from 'awilix-express';
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
+import { container } from './container';
+import { loadControllers, scopePerRequest } from 'awilix-express';
 import { AWILIX_CONTROLLERS, PORT } from './env';
 import './queues/bull/index';
 

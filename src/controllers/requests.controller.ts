@@ -17,11 +17,7 @@ export class RequestsController {
     const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
     const { httpMethod, hour } = request.query as { httpMethod?: string; hour: string };
 
-    const data = await this.requestsService.recentRequests(
-      idEmpresa,
-      +hour,
-      httpMethod?.toUpperCase(),
-    );
+    const data = await this.requestsService.recentRequests(idEmpresa, +hour, httpMethod?.toUpperCase());
 
     return response.status(200).json(data);
   }
@@ -32,11 +28,7 @@ export class RequestsController {
     const idEmpresa = 'f6bf0b27-7fed-4737-8b57-955ee9e09ad9';
     const { httpMethod, hour } = request.query as { httpMethod?: string; hour: string };
 
-    const data = await this.requestsService.getSlowestRequests(
-      idEmpresa,
-      +hour,
-      httpMethod?.toUpperCase(),
-    );
+    const data = await this.requestsService.getSlowestRequests(idEmpresa, +hour, httpMethod?.toUpperCase());
 
     return response.status(200).json(data);
   }

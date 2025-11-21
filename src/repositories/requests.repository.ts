@@ -7,11 +7,7 @@ export class RequestsRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  public async recentRequests(
-    idEmpresa: string,
-    hour: number,
-    httpMethod: string = 'ALL',
-  ): Promise<any> {
+  public async recentRequests(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any> {
     const query = `
       SELECT
          *
@@ -51,11 +47,7 @@ export class RequestsRepository {
     }));
   }
 
-  public async getSlowestRequests(
-    idEmpresa: string,
-    hour: number,
-    httpMethod: string = 'ALL',
-  ): Promise<any[]> {
+  public async getSlowestRequests(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any[]> {
     const query = `
       SELECT *
       FROM (
@@ -134,11 +126,7 @@ export class RequestsRepository {
     }));
   }
 
-  public async getResponseStatusDistribution(
-    idEmpresa: string,
-    hour: number,
-    httpMethod: string = 'ALL',
-  ): Promise<any[]> {
+  public async getResponseStatusDistribution(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any[]> {
     const query = `
       SELECT
           http_status,

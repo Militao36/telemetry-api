@@ -1,5 +1,4 @@
 import { DashRepository } from '../repositories/dash.repository';
-import { QueriesRepository } from '../repositories/queries.repository';
 import { RequestsRepository } from '../repositories/requests.repository';
 
 export class RequestsService {
@@ -24,17 +23,9 @@ export class RequestsService {
   }
 
   public async getMetrics(idEmpresa: string, hour: number = 1, httpMethod: string = 'ALL') {
-    const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(
-      idEmpresa,
-      hour,
-      httpMethod,
-    );
+    const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(idEmpresa, hour, httpMethod);
 
-    const responseStatusDistribution = await this.requestsRepository.getResponseStatusDistribution(
-      idEmpresa,
-      hour,
-      httpMethod,
-    );
+    const responseStatusDistribution = await this.requestsRepository.getResponseStatusDistribution(idEmpresa, hour, httpMethod);
 
     return {
       requestPerTimeSeries,

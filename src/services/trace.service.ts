@@ -3,10 +3,7 @@ import { RedisClientType } from '@redis/client';
 import { Logger } from 'pino';
 import _ from 'lodash';
 
-import {
-  NormalizedSpanDatabase,
-  NormalizedSpanHttp,
-} from '../queues/bull/utils/normalizeOtlpHttpJsonTrace';
+import { NormalizedSpanDatabase, NormalizedSpanHttp } from '../queues/bull/utils/normalizeOtlpHttpJsonTrace';
 import { LIMIT_ITEM_QUEUE_DEFAULT } from '../env';
 import { ADD_ITEM_SCRIPT } from '../databases/redis/lua';
 import { QueriesRepository } from '../repositories/queries.repository';
@@ -28,14 +25,7 @@ export class TracesService {
   queriesService: QueriesService;
   requestsService: RequestsService;
 
-  constructor({
-    queriesService,
-    requestsService,
-    queueTraces,
-    logger,
-    clientRedis,
-    normalizeOTLP,
-  }) {
+  constructor({ queriesService, requestsService, queueTraces, logger, clientRedis, normalizeOTLP }) {
     this.queueTraces = queueTraces;
     this.normalizeOTLP = normalizeOTLP;
     this.clientRedis = clientRedis;
@@ -46,9 +36,7 @@ export class TracesService {
   }
 
   async create(idEmpresa: string, resourceSpans: Array<Record<string, any>>) {
-    this.logger.info(
-      `Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans`,
-    );
+    this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans`);
 
     const spans = this.normalizeOTLP(idEmpresa, resourceSpans);
 
@@ -65,24 +53,17 @@ export class TracesService {
     try {
       const result = (await this.clientRedis.eval(ADD_ITEM_SCRIPT, {
         keys: [countKey, spansKey],
-        arguments: [
-          this.LIMIT_ITEM_QUEUE_DEFAULT.toString(),
-          JSON.stringify(spans),
-          length.toString(),
-        ],
+        arguments: [this.LIMIT_ITEM_QUEUE_DEFAULT.toString(), JSON.stringify(spans), length.toString()],
       })) as [number, string];
 
       const [shouldQueue, spansToQueue] = result;
 
       if (shouldQueue === 1 && spansToQueue) {
-        this.logger.info(
-          `Limit of ${this.LIMIT_ITEM_QUEUE_DEFAULT} spans reached for company ${idEmpresa}, sending to queue`,
-        );
+        this.logger.info(`Limit of ${this.LIMIT_ITEM_QUEUE_DEFAULT} spans reached for company ${idEmpresa}, sending to queue`);
 
         const parsedSpans = JSON.parse(spansToQueue);
 
-        const totalLen =
-          (parsedSpans?.spans_database?.length || 0) + (parsedSpans?.spans_http?.length || 0);
+        const totalLen = (parsedSpans?.spans_database?.length || 0) + (parsedSpans?.spans_http?.length || 0);
         if (parsedSpans?.spans_database?.length || parsedSpans?.spans_http?.length) {
           await this.queueTraces.add(
             {
@@ -114,10 +95,7 @@ export class TracesService {
     const tracesRequestsOrdered = _.orderBy(tracesRequests, ['startTime'], ['asc']);
 
     const unionTraces = _.sortBy(
-      [
-        ...tracesQueriesOrdered.map((e) => ({ ...e, typeTrace: 'query' })),
-        ...tracesRequestsOrdered.map((e) => ({ ...e, typeTrace: 'request' })),
-      ],
+      [...tracesQueriesOrdered.map((e) => ({ ...e, typeTrace: 'query' })), ...tracesRequestsOrdered.map((e) => ({ ...e, typeTrace: 'request' }))],
       ['startTime'],
     );
 

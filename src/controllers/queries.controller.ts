@@ -26,11 +26,7 @@ export class DashController {
     //   return response.status(200).json(JSON.parse(cache as string))
     // }
 
-    const data = await this.queriesService.reportQueries(
-      idEmpresa,
-      +(hour || 720),
-      queryTy as 'select' | 'insert' | 'update' | 'delete' | 'all',
-    );
+    const data = await this.queriesService.reportQueries(idEmpresa, +(hour || 720), queryTy as 'select' | 'insert' | 'update' | 'delete' | 'all');
 
     // await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data))
 

@@ -8,15 +8,7 @@ export class DashService {
   }
 
   public async reportRequests(idEmpresa: string, hour: number) {
-    const {
-      totalRequests,
-      totalErrors,
-      avgMs: avgResponse,
-      p50Ms,
-      p90Ms,
-      p95Ms,
-      p99Ms,
-    } = await this.dashRepository.getMetrics(idEmpresa, hour);
+    const { totalRequests, totalErrors, avgMs: avgResponse, p50Ms, p90Ms, p95Ms, p99Ms } = await this.dashRepository.getMetrics(idEmpresa, hour);
 
     const topRequests = await this.dashRepository.getTopRequests(idEmpresa, hour);
     const totalQueries = await this.dashRepository.getTotalQueries(idEmpresa, hour);
