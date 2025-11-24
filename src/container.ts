@@ -20,6 +20,7 @@ import { UserService } from './services/user.service';
 import { UserRepository } from './repositories/user.repository';
 import { ProjectsRepository } from './repositories/projects.repository';
 import { HashService } from './services/hash.service';
+import { SearchService } from './services/search.service';
 
 const container = createContainer();
 
@@ -40,6 +41,7 @@ container.register({
   requestsService: asClass(RequestsService).singleton(),
   projectService: asClass(ProjectService).singleton(),
   userService: asClass(UserService).singleton(),
+  searchService: asClass(SearchService).singleton(),
 
   // repositories
   dashRepository: asClass(DashRepository).singleton(),

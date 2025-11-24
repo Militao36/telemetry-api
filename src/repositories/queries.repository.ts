@@ -1,4 +1,5 @@
 import { ClickHouseClient } from '@clickhouse/client';
+import { SearchFilters } from '../services/search.service';
 
 export class QueriesRepository {
   clickHouseClient: ClickHouseClient;
@@ -364,6 +365,79 @@ export class QueriesRepository {
       endTime: row.end_time,
       durationNs: row.duration_ns,
       durationMs: row.duration_ns / 1e6,
+      dbStatement: row.db_statement,
+      dbOperation: row.db_operation,
+      dbTable: row.db_table,
+      dbName: row.db_name,
+    }));
+  }
+
+  public async list(idEmpresa: string, filters: SearchFilters): Promise<any[]> {
+    const where: string[] = [];
+
+    if (filters.databaseFilter?.queryContains) {
+      where.push(`db_statement ILIKE '%${filters.databaseFilter.queryContains}%'`);
+    }
+
+    if (filters.databaseFilter?.tableName) {
+      where.push(`db_table = '${filters.databaseFilter.tableName}'`);
+    }
+
+    if (filters.environment) {
+      where.push(`service_environment = '${filters.environment}'`);
+    }
+
+    if (filters.traceId) {
+      where.push(`trace_id = '${filters.traceId}'`);
+    }
+
+    if (filters.startTimeFrom) {
+      where.push(`start_time >= parseDateTime64BestEffort('${filters.startTimeFrom}')`);
+    }
+
+    if (filters.startTimeTo) {
+      where.push(`start_time <= parseDateTime64BestEffort('${filters.startTimeTo}')`);
+    }
+
+    const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+    const query = `
+      SELECT
+        trace_id,
+        span_id,
+        parent_span_id,
+        service_name,
+        service_version,
+        service_environment,
+        start_time,
+        end_time,
+        duration_ns,
+        db_statement,
+        db_operation,
+        db_table,
+        db_name
+        FROM telemetry.spans_database
+        ${whereClause}
+        ${where.length ? 'AND' : 'WHERE'} id_empresa = '${idEmpresa}'
+      ORDER BY start_time DESC
+      LIMIT ${filters.limit ?? 20}
+      OFFSET ${filters.offset ?? 0}
+    `;
+
+    const result = await this.clickHouseClient.query({ query, format: 'JSONEachRow' });
+
+    const rows = (await result.json()) as any;
+
+    return rows.map((row: any) => ({
+      traceId: row.trace_id,
+      spanId: row.span_id,
+      parentSpanId: row.parent_span_id,
+      serviceName: row.service_name,
+      serviceVersion: row.service_version,
+      serviceEnvironment: row.service_environment,
+      startTime: row.start_time,
+      endTime: row.end_time,
+      durationNs: row.duration_ns,
       dbStatement: row.db_statement,
       dbOperation: row.db_operation,
       dbTable: row.db_table,
