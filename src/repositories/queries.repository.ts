@@ -8,7 +8,7 @@ export class QueriesRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all') {
+  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
     const query = `
       SELECT 
         count(*) AS total_queries,
@@ -47,7 +47,7 @@ export class QueriesRepository {
     }))[0];
   }
 
-  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all') {
+  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
     const query = `
       SELECT 
         toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,
@@ -90,7 +90,7 @@ export class QueriesRepository {
     }));
   }
 
-  async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'delete' | 'all', limit: number = 10) {
+  async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all', limit: number = 10) {
     const query = ` 
       SELECT
         trace_id,
