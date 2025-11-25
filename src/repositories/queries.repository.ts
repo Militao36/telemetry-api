@@ -1,5 +1,6 @@
 import { ClickHouseClient } from '@clickhouse/client';
 import { SearchFilters } from '../services/search.service';
+import _ from 'lodash';
 
 export class QueriesRepository {
   clickHouseClient: ClickHouseClient;
@@ -91,114 +92,31 @@ export class QueriesRepository {
   }
 
   async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all', limit: number = 10) {
-    const query = ` 
+    const query = `
       SELECT
-        trace_id,
-        span_id,
-        parent_span_id,
-        service_name,
-        service_version,
-        service_environment,
-        start_time,
-        end_time,
-        duration_ns,
-        duration_ns / 1e6 AS duration_ms,
         db_statement,
-        db_operation,
         db_table,
-        db_name,
-        executions,
-        avg_duration_ms
-      FROM (
-          SELECT
-              *,
-              COUNT(*) OVER (PARTITION BY db_statement) AS executions,
-              avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms,
-              ROW_NUMBER() OVER (
-                  PARTITION BY db_statement
-                  ORDER BY duration_ns DESC
-              ) AS rn
-          FROM telemetry.spans_database
-          WHERE start_time >= now() - INTERVAL ${hour} HOUR
-            AND db_statement <> '' 
-            ${queryType !== 'all' ? `AND db_operation = '${queryType}'` : ''}
-            AND id_empresa = '${idEmpresa}'
-      ) t
-      WHERE rn = 1
-      ORDER BY duration_ns DESC
-      limit ${limit};
+        start_time,
+        countMerge(execution_count) AS total_executions,
+        (sumMerge(sum_duration) / total_executions) / 1000000 AS average_duration_ms,
+        maxMerge(max_duration) / 1000000 AS max_duration_ms,
 
+        argMaxMerge(slowest_trace_id) AS slowest_trace_id,
+        argMaxMerge(slowest_span_id) AS slowest_span_id
+      FROM
+          telemetry.spans_database_slowest
+      WHERE start_time >= now() - INTERVAL ${hour} HOUR
+      AND db_statement <> '' 
+      ${queryType !== 'all' ? `AND db_statement like '${queryType}%'` : ''}
+      AND id_empresa = '${idEmpresa}'
+      GROUP BY
+          db_statement,
+          db_table,
+          start_time
+      ORDER BY
+          average_duration_ms DESC
+      LIMIT 10;
     `;
-    // const query = `
-    // SELECT
-    //   db_statement,
-    //   executions,
-    //   avg_duration_ms,
-    //   argMax(trace_id, duration_ns) AS trace_id,
-    //   argMax(span_id, duration_ns) AS span_id,
-    //   argMax(parent_span_id, duration_ns) AS parent_span_id,
-    //   argMax(service_name, duration_ns) AS service_name,
-    //   argMax(service_version, duration_ns) AS service_version,
-    //   argMax(service_environment, duration_ns) AS service_environment,
-    //   argMax(start_time, duration_ns) AS start_time,
-    //   argMax(end_time, duration_ns) AS end_time,
-    //   argMax(duration_ns, duration_ns) / 1e6 AS duration_ms,
-    //   argMax(db_table, duration_ns) AS db_table,
-    //   argMax(db_name, duration_ns) AS db_name,
-    //   argMax(db_operation, duration_ns) AS db_operation
-    // FROM
-    //   (
-    //       SELECT
-    //           trace_id,
-    //           span_id,
-    //           parent_span_id,
-    //           service_name,
-    //           service_version,
-    //           service_environment,
-    //           start_time,
-    //           end_time,
-    //           duration_ns,
-    //           duration_ns / 1e6 AS duration_ms,
-    //           db_statement,
-    //           db_operation,
-    //           db_table,
-    //           db_name,
-    //           count(*) OVER (PARTITION BY db_statement) AS executions,
-    //           avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms
-    //       FROM telemetry.spans_database
-    //       WHERE start_time >= now() - INTERVAL ${hour} HOUR
-    //         AND db_statement <> ''
-    //         ${queryType !== 'all' ? `AND db_operation = '${queryType}'` : ''}
-    //     AND id_empresa = '${idEmpresa}'
-    //   )
-
-    //   GROUP BY db_statement, executions, avg_duration_ms
-    //   ORDER BY avg_duration_ms DESC
-    //   LIMIT ${limit};
-    // `
-    //   const query = `
-    //     SELECT
-    //       trace_id,
-    //       span_id,
-    //       parent_span_id,
-    //       service_name,
-    //       service_version,
-    //       service_environment,
-    //       start_time,
-    //       end_time,
-    //       duration_ns / 1e6 AS duration_ms,
-    //       db_statement,
-    //       db_table,
-    //       db_name,
-    //       count() OVER (PARTITION BY db_statement) AS executions,
-    //       avg(duration_ns) OVER (PARTITION BY db_statement) / 1e6 AS avg_duration_ms
-    //     FROM telemetry.spans_database
-    //     WHERE start_time >= now() - INTERVAL ${hour} HOUR
-    //       ${queryType !== 'all' ? `AND db_statement LIKE '${queryType}%'` : ''}
-    //       AND id_empresa = '${idEmpresa}'
-    //     ORDER BY duration_ms DESC
-    //     LIMIT ${limit};
-    // `;
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
@@ -206,55 +124,36 @@ export class QueriesRepository {
     });
 
     const result = await resultSet.json<{
-      trace_id: string;
-      span_id: string;
-      parent_span_id: string;
-      service_name: string;
-      service_version: string;
-      service_environment: string;
-      start_time: string;
-      end_time: string;
-      duration_ms: number;
       db_statement: string;
       db_table: string;
-      db_name: string;
-      executions: number;
-      avg_duration_ms: number;
+      total_executions: string;
+      average_duration_ms: number;
+      max_duration_ms: number;
+      slowest_trace_id: string;
+      slowest_span_id: string;
     }>();
 
     return result.data.map((item) => ({
-      traceId: item.trace_id,
-      spanId: item.span_id,
-      parentSpanId: item.parent_span_id,
-      serviceName: item.service_name,
-      serviceVersion: item.service_version,
-      serviceEnvironment: item.service_environment,
-      startTime: item.start_time,
-      endTime: item.end_time,
-      durationMs: item.duration_ms,
+      traceId: item.slowest_trace_id,
+      spanId: item.slowest_span_id,
+      durationMs: item.max_duration_ms,
       dbStatement: item.db_statement,
       dbTable: item.db_table,
-      dbName: item.db_name,
-      executions: +item.executions,
-      avgDurationMs: item.avg_duration_ms,
+      executions: +item.total_executions,
+      avgDurationMs: item.average_duration_ms,
     }));
   }
 
   async queryVolumeByType(idEmpresa: string, hour: number) {
     const query = `
-      SELECT 
-        CASE 
-          WHEN db_statement LIKE 'select%' THEN 'select'
-          WHEN db_statement LIKE 'insert%' THEN 'insert'
-          WHEN db_statement LIKE 'update%' THEN 'update'
-          WHEN db_statement LIKE 'delete%' THEN 'delete'
-          ELSE 'other'
-        END AS query_type,
-        count(*) AS total
-      FROM "telemetry"."spans_database"
+      SELECT
+          query_type,
+          countMerge(total_queries) AS total
+      FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL ${hour} HOUR
       and id_empresa = '${idEmpresa}'
       GROUP BY query_type
+      ORDER BY total DESC;
     `;
 
     const resultSet = await this.clickHouseClient.query({
@@ -273,16 +172,25 @@ export class QueriesRepository {
   async getQueryVolumeByHours(idEmpresa: string, hour: number) {
     const query = `
       SELECT
-          toStartOfInterval(start_time, INTERVAL 1 hour) AS interva_hour,
-          countIf(db_operation = 'select') AS selects,
-          countIf(db_operation = 'insert') AS inserts,
-          countIf(db_operation = 'update') AS updates,
-          countIf(db_operation = 'delete') AS deletes
-      FROM telemetry.spans_database
+        start_time,
+        id_empresa,
+        query_type,
+
+        countMerge(total_queries) AS total_queries,
+        avgMerge(duration_state) AS avg_duration,
+
+        quantileMerge(0.5)(p50_state) AS p50,
+        quantileMerge(0.9)(p90_state) AS p90,
+        quantileMerge(0.95)(p95_state) AS p95,
+        quantileMerge(0.99)(p99_state) AS p99
+      FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL ${hour} HOUR
       AND id_empresa = '${idEmpresa}'
-      GROUP BY interva_hour
-      ORDER BY interva_hour ASC;
+      GROUP BY
+          start_time,
+          id_empresa,
+          query_type
+      ORDER BY start_time DESC;
     `;
 
     const resultSet = await this.clickHouseClient.query({
@@ -290,34 +198,55 @@ export class QueriesRepository {
       format: 'JSON',
     });
 
-    const result = await resultSet.json<{
-      interva_hour: string;
-      selects: number;
-      inserts: number;
-      updates: number;
-      deletes: number;
-    }>();
+    const result = await resultSet.json();
 
-    return result.data.map((item) => ({
-      interval: item.interva_hour,
-      selects: item.selects,
-      inserts: item.inserts,
-      updates: item.updates,
-      deletes: item.deletes,
-    }));
+    const grouped = {};
+
+    for (const item of result.data as any[]) {
+      const interval = item.start_time;
+
+      if (!grouped[interval]) {
+        grouped[interval] = {
+          interval,
+          selects: 0,
+          inserts: 0,
+          updates: 0,
+          deletes: 0,
+        };
+      }
+
+      switch (item.query_type) {
+        case 'SELECT':
+          grouped[interval].selects += item.total_queries;
+          break;
+        case 'INSERT':
+          grouped[interval].inserts += item.total_queries;
+          break;
+        case 'UPDATE':
+          grouped[interval].updates += item.total_queries;
+          break;
+        case 'DEL':
+          grouped[interval].deletes += item.total_queries;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return Object.values(grouped);
   }
 
   public async getQueriesPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
     const query = `
       SELECT
-          toStartOfInterval(start_time, INTERVAL 1 HOUR) AS time,
-          count(*) AS total_queries,
-          avg(duration_ns) / 1e6 AS avg_ms
-      FROM telemetry.spans_database
+          start_time AS time,
+          countMerge(total_queries) AS total_queries,
+          avgMerge(duration_state) / 1e6 AS avg_ms
+      FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL ${hour} HOUR
       AND id_empresa = '${idEmpresa}'
-      GROUP BY time
-      ORDER BY time ASC;
+      GROUP BY start_time
+      ORDER BY start_time ASC;
     `;
 
     const result = await this.clickHouseClient.query({

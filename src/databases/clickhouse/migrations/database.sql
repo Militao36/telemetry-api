@@ -1,3 +1,11 @@
+DROP table spans_database;
+drop table spans_database_hourly_summary;
+drop table spans_database_slowest;
+drop table spans_http;
+drop view spans_agg_mv;
+drop view spans_database_mv;
+
+
 CREATE TABLE telemetry.spans_http 
 (
     id_empresa LowCardinality(FixedString(36)),
@@ -96,10 +104,10 @@ SELECT
     id_empresa,
 
     multiIf(
-        db_statement LIKE 'SELECT%', 'SELECT',
-        db_statement LIKE 'INSERT%', 'INSERT',
-        db_statement LIKE 'UPDATE%', 'UPDATE',
-        db_statement LIKE 'DELETE%', 'DELETE',
+        db_operation LIKE 'select%', 'SELECT',
+        db_operation LIKE 'insert%', 'INSERT',
+        db_operation LIKE 'update%', 'UPDATE',
+        db_operation LIKE 'del%', 'DEL',
         'OTHER'
     ) AS query_type,
 
@@ -118,16 +126,57 @@ GROUP BY
 
 --- Fim para tabela materializada para sumarização hourly
 
-CREATE TABLE IF NOT EXISTS telemetry.spans_database_by_duration
+---- INICIo criacação de slowest query
+-- Primeiro, apague a tabela e a view antigas para recriá-las
+
+CREATE TABLE telemetry.spans_database_slowest
 (
-    start_time   DateTime,
-    id_empresa   String,
-    trace_id     String,
+    -- Dimensões para agrupar (GROUP BY)
+    day Date,
+    id_empresa LowCardinality(FixedString(36)),
+    project_id LowCardinality(FixedString(36)),
+    db_table LowCardinality(String),
     db_statement String,
-    duration_ns  UInt64
-) ENGINE = MergeTree()
-PARTITION BY toYYYYMM(start_time)
-ORDER BY (id_empresa, duration_ns DESC, start_time); 
+    start_time DateTime,
+
+    -- Métricas agregadas
+    execution_count AggregateFunction(count),
+    sum_duration AggregateFunction(sum, UInt64),
+    max_duration AggregateFunction(max, UInt64),
+
+    -- Colunas para guardar o ID do trace mais lento (usando argMax)
+    slowest_trace_id AggregateFunction(argMax, FixedString(32), UInt64),
+    slowest_span_id AggregateFunction(argMax, FixedString(16), UInt64)
+)
+ENGINE = AggregatingMergeTree()
+PARTITION BY day
+ORDER BY (id_empresa, project_id, db_table, db_statement);
 
 
+CREATE MATERIALIZED VIEW telemetry.spans_agg_mv TO telemetry.spans_database_slowest
+AS SELECT
+    toDate(start_time) AS day,
+    id_empresa,
+    project_id,
+    db_table,
+    db_statement,
+    start_time,
+    -- Estados de Agregação
+    countState() AS execution_count,
+    sumState(db_duration) AS sum_duration,
+    maxState(db_duration) AS max_duration,
 
+    -- Calcula o estado do argMax
+    argMaxState(trace_id, db_duration) AS slowest_trace_id,
+    argMaxState(span_id, db_duration) AS slowest_span_id
+FROM
+    telemetry.spans_database
+WHERE
+    db_statement != ''
+GROUP BY
+    day,
+    id_empresa,
+    project_id,
+    db_table,
+    start_time,
+    db_statement;

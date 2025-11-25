@@ -1,8 +1,15 @@
 ### Dash tela inicial
 GET http://localhost:3333/api/v1/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
 
 ### Dash de queries
-GET http://localhost:3333/api/v1/queries
+GET http://localhost:3333/api/v1/queries/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+
+### queries
+GET http://localhost:3333/api/v1/queries?queryT=select&hour=720
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+
 
 ### Get traces
 GET http://localhost:3333/api/v1/traces/328ee43e4fe9bcc33cfe74838f8d8ff9

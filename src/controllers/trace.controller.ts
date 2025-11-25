@@ -15,9 +15,9 @@ export class TraceController {
   async create(request: Request, response: Response) {
     const idEmpresa = request.idEmpresa;
 
-    const { resourceSpans } = request.body;
+    // const { resourceSpans } = request.body;
 
-    await this.traceService.create(idEmpresa, request.idProject!, resourceSpans);
+    // await this.traceService.create(idEmpresa, request.idProject!, resourceSpans);
 
     return response.status(200).json({});
   }
