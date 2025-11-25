@@ -114,7 +114,7 @@ export class QueriesRepository {
           db_table,
           start_time
       ORDER BY
-          average_duration_ms DESC
+          max_duration_ms DESC
       LIMIT 10;
     `;
 
