@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "name": "Matheus Moreira Militão",
-  "email": "matheus@gmail.com",
+  "email": "eriks@gmail.com",
   "password": "12345678"
 }
 
@@ -21,3 +21,13 @@ GET {{baseUrl}}/projects/{{projectId}}
 
 ### Delete Project
 DELETE {{baseUrl}}/projects/{{projectId}}
+
+
+### auth
+POST {{baseUrl}}/users/auth
+Content-Type: application/json
+
+{
+  "email": "matheus@gmail.com",
+  "password": "12345678"
+}

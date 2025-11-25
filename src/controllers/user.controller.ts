@@ -1,7 +1,5 @@
 import { DELETE, GET, POST, route } from 'awilix-express';
 import { Request, Response } from 'express';
-import { QueriesService } from '../services/queries.service';
-import { RedisClientType } from '@redis/client';
 import { UserService } from '../services/user.service';
 
 @route('/users')
@@ -9,6 +7,17 @@ export class UserController {
   userService: UserService;
   constructor({ userService }) {
     this.userService = userService;
+  }
+
+
+  @route('/auth')
+  @POST()
+  async authenticate(request: Request, response: Response) {
+    const { email, password } = request.body;
+
+    const authResult = await this.userService.authenticate(email, password);
+
+    return response.status(200).json(authResult);
   }
 
   @route('/:id')

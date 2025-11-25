@@ -18,6 +18,31 @@ export class UserService {
     this.clientRedis = clientRedis;
   }
 
+  async authenticate(email: string, password: string) {
+    const user = await this.userRepository.findByEmailWithoutIdEmpresa(email);
+
+    if (!user) {
+      throw new NotFound('User not found');
+    }
+
+    const isPasswordValid = await this.hashService.compareHash(user.password, password);
+
+    if (!isPasswordValid) {
+      throw new NotFound('Invalid credentials');
+    }
+
+    user.password = '*******';
+    user.idEmpresa = undefined;
+
+    return {
+      user,
+      token: generateToken({
+        idEmpresa: user.idEmpresa,
+        idUser: user.id,
+      }),
+    };
+  }
+
   async create(data: UserEntity) {
     const user = new UserEntity({
       ...data,

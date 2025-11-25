@@ -2,13 +2,16 @@ import { GET, route } from 'awilix-express';
 import { Request, Response } from 'express';
 
 import { RequestsService } from '../services/requests.service';
+import { RedisClientType } from '@redis/client';
 
 @route('/requests')
 export class RequestsController {
   requestsService: RequestsService;
+  clientRedis: RedisClientType;
 
-  constructor({ requestsService }) {
+  constructor({ requestsService, clientRedis }) {
     this.requestsService = requestsService;
+    this.clientRedis = clientRedis;
   }
 
   @route('/recent')
@@ -17,7 +20,17 @@ export class RequestsController {
     const idEmpresa = request.idEmpresa;
     const { httpMethod, hour } = request.query as { httpMethod?: string; hour: string };
 
+    const key = `recent-requests-${idEmpresa}-${hour}-${httpMethod}`;
+
+    const cache = await this.clientRedis.get(key);
+
+    if (cache) {
+      return response.status(200).json(JSON.parse(cache as string));
+    }
+
     const data = await this.requestsService.recentRequests(idEmpresa, +hour, httpMethod?.toUpperCase());
+
+    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
@@ -28,7 +41,17 @@ export class RequestsController {
     const idEmpresa = request.idEmpresa;
     const { httpMethod, hour } = request.query as { httpMethod?: string; hour: string };
 
+    const key = `slowest-requests-${idEmpresa}-${hour}-${httpMethod}`;
+
+    const cache = await this.clientRedis.get(key);
+
+    if (cache) {
+      return response.status(200).json(JSON.parse(cache as string));
+    }
+
     const data = await this.requestsService.getSlowestRequests(idEmpresa, +hour, httpMethod?.toUpperCase());
+
+    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
@@ -40,7 +63,17 @@ export class RequestsController {
 
     const { httpMethod, hour } = request.query as { httpMethod?: string; hour: string };
 
+    const key = `metrics-requests-${idEmpresa}-${hour}-${httpMethod}`;
+
+    const cache = await this.clientRedis.get(key);
+
+    if (cache) {
+      return response.status(200).json(JSON.parse(cache as string));
+    }
+
     const data = await this.requestsService.getMetrics(idEmpresa, +hour, httpMethod?.toUpperCase());
+
+    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
