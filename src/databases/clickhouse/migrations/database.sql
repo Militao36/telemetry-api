@@ -127,7 +127,6 @@ GROUP BY
 --- Fim para tabela materializada para sumarização hourly
 
 ---- INICIo criacação de slowest query
--- Primeiro, apague a tabela e a view antigas para recriá-las
 
 CREATE TABLE telemetry.spans_database_slowest
 (
@@ -180,3 +179,103 @@ GROUP BY
     db_table,
     start_time,
     db_statement;
+-------------- Fim criação de slowest query
+
+--------- inico criação http slowest
+
+CREATE TABLE telemetry.spans_http_slowest_by_target
+(
+    -- Colunas para agrupar (GROUP BY)
+    id_empresa LowCardinality(FixedString(36)),
+    http_method LowCardinality(String),
+    http_target String,
+
+    -- Coluna para ordenar e encontrar o máximo
+    latest_start_time DateTime64(9),
+
+    -- Colunas que queremos guardar do span mais lento
+    -- CORREÇÃO: Usar AggregateFunction em vez de SimpleAggregateFunction
+    duration_ns AggregateFunction(argMax, UInt64, UInt64),
+    trace_id AggregateFunction(argMax, FixedString(32), UInt64),
+    span_id AggregateFunction(argMax, FixedString(16), UInt64),
+    start_time AggregateFunction(argMax, DateTime64(9), UInt64),
+    end_time AggregateFunction(argMax, DateTime64(9), UInt64),
+    http_status AggregateFunction(argMax, UInt32, UInt64),
+    service_name AggregateFunction(argMax, String, UInt64)
+)
+ENGINE = AggregatingMergeTree()
+PARTITION BY toDate(latest_start_time)
+ORDER BY (id_empresa, http_method, http_target);
+
+SELECT
+    argMaxMerge(trace_id) AS trace_id,
+    argMaxMerge(span_id) AS span_id,
+    argMaxMerge(duration_ns) AS duration_ns,
+    argMaxMerge(start_time) AS start_time,
+    argMaxMerge(end_time) AS end_time,
+    argMaxMerge(http_status) AS http_status,
+    argMaxMerge(service_name) AS service_name,
+    http_target,
+    http_method
+
+FROM telemetry.spans_http_slowest_by_target
+FINAL
+
+WHERE
+   latest_start_time >= now() - toIntervalHour(12)
+
+-- CORREÇÃO: Adicionar as chaves de agrupamento aqui
+GROUP BY
+    http_target,
+    http_method
+
+-- Ordenar pelo resultado da agregação
+ORDER BY duration_ns DESC
+LIMIT 10;
+
+
+
+CREATE TABLE telemetry.spans_http_metrics_by_minute
+(
+    -- Chaves de Agregação
+    time_bucket DateTime,
+    id_empresa LowCardinality(FixedString(36)),
+    http_method LowCardinality(String),
+    http_status UInt32,
+
+    -- Métricas Agregadas
+    -- Estado para count()
+    request_count AggregateFunction(count),
+    -- Estado para avg(duration_ns)
+    avg_duration AggregateFunction(avg, UInt64)
+)
+ENGINE = AggregatingMergeTree()
+PARTITION BY toDate(time_bucket)
+ORDER BY (id_empresa, http_method, http_status, time_bucket);
+
+
+
+CREATE MATERIALIZED VIEW telemetry.mv_spans_http_metrics_by_minute
+TO telemetry.spans_http_metrics_by_minute
+AS SELECT
+    -- Truncar o tempo para o minuto mais próximo
+    toStartOfMinute(spans_http.start_time) as time_bucket,
+    
+    -- Chaves de agrupamento
+    id_empresa,
+    http_method,
+    http_status,
+
+    -- Funções de estado para as métricas
+    countState() as request_count,
+    avgState(spans_http.duration_ns) as avg_duration
+FROM telemetry.spans_http
+GROUP BY
+    time_bucket,
+    id_empresa,
+    http_method,
+    http_status;
+
+
+
+    

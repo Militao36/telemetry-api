@@ -50,20 +50,29 @@ export class RequestsRepository {
 
   public async getSlowestRequests(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any[]> {
     const query = `
-      SELECT *
-      FROM (
-          SELECT
-              *,
-              row_number() OVER (
-                  PARTITION BY http_target
-                  ORDER BY duration_ns DESC
-              ) AS rnk
-          FROM telemetry.spans_http
-          WHERE id_empresa = '${idEmpresa}'
-          ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
-          and start_time >= now() - toIntervalHour(${hour})
-      )
-      WHERE rnk = 1
+      SELECT
+          argMaxMerge(trace_id) AS trace_id,
+          argMaxMerge(span_id) AS span_id,
+          argMaxMerge(duration_ns) AS duration_ns,
+          argMaxMerge(start_time) AS start_time,
+          argMaxMerge(end_time) AS end_time,
+          argMaxMerge(http_status) AS http_status,
+          argMaxMerge(service_name) AS service_name,
+          http_target,
+          http_method
+
+      FROM telemetry.spans_http_slowest_by_target
+      FINAL
+
+      WHERE id_empresa = '${idEmpresa}'
+      ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
+      and start_time >= now() - toIntervalHour(${hour})
+
+      GROUP BY
+          http_target,
+          http_method
+
+      -- Ordenar pelo resultado da agregação
       ORDER BY duration_ns DESC
       LIMIT 10;
     `;
@@ -77,6 +86,7 @@ export class RequestsRepository {
 
     return rows.data.map((row: any) => {
       return {
+        traceId: row.trace_id,
         spanId: row.span_id,
         httpMethod: row.http_method,
         httpTarget: row.http_target,
@@ -84,6 +94,7 @@ export class RequestsRepository {
         startTime: row.start_time,
         endTime: row.end_time,
         httpStatus: row.http_status,
+        serviceName: row.service_name,
       };
     });
   }
@@ -131,9 +142,10 @@ export class RequestsRepository {
     const query = `
       SELECT
           http_status,
-          count() AS count,
-          avg(duration_ns) AS avg_ms
-      FROM telemetry.spans_http
+          countMerge(request_count) as count,
+          avgMerge(avg_duration) as avg_ms
+
+      FROM telemetry.spans_http_metrics_by_minute
       WHERE id_empresa = '${idEmpresa}'
       and start_time >= now() - toIntervalHour(${hour})
        ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}

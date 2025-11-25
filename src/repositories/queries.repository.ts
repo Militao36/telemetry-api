@@ -9,6 +9,7 @@ export class QueriesRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
+  // TODO
   async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
     const query = `
       SELECT 
@@ -48,6 +49,7 @@ export class QueriesRepository {
     }))[0];
   }
 
+  // TODO
   async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
     const query = `
       SELECT 
