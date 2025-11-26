@@ -30,7 +30,7 @@ export class RequestsController {
 
     const data = await this.requestsService.recentRequests(idEmpresa, +hour, httpMethod?.toUpperCase());
 
-    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
+    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
@@ -51,7 +51,7 @@ export class RequestsController {
 
     const data = await this.requestsService.getSlowestRequests(idEmpresa, +hour, httpMethod?.toUpperCase());
 
-    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
+    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
@@ -73,7 +73,7 @@ export class RequestsController {
 
     const data = await this.requestsService.getMetrics(idEmpresa, +hour, httpMethod?.toUpperCase());
 
-    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
+    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }

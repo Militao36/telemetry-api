@@ -29,7 +29,7 @@ export class DashController {
 
     const data = await this.dashService.reportRequests(idEmpresa, +hour);
 
-    await this.clientRedis.setEx(key, 60 * 5, JSON.stringify(data));
+    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
