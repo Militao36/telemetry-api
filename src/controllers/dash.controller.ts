@@ -19,17 +19,7 @@ export class DashController {
 
     const { hour = '12' } = request.query as { hour?: string };
 
-    const key = `dash-requests-${idEmpresa}-${hour}`;
-
-    const cache = await this.clientRedis.get(key);
-
-    if (cache) {
-      return response.status(200).json(JSON.parse(cache as string));
-    }
-
     const data = await this.dashService.reportRequests(idEmpresa, +hour);
-
-    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }

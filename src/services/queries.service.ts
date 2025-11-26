@@ -1,5 +1,6 @@
 import { orderBy } from 'lodash';
 import { QueriesRepository } from '../repositories/queries.repository';
+import { Cacheable } from '../decorators/Cacheable';
 
 export class QueriesService {
   queriesRepository: QueriesRepository;
@@ -8,6 +9,7 @@ export class QueriesService {
     this.queriesRepository = queriesRepository;
   }
 
+  @Cacheable({ ttl: 60 })
   public async reportQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
     const averageTime = await this.queriesRepository.avgQueryTimeByType(idEmpresa, hour, queryType);
 
@@ -39,6 +41,7 @@ export class QueriesService {
     };
   }
 
+  @Cacheable({ ttl: 60 })
   public async dashboardQueries(idEmpresa: string, hour: number) {
     const queriesPerTimeSeries = await this.queriesRepository.getQueriesPerTimeSeries(idEmpresa, hour);
 
@@ -47,6 +50,7 @@ export class QueriesService {
     };
   }
 
+  @Cacheable({ ttl: 60 })
   public async getTraces(idEmpresa: string, traceId: string) {
     const traces = await this.queriesRepository.getTraces(idEmpresa, traceId);
 

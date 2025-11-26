@@ -1,3 +1,4 @@
+import { Cacheable } from '../decorators/Cacheable';
 import { QueriesRepository } from '../repositories/queries.repository';
 import { RequestsRepository } from '../repositories/requests.repository';
 
@@ -31,6 +32,7 @@ export class SearchService {
     this.queriesRepository = queriesRepository;
   }
 
+  @Cacheable({ ttl: 60 })
   public async list(idEmpresa: string, qs: SearchFilters) {
     if (qs.type === 'HTTP') {
       return this.requestsRepository.list(idEmpresa, qs);

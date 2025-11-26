@@ -18,17 +18,7 @@ export class DashController {
     const idEmpresa = request.idEmpresa;
     const { hour, queryTy } = request.query;
 
-    const key = `queries-${idEmpresa}-${hour}-${queryTy}`;
-
-    const cache = await this.clientRedis.get(key);
-
-    if (cache) {
-      return response.status(200).json(JSON.parse(cache as string));
-    }
-
     const data = await this.queriesService.reportQueries(idEmpresa, +(hour || 720), queryTy as 'select' | 'insert' | 'update' | 'del' | 'all');
-
-    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
@@ -38,17 +28,7 @@ export class DashController {
   async dashboardQueries(request: Request, response: Response) {
     const idEmpresa = request.idEmpresa;
 
-    const key = `dashboard-queries-${idEmpresa}`;
-
-    const cache = await this.clientRedis.get(key);
-
-    if (cache) {
-      return response.status(200).json(JSON.parse(cache as string));
-    }
-
     const data = await this.queriesService.dashboardQueries(idEmpresa, +'12');
-
-    await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
 
     return response.status(200).json(data);
   }
