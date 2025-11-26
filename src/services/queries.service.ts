@@ -16,7 +16,11 @@ export class QueriesService {
     const slowesTypeUpdate = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'update', 10);
     const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'del', 10);
 
-    const slowestQuery = orderBy([slowesTypeSelect[0], slowesTypeInsert[0], slowesTypeUpdate[0], slowesTypeDelete[0]], ['durationMs'], ['desc'])[0];
+    const slowestQuery = orderBy(
+      [slowesTypeSelect[0], slowesTypeInsert[0], slowesTypeUpdate[0], slowesTypeDelete[0]],
+      ['durationMs'],
+      ['desc'],
+    ).slice(0, 1);
 
     const queryVolumeByType = await this.queriesRepository.queryVolumeByType(idEmpresa, hour);
     const queryVolumeByHours = await this.queriesRepository.getQueryVolumeByHours(idEmpresa, hour);
