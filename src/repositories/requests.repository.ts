@@ -13,15 +13,20 @@ export class RequestsRepository {
       SELECT
          *
       FROM telemetry.spans_http
-      WHERE id_empresa = '${idEmpresa}'
-      ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
-      and start_time >= now() - toIntervalHour(${hour})
+      WHERE id_empresa = {idEmpresa:String}
+      ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
+      and start_time >= now() - toIntervalHour({hour:Int32})
       ORDER BY start_time DESC
       LIMIT 10;
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        idEmpresa,
+        httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
+        hour,
+      },
       format: 'JSON',
     });
 
@@ -64,9 +69,9 @@ export class RequestsRepository {
       FROM telemetry.spans_http_slowest_by_target
       FINAL
 
-      WHERE id_empresa = '${idEmpresa}'
-      ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
-      and latest_start_time >= now() - toIntervalHour(${hour})
+      WHERE id_empresa = {idEmpresa:String}
+      ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
+      and latest_start_time >= now() - toIntervalHour({hour:Int32})
 
       GROUP BY
           http_target,
@@ -78,6 +83,11 @@ export class RequestsRepository {
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        idEmpresa,
+        httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
+        hour,
+      },
       format: 'JSON',
     });
 
@@ -103,14 +113,18 @@ export class RequestsRepository {
       SELECT
          *
       FROM telemetry.spans_http
-      WHERE id_empresa = '${idEmpresa}'
-      AND trace_id = '${traceId}'
-      or parent_span_id = '${traceId}'
-      or span_id = '${traceId}';
+      WHERE id_empresa = {idEmpresa:String}
+      AND trace_id = {traceId:String}
+      or parent_span_id = {traceId:String}
+      or span_id = {traceId:String};
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        idEmpresa,
+        traceId,
+      },
       format: 'JSON',
     });
 
@@ -144,15 +158,20 @@ export class RequestsRepository {
           countMerge(request_count) as count,
           avgMerge(avg_duration) as avg_ms
       FROM telemetry.spans_http_metrics_by_minute
-      WHERE id_empresa = '${idEmpresa}'
-      and time_bucket >= now() - toIntervalHour(${hour})
-       ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
+      WHERE id_empresa = {idEmpresa:String}
+      and time_bucket >= now() - toIntervalHour({hour:Int32})
+       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       GROUP BY http_status
       ORDER BY count DESC;
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        idEmpresa,
+        hour,
+        httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
+      },
       format: 'JSON',
     });
 
@@ -169,33 +188,41 @@ export class RequestsRepository {
 
   public async list(idEmpresa: string, filters: SearchFilters): Promise<any[]> {
     const where: string[] = [];
+    const queryParams: Record<string, any> = { idEmpresa };
 
     if (filters.httpFilter?.method) {
-      where.push(`http_method = '${filters.httpFilter.method}'`);
+      where.push(`http_method = {method:String}`);
+      queryParams.method = filters.httpFilter.method;
     }
 
     if (filters.httpFilter?.statusCode) {
-      where.push(`http_status = ${filters.httpFilter.statusCode}`);
+      where.push(`http_status = {statusCode:Int32}`);
+      queryParams.statusCode = filters.httpFilter.statusCode;
     }
 
     if (filters.httpFilter?.pathContains) {
-      where.push(`http_target ILIKE '%${filters.httpFilter.pathContains}%'`);
+      where.push(`http_target ILIKE {pathContains:String}`);
+      queryParams.pathContains = `%${filters.httpFilter.pathContains}%`;
     }
 
     if (filters.environment) {
-      where.push(`service_environment = '${filters.environment}'`);
+      where.push(`service_environment = {environment:String}`);
+      queryParams.environment = filters.environment;
     }
 
     if (filters.traceId) {
-      where.push(`trace_id = '${filters.traceId}'`);
+      where.push(`trace_id = {traceId:String}`);
+      queryParams.traceId = filters.traceId;
     }
 
     if (filters.startTimeFrom) {
-      where.push(`start_time >= parseDateTime64BestEffort('${filters.startTimeFrom}')`);
+      where.push(`start_time >= parseDateTime64BestEffort({startTimeFrom:String})`);
+      queryParams.startTimeFrom = filters.startTimeFrom;
     }
 
     if (filters.startTimeTo) {
-      where.push(`start_time <= parseDateTime64BestEffort('${filters.startTimeTo}')`);
+      where.push(`start_time <= parseDateTime64BestEffort({startTimeTo:String})`);
+      queryParams.startTimeTo = filters.startTimeTo;
     }
 
     const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
@@ -205,13 +232,16 @@ export class RequestsRepository {
         *
       FROM telemetry.spans_http
       ${whereClause}
-      ${where.length ? 'AND' : 'WHERE'} id_empresa = '${idEmpresa}'
+      ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
       ORDER BY start_time DESC
-      LIMIT ${filters.limit ?? 20}
-      OFFSET ${filters.offset ?? 0}
+      LIMIT {limit:Int32}
+      OFFSET {offset:Int32}
     `;
 
-    const result = await this.clickHouseClient.query({ query, format: 'JSONEachRow' });
+    queryParams.limit = filters.limit ?? 20;
+    queryParams.offset = filters.offset ?? 0;
+
+    const result = await this.clickHouseClient.query({ query, query_params: queryParams, format: 'JSONEachRow' });
 
     const rows = (await result.json()) as any;
 

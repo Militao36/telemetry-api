@@ -20,13 +20,18 @@ export class QueriesRepository {
         quantile(0.95)(duration_ns) / 1e6 AS p95_ms,
         quantile(0.99)(duration_ns) / 1e6 AS p99_ms
       FROM "telemetry"."spans_database"
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      ${queryType !== 'all' ? `and db_statement like '${queryType}%'` : ''}
-      and id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      ${queryType !== 'all' ? `and db_statement like {queryType:String}` : ''}
+      and id_empresa = {idEmpresa:String}
     `;
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
+      query_params: {
+        hour,
+        queryType: queryType !== 'all' ? `${queryType}%` : undefined,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -60,15 +65,20 @@ export class QueriesRepository {
         quantile(0.95)(duration_ns) / 1e6 AS p95_ms,
         quantile(0.99)(duration_ns) / 1e6 AS p99_ms
       FROM "telemetry"."spans_database"
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      ${queryType !== 'all' ? `and db_statement like '${queryType}%'` : ''}
-      and id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      ${queryType !== 'all' ? `and db_statement like {queryType:String}` : ''}
+      and id_empresa = {idEmpresa:String}
       GROUP BY interval_hour
       ORDER BY interval_hour ASC
     `;
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
+      query_params: {
+        hour,
+        queryType: queryType !== 'all' ? `${queryType}%` : undefined,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -107,10 +117,10 @@ export class QueriesRepository {
         argMaxMerge(slowest_span_id) AS slowest_span_id
       FROM
           telemetry.spans_database_slowest
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND db_statement <> '' 
-      ${queryType !== 'all' ? `AND db_statement like '${queryType}%'` : ''}
-      AND id_empresa = '${idEmpresa}'
+      ${queryType !== 'all' ? `AND db_statement like {queryType:String}` : ''}
+      AND id_empresa = {idEmpresa:String}
       GROUP BY
           db_statement,
           db_table,
@@ -122,6 +132,11 @@ export class QueriesRepository {
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
+      query_params: {
+        hour,
+        queryType: queryType !== 'all' ? `${queryType}%` : undefined,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -152,14 +167,18 @@ export class QueriesRepository {
           query_type,
           countMerge(total_queries) AS total
       FROM telemetry.spans_database_hourly_summary
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      and id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      and id_empresa = {idEmpresa:String}
       GROUP BY query_type
       ORDER BY total DESC;
     `;
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -186,8 +205,8 @@ export class QueriesRepository {
         quantileMerge(0.95)(p95_state) AS p95,
         quantileMerge(0.99)(p99_state) AS p99
       FROM telemetry.spans_database_hourly_summary
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      AND id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      AND id_empresa = {idEmpresa:String}
       GROUP BY
           start_time,
           id_empresa,
@@ -197,6 +216,10 @@ export class QueriesRepository {
 
     const resultSet = await this.clickHouseClient.query({
       query: query,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -245,14 +268,18 @@ export class QueriesRepository {
           countMerge(total_queries) AS total_queries,
           avgMerge(duration_state) / 1e6 AS avg_ms
       FROM telemetry.spans_database_hourly_summary
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      AND id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      AND id_empresa = {idEmpresa:String}
       GROUP BY start_time
       ORDER BY start_time ASC;
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -272,14 +299,18 @@ export class QueriesRepository {
       SELECT
          *
       FROM telemetry.spans_database
-      WHERE id_empresa = '${idEmpresa}'
-      AND trace_id = '${traceId}'
-      or parent_span_id = '${traceId}'
-      or span_id = '${traceId}';
+      WHERE id_empresa = {idEmpresa:String}
+      AND trace_id = {traceId:String}
+      or parent_span_id = {traceId:String}
+      or span_id = {traceId:String};
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        idEmpresa,
+        traceId,
+      },
       format: 'JSON',
     });
 
@@ -305,29 +336,36 @@ export class QueriesRepository {
 
   public async list(idEmpresa: string, filters: SearchFilters): Promise<any[]> {
     const where: string[] = [];
+    const queryParams: Record<string, any> = { idEmpresa };
 
     if (filters.databaseFilter?.queryContains) {
-      where.push(`db_statement ILIKE '%${filters.databaseFilter.queryContains}%'`);
+      where.push(`db_statement ILIKE {queryContains:String}`);
+      queryParams.queryContains = `%${filters.databaseFilter.queryContains}%`;
     }
 
     if (filters.databaseFilter?.tableName) {
-      where.push(`db_table = '${filters.databaseFilter.tableName}'`);
+      where.push(`db_table = {tableName:String}`);
+      queryParams.tableName = filters.databaseFilter.tableName;
     }
 
     if (filters.environment) {
-      where.push(`service_environment = '${filters.environment}'`);
+      where.push(`service_environment = {environment:String}`);
+      queryParams.environment = filters.environment;
     }
 
     if (filters.traceId) {
-      where.push(`trace_id = '${filters.traceId}'`);
+      where.push(`trace_id = {traceId:String}`);
+      queryParams.traceId = filters.traceId;
     }
 
     if (filters.startTimeFrom) {
-      where.push(`start_time >= parseDateTime64BestEffort('${filters.startTimeFrom}')`);
+      where.push(`start_time >= parseDateTime64BestEffort({startTimeFrom:String})`);
+      queryParams.startTimeFrom = filters.startTimeFrom;
     }
 
     if (filters.startTimeTo) {
-      where.push(`start_time <= parseDateTime64BestEffort('${filters.startTimeTo}')`);
+      where.push(`start_time <= parseDateTime64BestEffort({startTimeTo:String})`);
+      queryParams.startTimeTo = filters.startTimeTo;
     }
 
     const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
@@ -349,13 +387,16 @@ export class QueriesRepository {
         db_name
         FROM telemetry.spans_database
         ${whereClause}
-        ${where.length ? 'AND' : 'WHERE'} id_empresa = '${idEmpresa}'
+        ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
       ORDER BY start_time DESC
-      LIMIT ${filters.limit ?? 20}
-      OFFSET ${filters.offset ?? 0}
+      LIMIT {limit:Int32}
+      OFFSET {offset:Int32}
     `;
 
-    const result = await this.clickHouseClient.query({ query, format: 'JSONEachRow' });
+    queryParams.limit = filters.limit ?? 20;
+    queryParams.offset = filters.offset ?? 0;
+
+    const result = await this.clickHouseClient.query({ query, query_params: queryParams, format: 'JSONEachRow' });
 
     const rows = (await result.json()) as any;
 

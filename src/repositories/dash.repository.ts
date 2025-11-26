@@ -19,7 +19,7 @@ export class DashRepository {
 
   public async getMetrics(idEmpresa: string, hour: number): Promise<MetricsResult> {
     const query = `
-     SELECT
+      SELECT
         count(*) AS total_requests,
         countIf(http_status >= 500) AS total_errors,
         avg(duration_ns) / 1e6 AS avg_ms,
@@ -28,12 +28,16 @@ export class DashRepository {
         quantile(0.95)(duration_ns) / 1e6 AS p95_ms,
         quantile(0.99)(duration_ns) / 1e6 AS p99_ms
       FROM telemetry.spans_http
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      AND id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      AND id_empresa = {idEmpresa:String}
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -60,8 +64,8 @@ export class DashRepository {
         count(*) AS total_requests,
         avg(duration_ns) / 1e6 AS avg_ms
       FROM telemetry.spans_http
-      WHERE start_time >= now() - toIntervalHour(${hour})
-      AND id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - toIntervalHour({hour:Int32})
+      AND id_empresa = {idEmpresa:String}
       GROUP BY path, http_method
       ORDER BY total_requests DESC
       LIMIT 10
@@ -69,6 +73,10 @@ export class DashRepository {
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -91,15 +99,20 @@ export class DashRepository {
           count(*) AS total_requests,
           avg(duration_ns) / 1e6 AS avg_ms
       FROM telemetry.spans_http
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      AND id_empresa = '${idEmpresa}'
-      ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      AND id_empresa = {idEmpresa:String}
+      ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       GROUP BY time
       ORDER BY time ASC;
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        hour,
+        idEmpresa,
+        httpMethod,
+      },
       format: 'JSON',
     });
 
@@ -123,14 +136,18 @@ export class DashRepository {
           start_time,
           end_time
       FROM telemetry.spans_http
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      AND id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      AND id_empresa = {idEmpresa:String}
       ORDER BY duration_ns DESC
       LIMIT 20;
     `;
 
     const result = await this.clickHouseClient.query({
       query,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 
@@ -152,12 +169,16 @@ export class DashRepository {
       SELECT
         count(*) AS total_queries
       FROM telemetry.spans_database
-      WHERE start_time >= now() - INTERVAL ${hour} HOUR
-      AND id_empresa = '${idEmpresa}'
+      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
+      AND id_empresa = {idEmpresa:String}
     `;
 
     const result = await this.clickHouseClient.query({
       query: queries,
+      query_params: {
+        hour,
+        idEmpresa,
+      },
       format: 'JSON',
     });
 

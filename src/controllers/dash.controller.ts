@@ -15,12 +15,21 @@ export class DashController {
 
   @GET()
   async reportRequests(request: Request, response: Response) {
-    const idEmpresa = request.idEmpresa;
+    try {
+      const idEmpresa = request.idEmpresa;
 
-    const { hour = '12' } = request.query as { hour?: string };
+      const { hour = '12' } = request.query as { hour?: string };
 
-    const data = await this.dashService.reportRequests(idEmpresa, +hour);
+      if (isNaN(+hour)) {
+        return response.status(400).json({ error: 'Hour must be a number' });
+      }
 
-    return response.status(200).json(data);
+      const data = await this.dashService.reportRequests(idEmpresa, +hour);
+
+      return response.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      return response.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 }
