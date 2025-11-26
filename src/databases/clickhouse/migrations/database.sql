@@ -207,6 +207,32 @@ ENGINE = AggregatingMergeTree()
 PARTITION BY toDate(latest_start_time)
 ORDER BY (id_empresa, http_method, http_target);
 
+
+CREATE MATERIALIZED VIEW telemetry.mv_spans_http_slowest_by_target
+TO telemetry.spans_http_slowest_by_target
+AS SELECT
+    id_empresa,
+    http_method,
+    http_target,
+
+    -- CORREÇÃO APLICADA AQUI:
+    -- Especificar explicitamente "max" da coluna da tabela de origem.
+    max(spans_http.start_time) as latest_start_time,
+    
+    -- Todas as outras agregações também devem ser explícitas.
+    argMaxState(spans_http.duration_ns, spans_http.duration_ns) as duration_ns,
+    argMaxState(spans_http.trace_id, spans_http.duration_ns) as trace_id,
+    argMaxState(spans_http.span_id, spans_http.duration_ns) as span_id,
+    argMaxState(spans_http.start_time, spans_http.duration_ns) as start_time,
+    argMaxState(spans_http.end_time, spans_http.duration_ns) as end_time,
+    argMaxState(spans_http.http_status, spans_http.duration_ns) as http_status,
+    argMaxState(spans_http.service_name, spans_http.duration_ns) as service_name
+FROM telemetry.spans_http
+GROUP BY
+    id_empresa,
+    http_method,
+    http_target;
+    
 SELECT
     argMaxMerge(trace_id) AS trace_id,
     argMaxMerge(span_id) AS span_id,

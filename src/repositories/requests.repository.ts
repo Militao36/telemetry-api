@@ -66,13 +66,12 @@ export class RequestsRepository {
 
       WHERE id_empresa = '${idEmpresa}'
       ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
-      and start_time >= now() - toIntervalHour(${hour})
+      and latest_start_time >= now() - toIntervalHour(${hour})
 
       GROUP BY
           http_target,
           http_method
 
-      -- Ordenar pelo resultado da agregação
       ORDER BY duration_ns DESC
       LIMIT 10;
     `;
