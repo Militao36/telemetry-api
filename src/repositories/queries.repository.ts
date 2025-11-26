@@ -204,7 +204,7 @@ export class QueriesRepository {
 
     const grouped = {};
 
-    for (const item of _.orderBy(result.data, 'start_time', 'desc') as any[]) {
+    for (const item of _.orderBy(result.data, 'start_time', 'asc') as any[]) {
       const interval = item.start_time;
 
       if (!grouped[interval]) {
