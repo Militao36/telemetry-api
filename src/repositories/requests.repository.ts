@@ -144,10 +144,9 @@ export class RequestsRepository {
           http_status,
           countMerge(request_count) as count,
           avgMerge(avg_duration) as avg_ms
-
       FROM telemetry.spans_http_metrics_by_minute
       WHERE id_empresa = '${idEmpresa}'
-      and start_time >= now() - toIntervalHour(${hour})
+      and time_bucket >= now() - toIntervalHour(${hour})
        ${httpMethod !== 'ALL' ? `and http_method = '${httpMethod}'` : ''}
       GROUP BY http_status
       ORDER BY count DESC;
