@@ -138,16 +138,20 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
           const db_user = findAttr(span, 'db.user');
           const db_name = findAttr(span, 'db.name');
 
-          spans_database.push({
-            ...baseFields,
-            db_system: db_system as any as any,
-            db_statement: db_statement || (null as any),
-            db_duration: db_duration ? Number(db_duration) : (duration_ns as any),
-            db_table: db_table || (null as any),
-            db_operation: db_statement ? db_statement.trim().split(' ')[0].toLowerCase().trim() : (null as any),
-            db_user: db_user || (null as any),
-            db_name: db_name || (null as any),
-          });
+          const operationAccepted = ['select', 'update', 'insert', 'delete', 'create', 'drop', 'alter', 'truncate', 'begin', 'commit', 'rollback'];
+
+          if (operationAccepted.includes(db_statement.trim().split(' ')[0].toLowerCase().trim())) {
+            spans_database.push({
+              ...baseFields,
+              db_system: db_system as any as any,
+              db_statement: db_statement || (null as any),
+              db_duration: db_duration ? Number(db_duration) : (duration_ns as any),
+              db_table: db_table || (null as any),
+              db_operation: db_statement ? db_statement.trim().split(' ')[0].toLowerCase().trim() : (null as any),
+              db_user: db_user || (null as any),
+              db_name: db_name || (null as any),
+            });
+          }
         }
       }
     }
