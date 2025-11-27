@@ -104,10 +104,10 @@ SELECT
     id_empresa,
 
     multiIf(
-        db_operation LIKE 'select%', 'SELECT',
-        db_operation LIKE 'insert%', 'INSERT',
-        db_operation LIKE 'update%', 'UPDATE',
-        db_operation LIKE 'del%', 'DEL',
+        db_operation = 'select', 'SELECT',
+        db_operation = 'insert', 'INSERT',
+        db_operation = 'update', 'UPDATE',
+        db_operation = 'del', 'DEL',
         'OTHER'
     ) AS query_type,
 

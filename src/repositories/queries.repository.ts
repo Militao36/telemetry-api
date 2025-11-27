@@ -240,7 +240,7 @@ export class QueriesRepository {
         };
       }
 
-      switch (item.query_type) {
+      switch (String(item.query_type).toUpperCase()) {
         case 'SELECT':
           grouped[interval].selects += item.total_queries;
           break;
