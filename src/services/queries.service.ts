@@ -19,7 +19,7 @@ export class QueriesService {
     const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'del', 10);
 
     const slowestQuery = orderBy(
-      [slowesTypeSelect[0], slowesTypeInsert[0], slowesTypeUpdate[0], slowesTypeDelete[0]],
+      [slowesTypeSelect[0], slowesTypeInsert[0], slowesTypeUpdate[0], slowesTypeDelete[0]].filter((e) => !!e),
       ['durationMs'],
       ['desc'],
     ).slice(0, 1);
