@@ -7,9 +7,10 @@
 # @name createProject
 POST {{baseUrl}}/projects
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "name": "BMS Otica Backend",
+  "name": "ZORDON API",
   "description": "Descrição do projeto de teste",
   "enviroment": "production",
   "languageOrFramework": "Node.js"

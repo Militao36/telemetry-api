@@ -4,7 +4,8 @@ drop table spans_database_slowest;
 drop table spans_http;
 drop view spans_agg_mv;
 drop view spans_database_mv;
-
+drop table spans_http_metrics_by_minute;
+drop table spans_http_slowest_by_target
 
 CREATE TABLE telemetry.spans_http 
 (
