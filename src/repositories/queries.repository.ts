@@ -10,7 +10,7 @@ export class QueriesRepository {
   }
 
   // TODO
-  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
+  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
     const query = `
       SELECT 
         count(*) AS total_queries,
@@ -55,7 +55,7 @@ export class QueriesRepository {
   }
 
   // TODO
-  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
+  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
     const query = `
       SELECT 
         toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,
