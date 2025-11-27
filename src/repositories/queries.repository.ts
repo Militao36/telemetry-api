@@ -21,7 +21,7 @@ export class QueriesRepository {
         quantile(0.99)(duration_ns) / 1e6 AS p99_ms
       FROM "telemetry"."spans_database"
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
-      ${queryType !== 'all' ? `and db_statement like {queryType:String}` : ''}
+      ${queryType !== 'all' ? `and db_operation = {queryType:String}` : ''}
       and id_empresa = {idEmpresa:String}
     `;
 
@@ -29,7 +29,7 @@ export class QueriesRepository {
       query: query,
       query_params: {
         hour,
-        queryType: queryType !== 'all' ? `${queryType}%` : undefined,
+        queryType: queryType !== 'all' ? `${queryType}` : undefined,
         idEmpresa,
       },
       format: 'JSON',
@@ -119,7 +119,7 @@ export class QueriesRepository {
           telemetry.spans_database_slowest
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND db_statement <> '' 
-      ${queryType !== 'all' ? `AND db_statement like {queryType:String}` : ''}
+      ${queryType !== 'all' ? `AND db_operation = {queryType:String}` : ''}
       AND id_empresa = {idEmpresa:String}
       GROUP BY
           db_statement,
@@ -134,7 +134,7 @@ export class QueriesRepository {
       query: query,
       query_params: {
         hour,
-        queryType: queryType !== 'all' ? `${queryType}%` : undefined,
+        queryType: queryType !== 'all' ? `${queryType}` : undefined,
         idEmpresa,
       },
       format: 'JSON',

@@ -9,7 +9,7 @@ export class QueriesService {
     this.queriesRepository = queriesRepository;
   }
 
-  @Cacheable({ ttl: 60 })
+  // @Cacheable({ ttl: 60 })
   public async reportQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
     const averageTime = await this.queriesRepository.avgQueryTimeByType(idEmpresa, hour, queryType);
 
