@@ -10,6 +10,17 @@ export class UserController {
   }
 
 
+  @route('/me')
+  @GET()
+  async getMe(request: Request, response: Response) {
+    const idEmpresa = request.idEmpresa;
+    const idUser = request.idUser;
+
+    const user = await this.userService.findById(idEmpresa, idUser);
+
+    return response.status(200).json(user);
+  }
+
   @route('/auth')
   @POST()
   async authenticate(request: Request, response: Response) {
