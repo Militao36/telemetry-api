@@ -7,7 +7,7 @@ import { UserService } from '../services/user.service';
 import { ProjectService } from '../services/project.service';
 
 export async function auth(req: Request, res: Response, next: NextFunction): Promise<any> {
-  const excludes = ['/api/v1/users','/api/v1/users/auth'];
+  const excludes = ['/api/v1/users', '/api/v1/users/auth'];
 
   if (excludes.includes(req.url)) {
     next();
