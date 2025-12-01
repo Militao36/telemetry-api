@@ -103,6 +103,11 @@ export function normalizeLog(idProject: string, idEmpresa: string, raw: Resource
         const exceptionMessage = logAttributes['exception.message'] as string || '';
         const exceptionStacktrace = logAttributes['exception.stacktrace'] as string || '';
 
+
+        if (!logRecord.traceId || !logRecord.spanId) {
+          return null
+        }
+
         return {
           id_project: idProject,
           id_empresa: idEmpresa,
@@ -127,7 +132,7 @@ export function normalizeLog(idProject: string, idEmpresa: string, raw: Resource
           exception_message: exceptionMessage,
           exception_stacktrace: exceptionStacktrace,
         }
-      })
+      }).filter(Boolean)
     })
   })
 }

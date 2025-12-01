@@ -79,6 +79,10 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
         const spanId = span.span_id || span.spanId;
         const parentSpanId = span.parent_span_id || span.parentSpanId || '0000000000000000';
 
+        if (!traceId || !spanId) {
+          continue;
+        }
+
         const startNano = span.start_time_unix_nano || span.startTimeUnixNano;
         const endNano = span.end_time_unix_nano || span.endTimeUnixNano;
 
