@@ -1,6 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express'
 
 function errorHandler (err: any, req: Request, res: Response, next: NextFunction): void {
+  console.log(err)
   if (err?.message?.includes('Cannot delete or update a parent row')) {
     res.status(400).json({
       message: 'Esse registro não pode ser deletado, favor deletar os items dele antes.'
