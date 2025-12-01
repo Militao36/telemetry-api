@@ -23,7 +23,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
   if (authHeaders) {
     const token = authHeaders.split(' ')[1];
 
-    if (req.url === '/api/v1/traces' && req.method.toLowerCase() === 'post') {
+    if (['/api/v1/traces', '/api/v1/logs'].includes(req.url) && req.method.toLowerCase() === 'post') {
       const project = await container.resolve<ProjectService>('projectService').findByToken(token);
 
       if (project.token === null || project.token !== token) {

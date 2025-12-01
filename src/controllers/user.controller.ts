@@ -9,7 +9,6 @@ export class UserController {
     this.userService = userService;
   }
 
-
   @route('/me')
   @GET()
   async getMe(request: Request, response: Response) {

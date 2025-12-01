@@ -3,12 +3,12 @@ import { RedisClientType } from '@redis/client';
 import { Logger } from 'pino';
 
 import { LIMIT_ITEM_QUEUE_DEFAULT } from '../env';
-import { ADD_ITEM_SCRIPT } from '../databases/redis/lua';
-import { NormalizedLog, RawLog } from '../queues/bull/utils/normalizeLog';
+import { ADD_LOG_SCRIPT } from '../databases/redis/lua/log';
+import { NormalizedLog, RawLog, ResourceLog } from '../queues/bull/utils/normalizeLog';
 
 export class LogService {
   queueLogs: Queue;
-  normalizeLog: (logs: RawLog[]) => Array<NormalizedLog>;
+  normalizeLog: (idProject: string, idEmpresa: string, logs: RawLog[] | ResourceLog[]) => Array<NormalizedLog>;
   clientRedis: RedisClientType;
   logger: Logger;
   LIMIT_ITEM_QUEUE: number;
@@ -21,8 +21,8 @@ export class LogService {
     this.logger = logger;
   }
 
-  async create(idEmpresa: string, logsRaw: Array<Record<string, any>>) {
-    const logs = this.normalizeLog(logsRaw as any);
+  async create(idEmpresa: string, idProject: string, logsRaw: Array<Record<string, any>>) {
+    const logs = this.normalizeLog(idProject, idEmpresa, logsRaw as any);
 
     if (logs.length === 0) {
       return;
@@ -32,7 +32,7 @@ export class LogService {
     const logsKey = `log_logs:${idEmpresa}`;
 
     try {
-      const result = (await this.clientRedis.eval(ADD_ITEM_SCRIPT, {
+      const result = (await this.clientRedis.eval(ADD_LOG_SCRIPT, {
         keys: [countKey, logsKey],
         arguments: [this.LIMIT_ITEM_QUEUE.toString(), JSON.stringify(logs), logs.length.toString()],
       })) as [number, string];
@@ -40,17 +40,18 @@ export class LogService {
       const [shouldQueue, logsToQueue] = result;
 
       if (shouldQueue === 1 && logsToQueue) {
-        const parsedSpans = JSON.parse(logsToQueue);
+        const parsedLogs = JSON.parse(logsToQueue);
 
-        if (parsedSpans.length > 0) {
+        if (parsedLogs.length > 0) {
           await this.queueLogs.add({
             idEmpresa,
-            spans: parsedSpans,
+            idProject,
+            logs: parsedLogs,
           });
         }
       }
     } catch (error) {
-      this.logger.error(`Error processing spans for company ${idEmpresa}: ${error}`);
+      this.logger.error(`Error processing logs for company ${idEmpresa}: ${error}`);
       throw error;
     }
   }

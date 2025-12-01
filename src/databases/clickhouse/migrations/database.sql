@@ -303,6 +303,42 @@ GROUP BY
     http_method,
     http_status;
 
+CREATE TABLE telemetry.logs
+(
+    -- Colunas para identificação e particionamento
+    id_empresa LowCardinality(FixedString(36)),
+    project_id LowCardinality(FixedString(36)),
+
+    -- Colunas do Log Normalizado
+    timestamp DateTime64(9, 'UTC'),
+    trace_id FixedString(32),
+    span_id FixedString(16),
+    severity_text LowCardinality(String),
+    severity_number UInt8,
+    service_name LowCardinality(String),
+    environment LowCardinality(String),
+    host LowCardinality(String),
+    app_version LowCardinality(String),
+    logger_name LowCardinality(String),
+    message String,
+    attributes String, -- Armazena o JSON como string
+    body String, -- Armazena o JSON do log original como string
+
+    -- Colunas de Exceção
+    exception_type String,
+    exception_message String,
+    exception_stacktrace String,
+
+    -- Coluna para TTL e ingestão
+    ingestion_time DateTime64(9, 'UTC') DEFAULT now('UTC')
+
+)
+ENGINE = MergeTree()
+PARTITION BY toDate(timestamp)
+ORDER BY (id_empresa, project_id, severity_number, timestamp)
+TTL timestamp + INTERVAL 30 DAY
+SETTINGS index_granularity = 8192;
 
 
-    
+
+

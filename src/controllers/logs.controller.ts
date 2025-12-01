@@ -1,13 +1,13 @@
 import { POST, route } from 'awilix-express';
 import { Request, Response } from 'express';
-import { TracesService } from '../services/trace.service';
+import { LogService } from '../services/log.service';
 
 @route('/logs')
-export class TraceController {
-  traceService: TracesService;
+export class LogsController {
+  logService: LogService;
 
-  constructor({ traceService }) {
-    this.traceService = traceService;
+  constructor({ logService }) {
+    this.logService = logService;
   }
 
   @route('/')
@@ -15,9 +15,9 @@ export class TraceController {
   async create(request: Request, response: Response) {
     const idEmpresa = request.idEmpresa;
 
-    const { resourceSpans } = request.body;
+    const { resourceLogs } = request.body;
 
-    await this.traceService.create(idEmpresa, request.idProject, resourceSpans);
+    await this.logService.create(idEmpresa, request.idProject, resourceLogs);
 
     return response.status(200).json({});
   }
