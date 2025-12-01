@@ -25,6 +25,7 @@ export class TraceJobProcessor implements QueueInterface {
         format: 'JSONEachRow',
       });
     }
+
     if (spans_http.length) {
       await this.clickHouseClient.insert({
         table: 'telemetry.spans_http',
