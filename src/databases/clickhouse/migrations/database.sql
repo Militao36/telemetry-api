@@ -1,11 +1,12 @@
 DROP table spans_database;
-drop table spans_database_hourly_summary;
-drop table spans_database_slowest;
-drop table spans_http;
-drop view spans_agg_mv;
-drop view spans_database_mv;
-drop table spans_http_metrics_by_minute;
-drop table spans_http_slowest_by_target
+DROP table spans_database_hourly_summary;
+DROP table spans_database_slowest;
+DROP table spans_http;
+DROP view spans_agg_mv;
+DROP view spans_database_mv;
+DROP view spans_http_metrics_by_minute;
+DROP view spans_http_slowest_by_target;
+DROP table telemetry.logs;
 
 CREATE TABLE telemetry.spans_http 
 (
@@ -233,34 +234,6 @@ GROUP BY
     id_empresa,
     http_method,
     http_target;
-    
-SELECT
-    argMaxMerge(trace_id) AS trace_id,
-    argMaxMerge(span_id) AS span_id,
-    argMaxMerge(duration_ns) AS duration_ns,
-    argMaxMerge(start_time) AS start_time,
-    argMaxMerge(end_time) AS end_time,
-    argMaxMerge(http_status) AS http_status,
-    argMaxMerge(service_name) AS service_name,
-    http_target,
-    http_method
-
-FROM telemetry.spans_http_slowest_by_target
-FINAL
-
-WHERE
-   latest_start_time >= now() - toIntervalHour(12)
-
--- CORREÇÃO: Adicionar as chaves de agrupamento aqui
-GROUP BY
-    http_target,
-    http_method
-
--- Ordenar pelo resultado da agregação
-ORDER BY duration_ns DESC
-LIMIT 10;
-
-
 
 CREATE TABLE telemetry.spans_http_metrics_by_minute
 (
