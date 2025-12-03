@@ -313,5 +313,24 @@ TTL timestamp + INTERVAL 30 DAY
 SETTINGS index_granularity = 8192;
 
 
+CREATE TABLE telemetry.logs_tokens
+(
+  id_empresa LowCardinality(FixedString(36)),
+  project_id LowCardinality(FixedString(36)),
+  log_key String,            -- id do log: pode ser concat(trace_id, span_id) ou outro identificador
+  token String,
+  timestamp DateTime64(9, 'UTC')
+)
+ENGINE = MergeTree()
+PARTITION BY toDate(timestamp)
+ORDER BY (id_empresa, project_id, token, timestamp);
 
-
+CREATE MATERIALIZED VIEW telemetry.mv_logs_tokens
+TO telemetry.logs_tokens AS
+SELECT
+  id_empresa,
+  project_id,
+  concat(trace_id, '-', span_id) AS log_key,
+  arrayJoin(arrayFilter(x -> x != '', splitByRegexp('[^\\p{L}\\p{N}]+', lower(message)))) AS token,
+  timestamp
+FROM telemetry.logs;
