@@ -1,0 +1,3 @@
+GET http://localhost:3333/api/v1/logs?message=ting
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjQzMzY4MDMsImV4cCI6MTc2NjkyODgwM30.Y5ZWrk6TWdYUUr40bprrE5UZmAe6BoR9ugZ_r0TVmw4

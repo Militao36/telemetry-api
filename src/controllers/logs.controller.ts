@@ -1,4 +1,4 @@
-import { POST, route } from 'awilix-express';
+import { GET, POST, route } from 'awilix-express';
 import { Request, Response } from 'express';
 import { LogService } from '../services/log.service';
 
@@ -20,5 +20,15 @@ export class LogsController {
     await this.logService.create(idEmpresa, request.idProject, resourceLogs);
 
     return response.status(200).json({});
+  }
+
+  @GET()
+  @route('/')
+  async list(request: Request, response: Response) {
+    const idEmpresa = request.idEmpresa;
+
+    const logs = await this.logService.list(idEmpresa, request.idProject, request.query);
+
+    return response.status(200).json(logs);
   }
 }
