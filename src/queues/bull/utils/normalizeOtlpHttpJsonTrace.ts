@@ -38,6 +38,7 @@ export interface NormalizedSpanDatabase {
 
   db_system: string;
   db_statement: string;
+  db_params: string;
   db_duration: number;
   db_table: string;
   db_operation: string;
@@ -137,6 +138,7 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
         } else if (spanType === 'Database') {
           const db_duration = findAttr(span, 'db.duration');
           const db_statement = findAttr(span, 'db.statement') as string;
+          const db_params = findAttr(span, 'db.statement.parameters');
           const db_system = findAttr(span, 'db.system');
           const db_table = findAttr(span, 'db.sql.table');
           const db_user = findAttr(span, 'db.user');
@@ -154,6 +156,7 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
               db_operation: db_statement ? db_statement.trim().split(' ')[0].toLowerCase().trim() : (null as any),
               db_user: db_user || (null as any),
               db_name: db_name || (null as any),
+              db_params: db_params ? JSON.stringify(db_params) : (null as any),
             });
           }
         }

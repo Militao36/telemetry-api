@@ -8,7 +8,7 @@ DROP view spans_http_metrics_by_minute;
 DROP view spans_http_slowest_by_target;
 DROP table telemetry.logs;
 
-CREATE TABLE telemetry.spans_http 
+CREATE TABLE telemetry.spans_http
 (
     id_empresa LowCardinality(FixedString(36)),
     project_id LowCardinality(FixedString(36)),
@@ -43,7 +43,7 @@ TTL start_time + INTERVAL 30 DAY
 SETTINGS index_granularity = 8192;
 
 
-CREATE TABLE telemetry.spans_database 
+CREATE TABLE telemetry.spans_database
 (
     id_empresa LowCardinality(FixedString(36)),
     project_id LowCardinality(FixedString(36)),
@@ -65,6 +65,7 @@ CREATE TABLE telemetry.spans_database
 
     db_system LowCardinality(String),
     db_statement String,
+    db_params String,
     db_duration UInt64,
     db_table LowCardinality(String),
     db_operation LowCardinality(String),
@@ -138,6 +139,7 @@ CREATE TABLE telemetry.spans_database_slowest
     project_id LowCardinality(FixedString(36)),
     db_table LowCardinality(String),
     db_statement String,
+    db_params String,
     start_time DateTime,
 
     -- Métricas agregadas
@@ -161,13 +163,12 @@ AS SELECT
     project_id,
     db_table,
     db_statement,
+    db_params,
     start_time,
-    -- Estados de Agregação
     countState() AS execution_count,
     sumState(db_duration) AS sum_duration,
     maxState(db_duration) AS max_duration,
 
-    -- Calcula o estado do argMax
     argMaxState(trace_id, db_duration) AS slowest_trace_id,
     argMaxState(span_id, db_duration) AS slowest_span_id
 FROM
@@ -180,7 +181,9 @@ GROUP BY
     project_id,
     db_table,
     start_time,
-    db_statement;
+    db_statement,
+    db_params
+;
 -------------- Fim criação de slowest query
 
 --------- inico criação http slowest
@@ -220,7 +223,7 @@ AS SELECT
     -- CORREÇÃO APLICADA AQUI:
     -- Especificar explicitamente "max" da coluna da tabela de origem.
     max(spans_http.start_time) as latest_start_time,
-    
+
     -- Todas as outras agregações também devem ser explícitas.
     argMaxState(spans_http.duration_ns, spans_http.duration_ns) as duration_ns,
     argMaxState(spans_http.trace_id, spans_http.duration_ns) as trace_id,
@@ -260,7 +263,7 @@ TO telemetry.spans_http_metrics_by_minute
 AS SELECT
     -- Truncar o tempo para o minuto mais próximo
     toStartOfMinute(spans_http.start_time) as time_bucket,
-    
+
     -- Chaves de agrupamento
     id_empresa,
     http_method,

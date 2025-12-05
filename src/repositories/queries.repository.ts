@@ -12,7 +12,7 @@ export class QueriesRepository {
   // TODO
   async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
     const query = `
-      SELECT 
+      SELECT
         count(*) AS total_queries,
         avg(duration_ns) / 1e6 AS avg_ms,
         quantile(0.5)(duration_ns)  / 1e6 AS p50_ms,
@@ -57,7 +57,7 @@ export class QueriesRepository {
   // TODO
   async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
     const query = `
-      SELECT 
+      SELECT
         toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,
         avg(duration_ns) / 1e6 AS avg_ms,
         quantile(0.5)(duration_ns)  / 1e6 AS p50_ms,
@@ -108,6 +108,7 @@ export class QueriesRepository {
       SELECT
         db_statement,
         db_table,
+        db_params,
         start_time,
         countMerge(execution_count) AS total_executions,
         (sumMerge(sum_duration) / total_executions) / 1000000 AS average_duration_ms,
@@ -118,7 +119,7 @@ export class QueriesRepository {
       FROM
           telemetry.spans_database_slowest
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
-      AND db_statement <> '' 
+      AND db_statement <> ''
       ${queryType !== 'all' ? `AND db_statement like {queryType:String}` : ''}
       AND id_empresa = {idEmpresa:String}
       GROUP BY
@@ -127,7 +128,7 @@ export class QueriesRepository {
           start_time
       ORDER BY
           max_duration_ms DESC
-      LIMIT 10;
+      LIMIT ${limit};
     `;
 
     const resultSet = await this.clickHouseClient.query({
@@ -142,6 +143,7 @@ export class QueriesRepository {
 
     const result = await resultSet.json<{
       db_statement: string;
+      db_params: string;
       db_table: string;
       total_executions: string;
       average_duration_ms: number;
@@ -155,6 +157,7 @@ export class QueriesRepository {
       spanId: item.slowest_span_id,
       durationMs: item.max_duration_ms,
       dbStatement: item.db_statement,
+      dbParams: item.db_params,
       dbTable: item.db_table,
       executions: +item.total_executions,
       avgDurationMs: item.average_duration_ms,
