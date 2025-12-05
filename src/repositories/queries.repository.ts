@@ -124,6 +124,7 @@ export class QueriesRepository {
       AND id_empresa = {idEmpresa:String}
       GROUP BY
           db_statement,
+          db_params,
           db_table,
           start_time
       ORDER BY
