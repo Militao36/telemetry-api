@@ -22,7 +22,7 @@ function normalizeLog(idProject, idEmpresa, raw) {
                     return null;
                 }
                 return {
-                    id_project: idProject,
+                    project_id: idProject,
                     id_empresa: idEmpresa,
                     timestamp,
                     trace_id: logRecord.traceId || '',

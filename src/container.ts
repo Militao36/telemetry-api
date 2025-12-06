@@ -24,6 +24,8 @@ import { HashService } from './services/hash.service';
 import { SearchService } from './services/search.service';
 import { LogService } from './services/log.service';
 import { LogsRepository } from './repositories/logs.repository';
+import { CompanyService } from './services/company.service';
+import { CompanyRepository } from './repositories/company.repository';
 
 const container = createContainer();
 
@@ -47,6 +49,7 @@ container.register({
   userService: asClass(UserService).singleton(),
   searchService: asClass(SearchService).singleton(),
   logService: asClass(LogService).singleton(),
+  companyService: asClass(CompanyService).singleton(),
 
   // repositories
   dashRepository: asClass(DashRepository).singleton(),
@@ -55,6 +58,7 @@ container.register({
   userRepository: asClass(UserRepository).singleton(),
   projectsRepository: asClass(ProjectsRepository).singleton(),
   logsRepository: asClass(LogsRepository).singleton(),
+  companyRepository: asClass(CompanyRepository).singleton(),
 
   // queues - processors
   traceJobProcessor: asClass(TraceJobProcessor).singleton(),

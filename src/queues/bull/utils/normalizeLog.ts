@@ -109,7 +109,7 @@ export function normalizeLog(idProject: string, idEmpresa: string, raw: Resource
         }
 
         return {
-          id_project: idProject,
+          project_id: idProject,
           id_empresa: idEmpresa,
           timestamp,
           trace_id: logRecord.traceId || '',

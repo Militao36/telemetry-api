@@ -22,7 +22,7 @@ class QueriesRepository {
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       ${queryType !== 'all' ? `and db_statement ILIKE {queryType:String}` : ''}
       and id_empresa = {idEmpresa:String}
-      and id_projeto = {idProject:String}
+      and project_id = {idProject:String}
     `;
         const resultSet = await this.clickHouseClient.query({
             query: query,
@@ -57,7 +57,7 @@ class QueriesRepository {
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       ${queryType !== 'all' ? `and db_statement ILIKE {queryType:String}` : ''}
       and id_empresa = {idEmpresa:String}
-      and id_projeto = {idProject:String}
+      and project_id = {idProject:String}
       GROUP BY interval_hour
       ORDER BY interval_hour ASC
     `;
@@ -101,7 +101,7 @@ class QueriesRepository {
       AND db_statement <> ''
       ${queryType !== 'all' ? `AND db_statement like {queryType:String}` : ''}
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       GROUP BY
           db_statement,
           db_params,
@@ -141,7 +141,7 @@ class QueriesRepository {
       FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       and id_empresa = {idEmpresa:String}
-      and id_projeto = {idProject:String}
+      and project_id = {idProject:String}
       GROUP BY query_type
       ORDER BY total DESC;
     `;
@@ -177,7 +177,7 @@ class QueriesRepository {
       FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       GROUP BY
           start_time,
           id_empresa,
@@ -234,7 +234,7 @@ class QueriesRepository {
       FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       GROUP BY start_time
       ORDER BY start_time ASC;
     `;
@@ -262,7 +262,7 @@ class QueriesRepository {
          *
       FROM telemetry.spans_database
       WHERE id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       AND trace_id = {traceId:String}
       or parent_span_id = {traceId:String}
       or span_id = {traceId:String};
@@ -341,7 +341,7 @@ class QueriesRepository {
         FROM telemetry.spans_database
         ${whereClause}
         ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
-        AND id_projeto = {idProject:String}
+        AND project_id = {idProject:String}
       ORDER BY start_time DESC
       LIMIT {limit:Int32}
       OFFSET {offset:Int32}

@@ -41,7 +41,7 @@ class LogsRepository {
             query,
             query_params: {
                 id_empresa: idEmpresa,
-                id_project: idProject,
+                project_id: idProject,
                 limit,
                 offset,
                 trace_id: qs.traceId,
@@ -54,7 +54,7 @@ class LogsRepository {
         const result = await resultSet.json();
         return result.data.map((row) => ({
             idEmpresa: row.id_empresa,
-            idProject: row.id_project,
+            idProject: row.project_id,
             timestamp: row.timestamp,
             traceId: row.trace_id,
             spanId: row.span_id,

@@ -30,7 +30,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
     `;
 
     const result = await this.clickHouseClient.query({
@@ -68,7 +68,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - toIntervalHour({hour:Int32})
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       GROUP BY path, http_method
       ORDER BY total_requests DESC
       LIMIT 10
@@ -105,7 +105,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       GROUP BY time
       ORDER BY time ASC;
@@ -144,7 +144,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       ORDER BY duration_ns DESC
       LIMIT 20;
     `;
@@ -179,7 +179,7 @@ export class DashRepository {
       FROM telemetry.spans_database
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
     `;
 
     const result = await this.clickHouseClient.query({

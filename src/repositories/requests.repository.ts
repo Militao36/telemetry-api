@@ -14,7 +14,7 @@ export class RequestsRepository {
          *
       FROM telemetry.spans_http
       WHERE id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       and start_time >= now() - toIntervalHour({hour:Int32})
       ORDER BY start_time DESC
@@ -72,7 +72,7 @@ export class RequestsRepository {
       FINAL
 
       WHERE id_empresa = {idEmpresa:String}
-      AND id_projeto = {idProject:String}
+      AND project_id = {idProject:String}
       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       and latest_start_time >= now() - toIntervalHour({hour:Int32})
 
@@ -121,7 +121,7 @@ export class RequestsRepository {
       AND trace_id = {traceId:String}
       or parent_span_id = {traceId:String}
       or span_id = {traceId:String}
-      and id_project = {idProject:String}
+      and project_id = {idProject:String}
     `;
 
     const result = await this.clickHouseClient.query({

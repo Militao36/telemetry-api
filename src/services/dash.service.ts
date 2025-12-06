@@ -8,7 +8,7 @@ export class DashService {
     this.dashRepository = dashRepository;
   }
 
-  @Cacheable({ ttl: 60 * 5 }) // Cache for 5 minutes
+  // @Cacheable({ ttl: 60 * 5 }) // Cache for 5 minutes
   public async reportRequests(idEmpresa: string, idProject: string, hour: number) {
     const { totalRequests, totalErrors, avgMs: avgResponse, p50Ms, p90Ms, p95Ms, p99Ms } = await this.dashRepository.getMetrics(idEmpresa, idProject, hour);
 
