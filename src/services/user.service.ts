@@ -7,18 +7,22 @@ import { HashService } from './hash.service';
 import { NotFound } from '../erros/NotFound';
 import { generateToken } from '../middlewares/auth';
 import { ProjectService } from './project.service';
+import { CompanyService } from './company.service';
+import { CompanyEntity, CompanyPlan, CompanyStatus } from '../entities/company.entity';
 
 export class UserService {
   userRepository: UserRepository;
   hashService: HashService;
   projectService: ProjectService;
   clientRedis: RedisClientType;
+  companyService: CompanyService;
 
-  constructor({ userRepository, projectService, clientRedis, hashService }) {
+  constructor({ userRepository, projectService, clientRedis, hashService, companyService }) {
     this.userRepository = userRepository;
     this.hashService = hashService;
     this.clientRedis = clientRedis;
     this.projectService = projectService;
+    this.companyService = companyService;
   }
 
   async authenticate(email: string, password: string) {
@@ -34,10 +38,10 @@ export class UserService {
       throw new NotFound('Invalid credentials');
     }
 
+    const projects = await this.projectService.list(user.idEmpresa);
+
     user.password = '*******';
     user.idEmpresa = undefined;
-
-    const projects = await this.projectService.list(user.idEmpresa);
 
     return {
       user,
@@ -59,6 +63,20 @@ export class UserService {
     user.active = false;
 
     await this.userRepository.create(user);
+
+    const usersExistsByIdEmpresa = await this.userRepository.findAll(user.idEmpresa);
+
+    if (usersExistsByIdEmpresa.length === 1) {
+      await this.companyService.create(new CompanyEntity({
+        idEmpresa: user.idEmpresa,
+        name: user.name,
+        contactEmail: '',
+        contactPhone: '',
+        documentNumber: '',
+        plan: CompanyPlan.FREE,
+        status: CompanyStatus.INACTIVE,
+      }));
+    }
 
     return this.authenticate(user.email, data.password);
   }

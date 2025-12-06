@@ -15,3 +15,4 @@ export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
 export const SECRET_JWT = process.env.SECRET_JWT || 'your_jwt_secret';
+export const URL_ABACATE_PAY = process.env.URL_ABACATE_PAY || 'https://api.abacatepay.com/v1';

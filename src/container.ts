@@ -1,6 +1,7 @@
 import { TracesService } from './services/trace.service';
 
 import { createContainer, asClass, asValue } from 'awilix';
+import axios from 'axios'
 import { clientClickHouse } from './databases/clickhouse';
 import { queueLogs, queueTraces } from './queues/bull';
 import { TraceJobProcessor } from './queues/bull/queues/traces';
@@ -30,6 +31,7 @@ container.register({
   // utils
   logger: asValue(logger),
   hashService: asClass(HashService).singleton(),
+  axios: asValue(axios),
 
   // database
   clickHouseClient: asValue(clientClickHouse),
