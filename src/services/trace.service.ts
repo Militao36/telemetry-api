@@ -9,6 +9,7 @@ import { ADD_ITEM_SCRIPT } from '../databases/redis/lua';
 import { QueriesRepository } from '../repositories/queries.repository';
 import { QueriesService } from './queries.service';
 import { RequestsService } from './requests.service';
+import { UserService } from './user.service';
 
 export class TracesService {
   queueTraces: Queue;
@@ -25,8 +26,9 @@ export class TracesService {
   LIMIT_ITEM_QUEUE_DEFAULT: number;
   queriesService: QueriesService;
   requestsService: RequestsService;
+  userService: UserService;
 
-  constructor({ queriesService, requestsService, queueTraces, logger, clientRedis, normalizeOTLP }) {
+  constructor({ queriesService, requestsService, userService, queueTraces, logger, clientRedis, normalizeOTLP }) {
     this.queueTraces = queueTraces;
     this.normalizeOTLP = normalizeOTLP;
     this.clientRedis = clientRedis;
@@ -34,12 +36,20 @@ export class TracesService {
     this.logger = logger;
     this.queriesService = queriesService;
     this.requestsService = requestsService;
+    this.userService = userService;
   }
 
   async create(idEmpresa: string, idProject: string, resourceSpans: Array<Record<string, any>>) {
     this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans, for project ${idProject}`);
 
     const spans = this.normalizeOTLP(idEmpresa, idProject, resourceSpans);
+
+    const [user] = await this.userService.incrementCountRegisters(idEmpresa, (spans.spans_database.length || 0) + (spans?.spans_http?.length || 0));
+
+    if (user.countRegisters > user.limitRegisters) {
+      this.logger.warn(`User from company ${idEmpresa} has exceeded the limit of registers: ${user.countRegisters}/${user.limitRegisters}`);
+      return;
+    }
 
     if (spans?.spans_database?.length === 0 && spans?.spans_http?.length === 0) {
       this.logger.info(`No spans to process for company ${idEmpresa}`);

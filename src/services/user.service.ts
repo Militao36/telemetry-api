@@ -88,6 +88,10 @@ export class UserService {
     return users;
   }
 
+  async incrementCountRegisters(idEmpresa: string, count: number = 1) {
+    return await this.userRepository.incrementCountRegisters(idEmpresa, count);
+  }
+
   async findByIdWithoutIdEmpresa(id: string) {
     const cacheKey = `user_id:${id}`;
     const cachedUser = await this.clientRedis.get(cacheKey);

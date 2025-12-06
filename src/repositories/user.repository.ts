@@ -20,6 +20,13 @@ export class UserRepository {
     return users.map((user) => new UserEntity(user, user.id));
   }
 
+  async incrementCountRegisters(idEmpresa: string, count: number = 1) {
+    return await this.databaseKnex<UserEntity>('users')
+      .where({ idEmpresa: idEmpresa })
+      .increment('countRegisters', count)
+      .returning('*') as UserEntity[];
+  }
+
   async findByEmail(idEmpresa: string, email: string) {
     const user = await this.databaseKnex<UserEntity>('users').where({ idEmpresa: idEmpresa, email }).first();
 
