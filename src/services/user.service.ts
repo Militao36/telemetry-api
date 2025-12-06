@@ -6,16 +6,19 @@ import { UserRepository } from '../repositories/user.repository';
 import { HashService } from './hash.service';
 import { NotFound } from '../erros/NotFound';
 import { generateToken } from '../middlewares/auth';
+import { ProjectService } from './project.service';
 
 export class UserService {
   userRepository: UserRepository;
   hashService: HashService;
+  projectService: ProjectService;
   clientRedis: RedisClientType;
 
-  constructor({ userRepository, clientRedis, hashService }) {
+  constructor({ userRepository, projectService, clientRedis, hashService }) {
     this.userRepository = userRepository;
     this.hashService = hashService;
     this.clientRedis = clientRedis;
+    this.projectService = projectService;
   }
 
   async authenticate(email: string, password: string) {
@@ -50,6 +53,7 @@ export class UserService {
     });
 
     user.password = await this.hashPassword(data.password);
+    user.active = false;
 
     const userCreated = await this.userRepository.create(user);
 
@@ -72,6 +76,16 @@ export class UserService {
     user.password = '*******';
 
     return user;
+  }
+
+  async findAll(idEmpresa: string) {
+    const users = await this.userRepository.findAll(idEmpresa);
+
+    users.forEach((user) => {
+      user.password = '*******';
+    });
+
+    return users;
   }
 
   async findByIdWithoutIdEmpresa(id: string) {

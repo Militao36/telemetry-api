@@ -22,7 +22,6 @@ export class ProjectService {
 
   async update(idEmpresa: string, id: string, updateData: Partial<ProjectEntity>) {
     await this.findById(idEmpresa, id);
-
     await this.projectsRepository.update(idEmpresa, id, updateData);
   }
 

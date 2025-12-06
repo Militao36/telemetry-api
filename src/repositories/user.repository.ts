@@ -14,6 +14,12 @@ export class UserRepository {
     return new UserEntity(user, user.id);
   }
 
+  async findAll(idEmpresa: string) {
+    const users = await this.databaseKnex<UserEntity>('users').where({ idEmpresa: idEmpresa });
+
+    return users.map((user) => new UserEntity(user, user.id));
+  }
+
   async findByEmail(idEmpresa: string, email: string) {
     const user = await this.databaseKnex<UserEntity>('users').where({ idEmpresa: idEmpresa, email }).first();
 

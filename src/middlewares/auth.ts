@@ -25,8 +25,17 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 
     if (['/api/v1/traces', '/api/v1/logs'].includes(req.url) && req.method.toLowerCase() === 'post') {
       const project = await container.resolve<ProjectService>('projectService').findByToken(token);
+      const users = await container.resolve<UserService>('userService').findAll(project.idEmpresa);
 
       if (project.token === null || project.token !== token) {
+        return res.status(401).json({ message: 'Access denied' });
+      }
+
+      if (project.active === false) {
+        return res.status(401).json({ message: 'Access denied' });
+      }
+
+      if (users.some((u) => u.active === false)) {
         return res.status(401).json({ message: 'Access denied' });
       }
 
