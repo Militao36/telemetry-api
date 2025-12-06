@@ -17,26 +17,13 @@ let CompanyController = class CompanyController {
         this.companyService = companyService;
     }
     async findById(request, response) {
-        const { id } = request.params;
-        const company = await this.companyService.findById(id);
+        const idEmpresa = request.idEmpresa;
+        const company = await this.companyService.findById(idEmpresa);
         return response.status(200).json(company);
     }
-    async list(request, response) {
-        const companies = await this.companyService.list();
-        return response.status(200).json(companies);
-    }
-    async create(request, response) {
-        const company = await this.companyService.create(request.body);
-        return response.status(201).json(company);
-    }
     async update(request, response) {
-        const { id } = request.params;
-        await this.companyService.update(id, request.body);
-        return response.status(204).send();
-    }
-    async delete(request, response) {
-        const { id } = request.params;
-        await this.companyService.delete(id);
+        const idEmpresa = request.idEmpresa;
+        await this.companyService.update(idEmpresa, request.body);
         return response.status(204).send();
     }
 };
@@ -49,31 +36,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CompanyController.prototype, "findById", null);
 __decorate([
-    (0, awilix_express_1.GET)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], CompanyController.prototype, "list", null);
-__decorate([
-    (0, awilix_express_1.POST)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], CompanyController.prototype, "create", null);
-__decorate([
     (0, awilix_express_1.route)('/:id'),
     (0, awilix_express_1.PUT)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], CompanyController.prototype, "update", null);
-__decorate([
-    (0, awilix_express_1.route)('/:id'),
-    (0, awilix_express_1.DELETE)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], CompanyController.prototype, "delete", null);
 exports.CompanyController = CompanyController = __decorate([
     (0, awilix_express_1.route)('/companies'),
     __metadata("design:paramtypes", [company_service_1.CompanyService])

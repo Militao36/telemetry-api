@@ -1,16 +1,32 @@
-import { CompanyEntity } from '../entities/company.entity';
+import { CompanyEntity, CompanyPlan } from '../entities/company.entity';
 import { NotFound } from '../erros/NotFound';
 import { CompanyRepository } from '../repositories/company.repository';
+import { AbacatePayService } from './abacatePay.service';
 
 export class CompanyService {
   companyRepository: CompanyRepository;
+  abacatePayService: AbacatePayService
 
-  constructor({ companyRepository }) {
+  constructor({ companyRepository, abacatePayService }) {
     this.companyRepository = companyRepository;
+    this.abacatePayService = abacatePayService;
   }
 
-  async incrementCountRegisters(idEmpresa: string, count: number = 1) {
-    return await this.companyRepository.incrementCountRegisters(idEmpresa, count);
+  async generatePay(id: string, plan: CompanyPlan): Promise<string> {
+    const pricingMapper = {
+      [CompanyPlan.BASIC]: 799,
+      [CompanyPlan.COMPLETE]: 1399,
+    }
+
+    const company = await this.findById(id);
+
+    const payQrcode = await this.abacatePayService.generatePaymentQrCode(company, pricingMapper[plan]);
+
+    return payQrcode;
+  }
+
+  async incrementCountRegisters(id: string, count: number = 1) {
+    return await this.companyRepository.incrementCountRegisters(id, count);
   }
 
   async create(data: CompanyEntity): Promise<CompanyEntity> {
@@ -19,8 +35,14 @@ export class CompanyService {
   }
 
   async update(id: string, updateData: Partial<CompanyEntity>): Promise<void> {
-    await this.findById(id);
-    await this.companyRepository.update(id, updateData);
+    const exists = await this.findById(id);
+    await this.companyRepository.update(id, {
+      ...updateData,
+      plan: exists.plan,
+      countRegisters: exists.countRegisters,
+      limitRegisters: exists.limitRegisters,
+      status: exists.status,
+    });
   }
 
   async findById(id: string): Promise<CompanyEntity> {
@@ -31,14 +53,5 @@ export class CompanyService {
     }
 
     return company;
-  }
-
-  async list(): Promise<CompanyEntity[]> {
-    return this.companyRepository.list();
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.findById(id);
-    await this.companyRepository.delete(id);
   }
 }

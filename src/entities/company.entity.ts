@@ -13,7 +13,6 @@ export enum CompanyPlan {
 }
 
 export class CompanyEntity extends Entity {
-  idEmpresa: string
   id: string
   name: string
   documentNumber: string
@@ -27,7 +26,6 @@ export class CompanyEntity extends Entity {
 
   constructor(body: Omit<CompanyEntity, 'id'>, id?: string) {
     super(body, id)
-    this.idEmpresa = body.idEmpresa
     this.name = body.name
     this.documentNumber = body.documentNumber
     this.contactPhone = body.contactPhone

@@ -17,7 +17,6 @@ var CompanyPlan;
 class CompanyEntity extends Entity_1.Entity {
     constructor(body, id) {
         super(body, id);
-        this.idEmpresa = body.idEmpresa;
         this.name = body.name;
         this.documentNumber = body.documentNumber;
         this.contactPhone = body.contactPhone;

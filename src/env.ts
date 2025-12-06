@@ -17,3 +17,4 @@ export const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PO
 export const SECRET_JWT = process.env.SECRET_JWT || 'your_jwt_secret';
 export const URL_ABACATE_PAY = process.env.URL_ABACATE_PAY || 'https://api.abacatepay.com/v1';
 export const DEFAULT_LIMIT_REGISTERS_FREE_PLAN = process.env.DEFAULT_LIMIT_REGISTERS_FREE_PLAN ? parseInt(process.env.DEFAULT_LIMIT_REGISTERS_FREE_PLAN) : 5000;
+export const TOKEN_ABACATE_PAY = process.env.TOKEN_ABACATE_PAY || 'your_abacate_pay_token';

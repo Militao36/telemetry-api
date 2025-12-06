@@ -36,26 +36,23 @@ class UserService {
             })),
         };
     }
-    async create(data) {
+    async register(data) {
         const user = new user_entity_1.UserEntity(Object.assign(Object.assign({}, data), { idEmpresa: (0, crypto_1.randomUUID)() }));
         user.password = await this.hashPassword(data.password);
         user.active = false;
+        const company = await this.companyService.create(new company_entity_1.CompanyEntity({
+            name: user.name,
+            contactEmail: '',
+            contactPhone: '',
+            documentNumber: '',
+            plan: company_entity_1.CompanyPlan.FREE,
+            status: company_entity_1.CompanyStatus.ACTIVE,
+            countAlerts: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+            countRegisters: 0,
+            limitRegisters: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN
+        }));
+        user.idEmpresa = company.id;
         await this.userRepository.create(user);
-        const usersExistsByIdEmpresa = await this.userRepository.findAll(user.idEmpresa);
-        if (usersExistsByIdEmpresa.length === 1) {
-            await this.companyService.create(new company_entity_1.CompanyEntity({
-                idEmpresa: user.idEmpresa,
-                name: user.name,
-                contactEmail: '',
-                contactPhone: '',
-                documentNumber: '',
-                plan: company_entity_1.CompanyPlan.FREE,
-                status: company_entity_1.CompanyStatus.ACTIVE,
-                countAlerts: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
-                countRegisters: 0,
-                limitRegisters: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN
-            }));
-        }
         return this.authenticate(user.email, data.password);
     }
     async findByEmail(idEmpresa, email) {

@@ -5,7 +5,6 @@ import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from "../src/env";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('companies', (table) => {
-    table.string('idEmpresa').notNullable()
     table.string('id').primary().notNullable()
     table.string('name').notNullable()
     table.string('documentNumber').notNullable()

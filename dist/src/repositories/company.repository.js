@@ -6,9 +6,9 @@ class CompanyRepository {
     constructor({ databaseKnex }) {
         this.databaseKnex = databaseKnex;
     }
-    async incrementCountRegisters(idEmpresa, count = 1) {
+    async incrementCountRegisters(id, count = 1) {
         return await this.databaseKnex('companies')
-            .where({ idEmpresa: idEmpresa })
+            .where({ id })
             .increment('countRegisters', count)
             .returning('*');
     }
@@ -26,13 +26,6 @@ class CompanyRepository {
             return null;
         }
         return new company_entity_1.CompanyEntity(company, company.id);
-    }
-    async list() {
-        const companies = await this.databaseKnex('companies');
-        return companies.map((company) => new company_entity_1.CompanyEntity(company, company.id));
-    }
-    async delete(id) {
-        await this.databaseKnex('companies').where({ id }).del();
     }
 }
 exports.CompanyRepository = CompanyRepository;

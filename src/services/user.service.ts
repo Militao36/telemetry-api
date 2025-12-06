@@ -54,7 +54,7 @@ export class UserService {
     };
   }
 
-  async create(data: UserEntity) {
+  async register(data: UserEntity) {
     const user = new UserEntity({
       ...data,
       idEmpresa: randomUUID(),
@@ -63,24 +63,21 @@ export class UserService {
     user.password = await this.hashPassword(data.password);
     user.active = false;
 
+    const company = await this.companyService.create(new CompanyEntity({
+      name: user.name,
+      contactEmail: '',
+      contactPhone: '',
+      documentNumber: '',
+      plan: CompanyPlan.FREE,
+      status: CompanyStatus.ACTIVE,
+      countAlerts: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+      countRegisters: 0,
+      limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN
+    }));
+
+    user.idEmpresa = company.id;
+
     await this.userRepository.create(user);
-
-    const usersExistsByIdEmpresa = await this.userRepository.findAll(user.idEmpresa);
-
-    if (usersExistsByIdEmpresa.length === 1) {
-      await this.companyService.create(new CompanyEntity({
-        idEmpresa: user.idEmpresa,
-        name: user.name,
-        contactEmail: '',
-        contactPhone: '',
-        documentNumber: '',
-        plan: CompanyPlan.FREE,
-        status: CompanyStatus.ACTIVE,
-        countAlerts: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
-        countRegisters: 0,
-        limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN
-      }));
-    }
 
     return this.authenticate(user.email, data.password);
   }

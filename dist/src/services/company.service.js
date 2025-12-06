@@ -7,8 +7,8 @@ class CompanyService {
     constructor({ companyRepository }) {
         this.companyRepository = companyRepository;
     }
-    async incrementCountRegisters(idEmpresa, count = 1) {
-        return await this.companyRepository.incrementCountRegisters(idEmpresa, count);
+    async incrementCountRegisters(id, count = 1) {
+        return await this.companyRepository.incrementCountRegisters(id, count);
     }
     async create(data) {
         const company = new company_entity_1.CompanyEntity(data);
@@ -24,13 +24,6 @@ class CompanyService {
             throw new NotFound_1.NotFound('Company not found');
         }
         return company;
-    }
-    async list() {
-        return this.companyRepository.list();
-    }
-    async delete(id) {
-        await this.findById(id);
-        await this.companyRepository.delete(id);
     }
 }
 exports.CompanyService = CompanyService;

@@ -6,7 +6,6 @@ const company_entity_1 = require("../src/entities/company.entity");
 const env_1 = require("../src/env");
 async function up(knex) {
     await knex.schema.createTable('companies', (table) => {
-        table.string('idEmpresa').notNullable();
         table.string('id').primary().notNullable();
         table.string('name').notNullable();
         table.string('documentNumber').notNullable();

@@ -34,7 +34,7 @@ let UserController = class UserController {
     }
     async create(request, response) {
         const data = request.body;
-        const user = await this.userService.create(data);
+        const user = await this.userService.register(data);
         return response.status(201).json(user);
     }
     async updatePassword(request, response) {

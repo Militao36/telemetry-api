@@ -45,7 +45,7 @@ export class UserController {
   async create(request: Request, response: Response) {
     const data = request.body;
 
-    const user = await this.userService.create(data);
+    const user = await this.userService.register(data);
 
     return response.status(201).json(user);
   }

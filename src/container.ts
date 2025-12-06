@@ -26,6 +26,7 @@ import { LogService } from './services/log.service';
 import { LogsRepository } from './repositories/logs.repository';
 import { CompanyService } from './services/company.service';
 import { CompanyRepository } from './repositories/company.repository';
+import { AbacatePayService } from './services/abacatePay.service';
 
 const container = createContainer();
 
@@ -50,6 +51,7 @@ container.register({
   searchService: asClass(SearchService).singleton(),
   logService: asClass(LogService).singleton(),
   companyService: asClass(CompanyService).singleton(),
+  abacatePayService: asClass(AbacatePayService).singleton(), // temporary alias
 
   // repositories
   dashRepository: asClass(DashRepository).singleton(),

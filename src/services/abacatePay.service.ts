@@ -1,23 +1,22 @@
 import { AxiosStatic } from "axios";
-import { CompanyService } from "./company.service";
 import { BadRequest } from "../erros/BadRequest";
-import { URL_ABACATE_PAY } from "../env";
+import { TOKEN_ABACATE_PAY, URL_ABACATE_PAY } from "../env";
+import { CompanyEntity } from "../entities/company.entity";
 
 export class AbacatePayService {
   axios: AxiosStatic
-  companyService: CompanyService
 
-  constructor({ axios, companyService }) {
+  constructor({ axios }) {
     this.axios = axios;
-    this.companyService = companyService;
   }
 
-  async generatePaymentQrCode(idEmpresa: string, amount: number): Promise<string> {
-    const company = await this.companyService.findById(idEmpresa);
-
+  async generatePaymentQrCode(company: CompanyEntity, amount: number): Promise<string> {
     const options = {
       method: 'POST',
-      headers: { Authorization: 'Bearer <token>', 'Content-Type': 'application/json' },
+      headers: {
+        Authorization: 'Bearer ' + TOKEN_ABACATE_PAY,
+        'Content-Type': 'application/json'
+      },
       body: {
         amount: +amount,
         expiresIn: 60 * 3, // 3 minutes
@@ -36,7 +35,7 @@ export class AbacatePayService {
     })
 
     if (response.status === 200) {
-      const data = response.data;
+      const { data } = response.data;
 
       return data.brCodeBase64;
     }
