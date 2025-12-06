@@ -28,7 +28,7 @@ export class TraceController {
     const idEmpresa = request.idEmpresa;
     const { traceId } = request.params;
 
-    const data = await this.traceService.getTraces(idEmpresa, traceId);
+    const data = await this.traceService.getTraces(idEmpresa, request.idProject!, traceId);
 
     return response.status(200).json(data);
   }

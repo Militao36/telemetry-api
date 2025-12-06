@@ -17,10 +17,19 @@ let DashController = class DashController {
         this.clientRedis = clientRedis;
     }
     async reportRequests(request, response) {
-        const idEmpresa = request.idEmpresa
-        const { hour = '12' } = request.query;
-        const data = await this.dashService.reportRequests(idEmpresa, +hour);
-        return response.status(200).json(data);
+        try {
+            const idEmpresa = request.idEmpresa;
+            const { hour = '12' } = request.query;
+            if (isNaN(+hour)) {
+                return response.status(400).json({ error: 'Hour must be a number' });
+            }
+            const data = await this.dashService.reportRequests(idEmpresa, request.idProject, +hour);
+            return response.status(200).json(data);
+        }
+        catch (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'Internal Server Error' });
+        }
     }
 };
 exports.DashController = DashController;

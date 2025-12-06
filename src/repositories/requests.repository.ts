@@ -112,7 +112,7 @@ export class RequestsRepository {
     });
   }
 
-  public async getTraces(idEmpresa: string, traceId: string): Promise<any> {
+  public async getTraces(idEmpresa: string, idProject: string, traceId: string): Promise<any> {
     const query = `
       SELECT
          *
@@ -120,7 +120,8 @@ export class RequestsRepository {
       WHERE id_empresa = {idEmpresa:String}
       AND trace_id = {traceId:String}
       or parent_span_id = {traceId:String}
-      or span_id = {traceId:String};
+      or span_id = {traceId:String}
+      and id_project = {idProject:String}
     `;
 
     const result = await this.clickHouseClient.query({
@@ -128,6 +129,7 @@ export class RequestsRepository {
       query_params: {
         idEmpresa,
         traceId,
+        idProject
       },
       format: 'JSON',
     });

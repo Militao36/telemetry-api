@@ -22,6 +22,9 @@ const user_service_1 = require("./services/user.service");
 const user_repository_1 = require("./repositories/user.repository");
 const projects_repository_1 = require("./repositories/projects.repository");
 const hash_service_1 = require("./services/hash.service");
+const search_service_1 = require("./services/search.service");
+const log_service_1 = require("./services/log.service");
+const logs_repository_1 = require("./repositories/logs.repository");
 const container = (0, awilix_1.createContainer)();
 exports.container = container;
 container.register({
@@ -36,11 +39,14 @@ container.register({
     requestsService: (0, awilix_1.asClass)(requests_service_1.RequestsService).singleton(),
     projectService: (0, awilix_1.asClass)(project_service_1.ProjectService).singleton(),
     userService: (0, awilix_1.asClass)(user_service_1.UserService).singleton(),
+    searchService: (0, awilix_1.asClass)(search_service_1.SearchService).singleton(),
+    logService: (0, awilix_1.asClass)(log_service_1.LogService).singleton(),
     dashRepository: (0, awilix_1.asClass)(dash_repository_1.DashRepository).singleton(),
     queriesRepository: (0, awilix_1.asClass)(queries_repository_1.QueriesRepository).singleton(),
     requestsRepository: (0, awilix_1.asClass)(requests_repository_1.RequestsRepository).singleton(),
     userRepository: (0, awilix_1.asClass)(user_repository_1.UserRepository).singleton(),
     projectsRepository: (0, awilix_1.asClass)(projects_repository_1.ProjectsRepository).singleton(),
+    logsRepository: (0, awilix_1.asClass)(logs_repository_1.LogsRepository).singleton(),
     traceJobProcessor: (0, awilix_1.asClass)(traces_1.TraceJobProcessor).singleton(),
     queueTraces: (0, awilix_1.asValue)(bull_1.queueTraces),
     normalizeOTLP: (0, awilix_1.asValue)(normalizeOtlpHttpJsonTrace_1.normalizeOTLP),

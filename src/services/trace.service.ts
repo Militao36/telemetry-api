@@ -98,9 +98,9 @@ export class TracesService {
     }
   }
 
-  public async getTraces(idEmpresa: string, traceId: string) {
-    const tracesQueries = await this.queriesService.getTraces(idEmpresa, traceId);
-    const tracesRequests = await this.requestsService.getTraces(idEmpresa, traceId);
+  public async getTraces(idEmpresa: string, idProject: string, traceId: string) {
+    const tracesQueries = await this.queriesService.getTraces(idEmpresa, idProject, traceId);
+    const tracesRequests = await this.requestsService.getTraces(idEmpresa, idProject, traceId);
 
     const tracesQueriesOrdered = _.orderBy(tracesQueries, ['startTime'], ['asc']);
     const tracesRequestsOrdered = _.orderBy(tracesRequests, ['startTime'], ['asc']);

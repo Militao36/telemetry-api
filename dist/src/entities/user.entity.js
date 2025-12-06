@@ -9,6 +9,10 @@ class UserEntity extends Entity_1.Entity {
         this.name = body.name;
         this.email = body.email;
         this.password = body.password;
+        this.active = body.active;
+        this.countRegisters = body.countRegisters;
+        this.countAlerts = body.countAlerts;
+        this.limitRegisters = body.limitRegisters;
     }
 }
 exports.UserEntity = UserEntity;

@@ -11,6 +11,7 @@ class ProjectEntity extends Entity_1.Entity {
         this.enviroment = body.enviroment;
         this.languageOrFramework = body.languageOrFramework;
         this.token = body.token;
+        this.active = body.active;
     }
 }
 exports.ProjectEntity = ProjectEntity;

@@ -9,40 +9,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LogsController = void 0;
+exports.RequestsController = void 0;
 const awilix_express_1 = require("awilix-express");
-let LogsController = class LogsController {
-    constructor({ logService }) {
-        this.logService = logService;
-    }
-    async create(request, response) {
-        const idEmpresa = request.idEmpresa;
-        const { resourceLogs } = request.body;
-        await this.logService.create(idEmpresa, request.idProject, resourceLogs);
-        return response.status(200).json({});
+let RequestsController = class RequestsController {
+    constructor({ searchService }) {
+        this.searchService = searchService;
     }
     async list(request, response) {
         const idEmpresa = request.idEmpresa;
-        const logs = await this.logService.list(idEmpresa, request.idProject, request.query);
-        return response.status(200).json(logs);
+        const data = await this.searchService.list(idEmpresa, request.idProject, request.query);
+        return response.status(200).json(data);
     }
 };
-exports.LogsController = LogsController;
+exports.RequestsController = RequestsController;
 __decorate([
     (0, awilix_express_1.route)('/'),
-    (0, awilix_express_1.POST)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], LogsController.prototype, "create", null);
-__decorate([
     (0, awilix_express_1.GET)(),
-    (0, awilix_express_1.route)('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], LogsController.prototype, "list", null);
-exports.LogsController = LogsController = __decorate([
-    (0, awilix_express_1.route)('/logs'),
+], RequestsController.prototype, "list", null);
+exports.RequestsController = RequestsController = __decorate([
+    (0, awilix_express_1.route)('/search'),
     __metadata("design:paramtypes", [Object])
-], LogsController);
+], RequestsController);

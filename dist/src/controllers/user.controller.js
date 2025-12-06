@@ -15,34 +15,57 @@ let UserController = class UserController {
     constructor({ userService }) {
         this.userService = userService;
     }
+    async getMe(request, response) {
+        const idEmpresa = request.idEmpresa;
+        const idUser = request.idUser;
+        const user = await this.userService.findById(idEmpresa, idUser);
+        return response.status(200).json(user);
+    }
+    async authenticate(request, response) {
+        const { email, password } = request.body;
+        const authResult = await this.userService.authenticate(email, password);
+        return response.status(200).json(authResult);
+    }
     async findById(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { id } = request.params;
         const user = await this.userService.findById(idEmpresa, id);
         return response.status(200).json(user);
     }
     async create(request, response) {
-        const idEmpresa = request.idEmpresa
         const data = request.body;
-        data.idEmpresa = idEmpresa;
         const user = await this.userService.create(data);
         return response.status(201).json(user);
     }
     async updatePassword(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { id } = request.params;
         const { newPassword } = request.body;
         await this.userService.updatePassword(idEmpresa, id, newPassword);
         return response.status(204).send();
     }
     async delete(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { id } = request.params;
         await this.userService.delete(idEmpresa, id);
         return response.status(204).send();
     }
 };
 exports.UserController = UserController;
+__decorate([
+    (0, awilix_express_1.route)('/me'),
+    (0, awilix_express_1.GET)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getMe", null);
+__decorate([
+    (0, awilix_express_1.route)('/auth'),
+    (0, awilix_express_1.POST)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "authenticate", null);
 __decorate([
     (0, awilix_express_1.route)('/:id'),
     (0, awilix_express_1.GET)(),

@@ -38,8 +38,8 @@ export class RequestsService {
   }
 
   @Cacheable({ ttl: 60 })
-  public async getTraces(idEmpresa: string, traceId: string) {
-    const traces = await this.requestsRepository.getTraces(idEmpresa, traceId);
+  public async getTraces(idEmpresa: string, idProject: string, traceId: string) {
+    const traces = await this.requestsRepository.getTraces(idEmpresa, idProject, traceId);
 
     return traces;
   }

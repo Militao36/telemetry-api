@@ -15,7 +15,7 @@ export class RequestsController {
   async list(request: Request, response: Response) {
     const idEmpresa = request.idEmpresa;
 
-    const data = await this.searchService.list(idEmpresa, request.query as any);
+    const data = await this.searchService.list(idEmpresa, request.idProject!, request.query as any);
 
     return response.status(200).json(data);
   }

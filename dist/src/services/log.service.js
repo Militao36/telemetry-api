@@ -2,42 +2,47 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogService = void 0;
 const env_1 = require("../env");
-const lua_1 = require("../databases/redis/lua");
+const log_1 = require("../databases/redis/lua/log");
 class LogService {
-    constructor({ queueLogs, logger, clientRedis, normalizeLog }) {
+    constructor({ queueLogs, logger, logsRepository, clientRedis, normalizeLog }) {
         this.queueLogs = queueLogs;
         this.normalizeLog = normalizeLog;
         this.clientRedis = clientRedis;
         this.LIMIT_ITEM_QUEUE = env_1.LIMIT_ITEM_QUEUE_DEFAULT;
         this.logger = logger;
+        this.logsRepository = logsRepository;
     }
-    async create(idEmpresa, logsRaw) {
-        const logs = this.normalizeLog(logsRaw);
+    async create(idEmpresa, idProject, logsRaw) {
+        const logs = this.normalizeLog(idProject, idEmpresa, logsRaw);
         if (logs.length === 0) {
             return;
         }
         const countKey = `log_count:${idEmpresa}`;
         const logsKey = `log_logs:${idEmpresa}`;
         try {
-            const result = (await this.clientRedis.eval(lua_1.ADD_ITEM_SCRIPT, {
+            const result = (await this.clientRedis.eval(log_1.ADD_LOG_SCRIPT, {
                 keys: [countKey, logsKey],
-                arguments: [this.LIMIT_ITEM_QUEUE.toString(), JSON.stringify(logs), logs.length.toString()],
+                arguments: ['10', JSON.stringify(logs), logs.length.toString()],
             }));
             const [shouldQueue, logsToQueue] = result;
             if (shouldQueue === 1 && logsToQueue) {
-                const parsedSpans = JSON.parse(logsToQueue);
-                if (parsedSpans.length > 0) {
+                const parsedLogs = JSON.parse(logsToQueue);
+                if (parsedLogs.length > 0) {
                     await this.queueLogs.add({
                         idEmpresa,
-                        spans: parsedSpans,
+                        idProject,
+                        logs: parsedLogs,
                     });
                 }
             }
         }
         catch (error) {
-            this.logger.error(`Error processing spans for company ${idEmpresa}: ${error}`);
+            this.logger.error(`Error processing logs for company ${idEmpresa}: ${error}`);
             throw error;
         }
+    }
+    async list(idEmpresa, idProject, qs) {
+        return await this.logsRepository.list(idEmpresa, idProject, qs);
     }
 }
 exports.LogService = LogService;

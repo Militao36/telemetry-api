@@ -17,20 +17,20 @@ let DashController = class DashController {
         this.clientRedis = clientRedis;
     }
     async reportQueries(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { hour, queryTy } = request.query;
-        const data = await this.queriesService.reportQueries(idEmpresa, +(hour || 720), queryTy);
+        const data = await this.queriesService.reportQueries(idEmpresa, request.idProject, +(hour || 720), queryTy);
         return response.status(200).json(data);
     }
     async dashboardQueries(request, response) {
-        const idEmpresa = request.idEmpresa
-        const data = await this.queriesService.dashboardQueries(idEmpresa, +'12');
+        const idEmpresa = request.idEmpresa;
+        const data = await this.queriesService.dashboardQueries(idEmpresa, request.idProject, +'12');
         return response.status(200).json(data);
     }
     async getTraces(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { traceId } = request.params;
-        const data = await this.queriesService.getTraces(idEmpresa, traceId);
+        const data = await this.queriesService.getTraces(idEmpresa, request.idProject, traceId);
         return response.status(200).json(data);
     }
 };

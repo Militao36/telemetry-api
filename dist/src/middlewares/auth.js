@@ -9,7 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../env");
 const container_1 = require("../container");
 async function auth(req, res, next) {
-    const excludes = ['/users'];
+    const excludes = ['/api/v1/users', '/api/v1/users/auth'];
     if (excludes.includes(req.url)) {
         next();
         return;
@@ -20,9 +20,16 @@ async function auth(req, res, next) {
     }
     if (authHeaders) {
         const token = authHeaders.split(' ')[1];
-        if (req.url === '/traces' && req.method.toLowerCase() === 'post') {
+        if (['/api/v1/traces', '/api/v1/logs'].includes(req.url) && req.method.toLowerCase() === 'post') {
             const project = await container_1.container.resolve('projectService').findByToken(token);
+            const users = await container_1.container.resolve('userService').findAll(project.idEmpresa);
             if (project.token === null || project.token !== token) {
+                return res.status(401).json({ message: 'Access denied' });
+            }
+            if (project.active === false) {
+                return res.status(401).json({ message: 'Access denied' });
+            }
+            if (users.some((u) => u.active === false)) {
                 return res.status(401).json({ message: 'Access denied' });
             }
             req.idEmpresa = project.idEmpresa;
@@ -38,6 +45,7 @@ async function auth(req, res, next) {
             }
             const user = await container_1.container.resolve('userService').findByIdWithoutIdEmpresa(decoded.idUser);
             req.idEmpresa = user === null || user === void 0 ? void 0 : user.idEmpresa;
+            req.idProject = decoded.idProject;
             req.idUser = user === null || user === void 0 ? void 0 : user.id;
             req.user = user;
             next();

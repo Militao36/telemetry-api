@@ -12,31 +12,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RequestsController = void 0;
 const awilix_express_1 = require("awilix-express");
 let RequestsController = class RequestsController {
-    constructor({ requestsService }) {
+    constructor({ requestsService, clientRedis }) {
         this.requestsService = requestsService;
+        this.clientRedis = clientRedis;
     }
     async recentRequests(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { httpMethod, hour } = request.query;
-        const data = await this.requestsService.recentRequests(idEmpresa, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
+        const data = await this.requestsService.recentRequests(idEmpresa, request.idProject, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
         return response.status(200).json(data);
     }
     async getSlowestRequests(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { httpMethod, hour } = request.query;
-        const data = await this.requestsService.getSlowestRequests(idEmpresa, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
+        const data = await this.requestsService.getSlowestRequests(idEmpresa, request.idProject, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
         return response.status(200).json(data);
     }
     async getMetrics(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { httpMethod, hour } = request.query;
-        const data = await this.requestsService.getMetrics(idEmpresa, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
+        const key = `metrics-requests-${idEmpresa}-${hour}-${httpMethod}`;
+        const cache = await this.clientRedis.get(key);
+        if (cache) {
+            return response.status(200).json(JSON.parse(cache));
+        }
+        const data = await this.requestsService.getMetrics(idEmpresa, request.idProject, +hour, httpMethod === null || httpMethod === void 0 ? void 0 : httpMethod.toUpperCase());
+        await this.clientRedis.setEx(key, 60 * 1, JSON.stringify(data));
         return response.status(200).json(data);
     }
     async getTraces(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { traceId } = request.params;
-        const data = await this.requestsService.getTraces(idEmpresa, traceId);
+        const data = await this.requestsService.getTraces(idEmpresa, request.idProject, traceId);
         return response.status(200).json(data);
     }
 };

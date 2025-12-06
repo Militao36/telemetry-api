@@ -33,13 +33,13 @@ export class SearchService {
   }
 
   @Cacheable({ ttl: 60 })
-  public async list(idEmpresa: string, qs: SearchFilters) {
+  public async list(idEmpresa: string, idProject: string, qs: SearchFilters) {
     if (qs.type === 'HTTP') {
       return this.requestsRepository.list(idEmpresa, qs);
     }
 
     if (qs.type === 'DATABASE') {
-      return this.queriesRepository.list(idEmpresa, qs);
+      return this.queriesRepository.list(idEmpresa, idProject, qs);
     }
 
     return [];

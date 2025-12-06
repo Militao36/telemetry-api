@@ -16,25 +16,32 @@ let ProjectController = class ProjectController {
         this.projectService = projectService;
     }
     async findById(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { id } = request.params;
         const user = await this.projectService.findById(idEmpresa, id);
         return response.status(200).json(user);
     }
     async list(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const projects = await this.projectService.list(idEmpresa);
         return response.status(200).json(projects);
     }
     async create(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const data = request.body;
         data.idEmpresa = idEmpresa;
         const user = await this.projectService.create(data);
         return response.status(201).json(user);
     }
+    async update(request, response) {
+        const idEmpresa = request.idEmpresa;
+        const { id } = request.params;
+        const updateData = request.body;
+        await this.projectService.update(idEmpresa, id, updateData);
+        return response.status(204).send();
+    }
     async delete(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { id } = request.params;
         await this.projectService.delete(idEmpresa, id);
         return response.status(204).send();
@@ -60,6 +67,13 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "create", null);
+__decorate([
+    (0, awilix_express_1.route)('/:id'),
+    (0, awilix_express_1.PUT)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "update", null);
 __decorate([
     (0, awilix_express_1.route)('/:id'),
     (0, awilix_express_1.DELETE)(),

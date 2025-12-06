@@ -7,6 +7,7 @@ exports.queueLogs = exports.queueTraces = void 0;
 const bull_1 = __importDefault(require("bull"));
 const traces_1 = require("./queues/traces");
 const env_1 = require("../../env");
+const logs_1 = require("./queues/logs");
 const clickhouse_1 = require("../../databases/clickhouse");
 const REDIS_CONFIG = {
     host: env_1.REDIS_HOST,
@@ -23,3 +24,7 @@ const traceJobProcessor = new traces_1.TraceJobProcessor({
     clickHouseClient: clickhouse_1.clientClickHouse,
 });
 exports.queueTraces.process(traceJobProcessor.handle.bind(traceJobProcessor));
+const logJobProcessor = new logs_1.LogJobProcessor({
+    clickHouseClient: clickhouse_1.clientClickHouse
+});
+exports.queueLogs.process(logJobProcessor.handle.bind(logJobProcessor));

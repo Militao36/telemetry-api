@@ -22,6 +22,9 @@ function normalizeOTLP(idEmpresa, idProject, resourceSpans) {
                 const traceId = span.trace_id || span.traceId;
                 const spanId = span.span_id || span.spanId;
                 const parentSpanId = span.parent_span_id || span.parentSpanId || '0000000000000000';
+                if (!traceId || !spanId) {
+                    continue;
+                }
                 const startNano = span.start_time_unix_nano || span.startTimeUnixNano;
                 const endNano = span.end_time_unix_nano || span.endTimeUnixNano;
                 const start = toCHDateTime64(startNano);
@@ -59,11 +62,15 @@ function normalizeOTLP(idEmpresa, idProject, resourceSpans) {
                 else if (spanType === 'Database') {
                     const db_duration = findAttr(span, 'db.duration');
                     const db_statement = findAttr(span, 'db.statement');
+                    const db_params = findAttr(span, 'db.statement.parameters');
                     const db_system = findAttr(span, 'db.system');
                     const db_table = findAttr(span, 'db.sql.table');
                     const db_user = findAttr(span, 'db.user');
                     const db_name = findAttr(span, 'db.name');
-                    spans_database.push(Object.assign(Object.assign({}, baseFields), { db_system: db_system, db_statement: db_statement || null, db_duration: db_duration ? Number(db_duration) : duration_ns, db_table: db_table || null, db_operation: findAttr(span, 'db.operation') || null, db_user: db_user || null, db_name: db_name || null }));
+                    const operationAccepted = ['select', 'update', 'insert', 'delete', 'create', 'drop', 'alter', 'truncate', 'begin', 'commit', 'rollback'];
+                    if (operationAccepted.includes(db_statement.trim().split(' ')[0].toLowerCase().trim())) {
+                        spans_database.push(Object.assign(Object.assign({}, baseFields), { db_system: db_system, db_statement: db_statement || null, db_duration: db_duration ? Number(db_duration) : duration_ns, db_table: db_table || null, db_operation: db_statement ? db_statement.trim().split(' ')[0].toLowerCase().trim() : null, db_user: db_user || null, db_name: db_name || null, db_params: db_params ? JSON.stringify(db_params) : null }));
+                    }
                 }
             }
         }

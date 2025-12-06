@@ -16,15 +16,15 @@ let TraceController = class TraceController {
         this.traceService = traceService;
     }
     async create(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { resourceSpans } = request.body;
         await this.traceService.create(idEmpresa, request.idProject, resourceSpans);
         return response.status(200).json({});
     }
     async getTraces(request, response) {
-        const idEmpresa = request.idEmpresa
+        const idEmpresa = request.idEmpresa;
         const { traceId } = request.params;
-        const data = await this.traceService.getTraces(idEmpresa, traceId);
+        const data = await this.traceService.getTraces(idEmpresa, request.idProject, traceId);
         return response.status(200).json(data);
     }
 };
