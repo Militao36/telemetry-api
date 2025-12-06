@@ -1,4 +1,4 @@
-import { DELETE, GET, POST, route } from 'awilix-express';
+import { DELETE, GET, POST, PUT, route } from 'awilix-express';
 import { Request, Response } from 'express';
 import { ProjectService } from '../services/project.service';
 
@@ -39,6 +39,18 @@ export class ProjectController {
     const user = await this.projectService.create(data);
 
     return response.status(201).json(user);
+  }
+
+  @route('/:id')
+  @PUT()
+  async update(request: Request, response: Response) {
+    const idEmpresa = request.idEmpresa;
+    const { id } = request.params;
+    const updateData = request.body;
+
+    await this.projectService.update(idEmpresa, id, updateData);
+
+    return response.status(204).send();
   }
 
   @route('/:id')
