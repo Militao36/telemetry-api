@@ -12,22 +12,22 @@ export class RequestsService {
   }
 
   @Cacheable({ ttl: 60 })
-  public async recentRequests(idEmpresa: string, hour: number, httpMethod: string) {
-    const requests = await this.requestsRepository.recentRequests(idEmpresa, hour, httpMethod);
+  public async recentRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string) {
+    const requests = await this.requestsRepository.recentRequests(idEmpresa, idProject, hour, httpMethod);
 
     return requests;
   }
 
   @Cacheable({ ttl: 60 })
-  public async getSlowestRequests(idEmpresa: string, hour: number, httpMethod: string) {
-    const requests = await this.requestsRepository.getSlowestRequests(idEmpresa, hour, httpMethod);
+  public async getSlowestRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string) {
+    const requests = await this.requestsRepository.getSlowestRequests(idEmpresa, idProject, hour, httpMethod);
 
     return requests;
   }
 
   @Cacheable({ ttl: 60 })
-  public async getMetrics(idEmpresa: string, hour: number = 1, httpMethod: string = 'ALL') {
-    const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(idEmpresa, hour, httpMethod);
+  public async getMetrics(idEmpresa: string, idProject: string, hour: number = 1, httpMethod: string = 'ALL') {
+    const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(idEmpresa, idProject, hour, httpMethod);
 
     const responseStatusDistribution = await this.requestsRepository.getResponseStatusDistribution(idEmpresa, hour, httpMethod);
 

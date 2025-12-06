@@ -10,13 +10,13 @@ export class QueriesService {
   }
 
   @Cacheable({ ttl: 60 })
-  public async reportQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
-    const averageTime = await this.queriesRepository.avgQueryTimeByType(idEmpresa, hour, queryType);
+  public async reportQueries(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all') {
+    const averageTime = await this.queriesRepository.avgQueryTimeByType(idEmpresa, idProject, hour, queryType);
 
-    const slowesTypeSelect = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'select', 10);
-    const slowesTypeInsert = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'insert', 10);
-    const slowesTypeUpdate = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'update', 10);
-    const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, hour, 'del', 10);
+    const slowesTypeSelect = await this.queriesRepository.slowestQueries(idEmpresa, idProject, hour, 'select', 10);
+    const slowesTypeInsert = await this.queriesRepository.slowestQueries(idEmpresa, idProject, hour, 'insert', 10);
+    const slowesTypeUpdate = await this.queriesRepository.slowestQueries(idEmpresa, idProject, hour, 'update', 10);
+    const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, idProject, hour, 'del', 10);
 
     const slowestQuery = orderBy(
       [slowesTypeSelect[0], slowesTypeInsert[0], slowesTypeUpdate[0], slowesTypeDelete[0]].filter((e) => !!e),
@@ -24,9 +24,9 @@ export class QueriesService {
       ['desc'],
     ).slice(0, 1);
 
-    const queryVolumeByType = await this.queriesRepository.queryVolumeByType(idEmpresa, hour);
-    const queryVolumeByHours = await this.queriesRepository.getQueryVolumeByHours(idEmpresa, hour);
-    const avgQueryTimeByHour = await this.queriesRepository.avgQueryTimeByHour(idEmpresa, hour, queryType);
+    const queryVolumeByType = await this.queriesRepository.queryVolumeByType(idEmpresa, idProject, hour);
+    const queryVolumeByHours = await this.queriesRepository.getQueryVolumeByHours(idEmpresa, idProject, hour);
+    const avgQueryTimeByHour = await this.queriesRepository.avgQueryTimeByHour(idEmpresa, idProject, hour, queryType);
 
     return {
       metrics: averageTime,
@@ -42,8 +42,8 @@ export class QueriesService {
   }
 
   @Cacheable({ ttl: 60 })
-  public async dashboardQueries(idEmpresa: string, hour: number) {
-    const queriesPerTimeSeries = await this.queriesRepository.getQueriesPerTimeSeries(idEmpresa, hour);
+  public async dashboardQueries(idEmpresa: string, idProject: string, hour: number) {
+    const queriesPerTimeSeries = await this.queriesRepository.getQueriesPerTimeSeries(idEmpresa, idProject, hour);
 
     return {
       queriesPerTimeSeries,
@@ -51,8 +51,8 @@ export class QueriesService {
   }
 
   @Cacheable({ ttl: 60 })
-  public async getTraces(idEmpresa: string, traceId: string) {
-    const traces = await this.queriesRepository.getTraces(idEmpresa, traceId);
+  public async getTraces(idEmpresa: string, idProject: string, traceId: string) {
+    const traces = await this.queriesRepository.getTraces(idEmpresa, idProject, traceId);
 
     return traces;
   }

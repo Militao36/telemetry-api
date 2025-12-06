@@ -37,12 +37,15 @@ export class UserService {
     user.password = '*******';
     user.idEmpresa = undefined;
 
+    const projects = await this.projectService.list(user.idEmpresa);
+
     return {
       user,
-      token: generateToken({
+      tokens: projects.map((project) => generateToken({
+        idProject: project.id,
         idEmpresa: user.idEmpresa,
         idUser: user.id,
-      }),
+      })),
     };
   }
 
@@ -55,15 +58,9 @@ export class UserService {
     user.password = await this.hashPassword(data.password);
     user.active = false;
 
-    const userCreated = await this.userRepository.create(user);
+    await this.userRepository.create(user);
 
-    return {
-      user: userCreated,
-      token: generateToken({
-        idEmpresa: userCreated.idEmpresa,
-        idUser: userCreated.id,
-      }),
-    };
+    return this.authenticate(user.email, data.password);
   }
 
   async findByEmail(idEmpresa: string, email: string) {

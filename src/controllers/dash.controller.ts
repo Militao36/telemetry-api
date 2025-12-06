@@ -24,7 +24,7 @@ export class DashController {
         return response.status(400).json({ error: 'Hour must be a number' });
       }
 
-      const data = await this.dashService.reportRequests(idEmpresa, +hour);
+      const data = await this.dashService.reportRequests(idEmpresa, request.idProject, +hour);
 
       return response.status(200).json(data);
     } catch (error) {

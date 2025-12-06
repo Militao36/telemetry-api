@@ -8,12 +8,13 @@ export class RequestsRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  public async recentRequests(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any> {
+  public async recentRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string = 'ALL'): Promise<any> {
     const query = `
       SELECT
          *
       FROM telemetry.spans_http
       WHERE id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       and start_time >= now() - toIntervalHour({hour:Int32})
       ORDER BY start_time DESC
@@ -24,6 +25,7 @@ export class RequestsRepository {
       query,
       query_params: {
         idEmpresa,
+        idProject,
         httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
         hour,
       },
@@ -53,7 +55,7 @@ export class RequestsRepository {
     }));
   }
 
-  public async getSlowestRequests(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any[]> {
+  public async getSlowestRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string = 'ALL'): Promise<any[]> {
     const query = `
       SELECT
           argMaxMerge(trace_id) AS trace_id,
@@ -70,6 +72,7 @@ export class RequestsRepository {
       FINAL
 
       WHERE id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       and latest_start_time >= now() - toIntervalHour({hour:Int32})
 
@@ -85,6 +88,7 @@ export class RequestsRepository {
       query,
       query_params: {
         idEmpresa,
+        idProject,
         httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
         hour,
       },

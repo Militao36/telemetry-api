@@ -18,7 +18,12 @@ export class DashController {
     const idEmpresa = request.idEmpresa;
     const { hour, queryTy } = request.query;
 
-    const data = await this.queriesService.reportQueries(idEmpresa, +(hour || 720), queryTy as 'select' | 'insert' | 'update' | 'del' | 'all');
+    const data = await this.queriesService.reportQueries(
+      idEmpresa,
+      request.idProject,
+      +(hour || 720),
+      queryTy as 'select' | 'insert' | 'update' | 'del' | 'all',
+    );
 
     return response.status(200).json(data);
   }
@@ -28,7 +33,7 @@ export class DashController {
   async dashboardQueries(request: Request, response: Response) {
     const idEmpresa = request.idEmpresa;
 
-    const data = await this.queriesService.dashboardQueries(idEmpresa, +'12');
+    const data = await this.queriesService.dashboardQueries(idEmpresa, request.idProject, +'12');
 
     return response.status(200).json(data);
   }
@@ -39,7 +44,7 @@ export class DashController {
     const idEmpresa = request.idEmpresa;
     const { traceId } = request.params;
 
-    const data = await this.queriesService.getTraces(idEmpresa, traceId);
+    const data = await this.queriesService.getTraces(idEmpresa, request.idProject, traceId);
 
     return response.status(200).json(data);
   }

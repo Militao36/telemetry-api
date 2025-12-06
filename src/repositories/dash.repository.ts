@@ -17,7 +17,7 @@ export class DashRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  public async getMetrics(idEmpresa: string, hour: number): Promise<MetricsResult> {
+  public async getMetrics(idEmpresa: string, idProject: string, hour: number): Promise<MetricsResult> {
     const query = `
       SELECT
         count(*) AS total_requests,
@@ -30,6 +30,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
     `;
 
     const result = await this.clickHouseClient.query({
@@ -37,6 +38,7 @@ export class DashRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -56,7 +58,7 @@ export class DashRepository {
     };
   }
 
-  public async getTopRequests(idEmpresa: string, hour: number): Promise<any[]> {
+  public async getTopRequests(idEmpresa: string, idProject: string, hour: number): Promise<any[]> {
     const query = `
       SELECT
         http_method,
@@ -66,6 +68,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - toIntervalHour({hour:Int32})
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       GROUP BY path, http_method
       ORDER BY total_requests DESC
       LIMIT 10
@@ -76,6 +79,7 @@ export class DashRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -92,7 +96,7 @@ export class DashRepository {
     });
   }
 
-  public async getRequestPerTimeSeries(idEmpresa: string, hour: number, httpMethod?: string): Promise<any[]> {
+  public async getRequestPerTimeSeries(idEmpresa: string, idProject: string, hour: number, httpMethod?: string): Promise<any[]> {
     const query = `
       SELECT
           toStartOfInterval(start_time, INTERVAL 1 HOUR) AS time,
@@ -101,6 +105,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
       GROUP BY time
       ORDER BY time ASC;
@@ -111,6 +116,7 @@ export class DashRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
         httpMethod,
       },
       format: 'JSON',
@@ -127,7 +133,7 @@ export class DashRepository {
     });
   }
 
-  public async getSlowestRequests(idEmpresa: string, hour: number): Promise<any[]> {
+  public async getSlowestRequests(idEmpresa: string, idProject: string, hour: number): Promise<any[]> {
     const query = `
       SELECT
           http_method,
@@ -138,6 +144,7 @@ export class DashRepository {
       FROM telemetry.spans_http
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       ORDER BY duration_ns DESC
       LIMIT 20;
     `;
@@ -147,6 +154,7 @@ export class DashRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -164,13 +172,14 @@ export class DashRepository {
     });
   }
 
-  public async getTotalQueries(idEmpresa: string, hour: number): Promise<number> {
+  public async getTotalQueries(idEmpresa: string, idProject: string, hour: number): Promise<number> {
     const queries = `
       SELECT
         count(*) AS total_queries
       FROM telemetry.spans_database
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
     `;
 
     const result = await this.clickHouseClient.query({
@@ -178,6 +187,7 @@ export class DashRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });

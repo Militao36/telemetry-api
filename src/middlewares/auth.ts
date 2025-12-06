@@ -56,6 +56,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
       const user = await container.resolve<UserService>('userService').findByIdWithoutIdEmpresa(decoded.idUser);
 
       req.idEmpresa = user?.idEmpresa;
+      req.idProject = decoded.idProject;
       req.idUser = user?.id;
       req.user = user;
 
@@ -66,7 +67,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
-export function generateToken(args: { idEmpresa: string; idUser: string }): string {
+export function generateToken(args: { idEmpresa: string; idProject: string, idUser: string }): string {
   return jwt.sign(args, SECRET_JWT, {
     expiresIn: 86400 * 30,
   });

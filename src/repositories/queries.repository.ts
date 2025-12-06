@@ -10,7 +10,7 @@ export class QueriesRepository {
   }
 
   // TODO
-  async avgQueryTimeByType(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
+  async avgQueryTimeByType(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
     const query = `
       SELECT
         count(*) AS total_queries,
@@ -23,6 +23,7 @@ export class QueriesRepository {
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       ${queryType !== 'all' ? `and db_statement ILIKE {queryType:String}` : ''}
       and id_empresa = {idEmpresa:String}
+      and id_projeto = {idProject:String}
     `;
 
     const resultSet = await this.clickHouseClient.query({
@@ -31,6 +32,7 @@ export class QueriesRepository {
         hour,
         queryType: queryType !== 'all' ? `${queryType.toUpperCase()}%` : undefined,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -55,7 +57,7 @@ export class QueriesRepository {
   }
 
   // TODO
-  async avgQueryTimeByHour(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
+  async avgQueryTimeByHour(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
     const query = `
       SELECT
         toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,
@@ -68,6 +70,7 @@ export class QueriesRepository {
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       ${queryType !== 'all' ? `and db_statement ILIKE {queryType:String}` : ''}
       and id_empresa = {idEmpresa:String}
+      and id_projeto = {idProject:String}
       GROUP BY interval_hour
       ORDER BY interval_hour ASC
     `;
@@ -78,6 +81,7 @@ export class QueriesRepository {
         hour,
         queryType: queryType !== 'all' ? `${queryType.toUpperCase()}%` : undefined,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -103,7 +107,7 @@ export class QueriesRepository {
     }));
   }
 
-  async slowestQueries(idEmpresa: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all', limit: number = 10) {
+  async slowestQueries(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all', limit: number = 10) {
     const query = `
       SELECT
         db_statement,
@@ -122,6 +126,7 @@ export class QueriesRepository {
       AND db_statement <> ''
       ${queryType !== 'all' ? `AND db_statement like {queryType:String}` : ''}
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       GROUP BY
           db_statement,
           db_params,
@@ -138,6 +143,7 @@ export class QueriesRepository {
         hour,
         queryType: queryType !== 'all' ? `${queryType.toUpperCase()}%` : undefined,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -165,7 +171,7 @@ export class QueriesRepository {
     }));
   }
 
-  async queryVolumeByType(idEmpresa: string, hour: number) {
+  async queryVolumeByType(idEmpresa: string, idProject: string, hour: number) {
     const query = `
       SELECT
           query_type,
@@ -173,6 +179,7 @@ export class QueriesRepository {
       FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       and id_empresa = {idEmpresa:String}
+      and id_projeto = {idProject:String}
       GROUP BY query_type
       ORDER BY total DESC;
     `;
@@ -182,6 +189,7 @@ export class QueriesRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -194,7 +202,7 @@ export class QueriesRepository {
     }));
   }
 
-  async getQueryVolumeByHours(idEmpresa: string, hour: number) {
+  async getQueryVolumeByHours(idEmpresa: string, idProject: string, hour: number) {
     const query = `
       SELECT
         start_time,
@@ -211,6 +219,7 @@ export class QueriesRepository {
       FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       GROUP BY
           start_time,
           id_empresa,
@@ -223,6 +232,7 @@ export class QueriesRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -265,7 +275,7 @@ export class QueriesRepository {
     return Object.values(grouped);
   }
 
-  public async getQueriesPerTimeSeries(idEmpresa: string, hour: number): Promise<any[]> {
+  public async getQueriesPerTimeSeries(idEmpresa: string, idProject: string, hour: number): Promise<any[]> {
     const query = `
       SELECT
           start_time AS time,
@@ -274,6 +284,7 @@ export class QueriesRepository {
       FROM telemetry.spans_database_hourly_summary
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       GROUP BY start_time
       ORDER BY start_time ASC;
     `;
@@ -283,6 +294,7 @@ export class QueriesRepository {
       query_params: {
         hour,
         idEmpresa,
+        idProject,
       },
       format: 'JSON',
     });
@@ -298,12 +310,13 @@ export class QueriesRepository {
     });
   }
 
-  public async getTraces(idEmpresa: string, traceId: string): Promise<any> {
+  public async getTraces(idEmpresa: string, idProject: string, traceId: string): Promise<any> {
     const query = `
       SELECT
          *
       FROM telemetry.spans_database
       WHERE id_empresa = {idEmpresa:String}
+      AND id_projeto = {idProject:String}
       AND trace_id = {traceId:String}
       or parent_span_id = {traceId:String}
       or span_id = {traceId:String};
@@ -313,6 +326,7 @@ export class QueriesRepository {
       query,
       query_params: {
         idEmpresa,
+        idProject,
         traceId,
       },
       format: 'JSON',
@@ -338,9 +352,9 @@ export class QueriesRepository {
     }));
   }
 
-  public async list(idEmpresa: string, filters: SearchFilters): Promise<any[]> {
+  public async list(idEmpresa: string, idProject: string, filters: SearchFilters): Promise<any[]> {
     const where: string[] = [];
-    const queryParams: Record<string, any> = { idEmpresa };
+    const queryParams: Record<string, any> = { idEmpresa, idProject };
 
     if (filters.databaseFilter?.queryContains) {
       where.push(`db_statement ILIKE {queryContains:String}`);
@@ -392,6 +406,7 @@ export class QueriesRepository {
         FROM telemetry.spans_database
         ${whereClause}
         ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
+        AND id_projeto = {idProject:String}
       ORDER BY start_time DESC
       LIMIT {limit:Int32}
       OFFSET {offset:Int32}
