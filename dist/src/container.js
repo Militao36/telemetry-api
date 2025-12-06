@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.container = void 0;
 const trace_service_1 = require("./services/trace.service");
 const awilix_1 = require("awilix");
+const axios_1 = __importDefault(require("axios"));
 const clickhouse_1 = require("./databases/clickhouse");
 const bull_1 = require("./queues/bull");
 const traces_1 = require("./queues/bull/queues/traces");
@@ -25,11 +29,14 @@ const hash_service_1 = require("./services/hash.service");
 const search_service_1 = require("./services/search.service");
 const log_service_1 = require("./services/log.service");
 const logs_repository_1 = require("./repositories/logs.repository");
+const company_service_1 = require("./services/company.service");
+const company_repository_1 = require("./repositories/company.repository");
 const container = (0, awilix_1.createContainer)();
 exports.container = container;
 container.register({
     logger: (0, awilix_1.asValue)(logger_1.logger),
     hashService: (0, awilix_1.asClass)(hash_service_1.HashService).singleton(),
+    axios: (0, awilix_1.asValue)(axios_1.default),
     clickHouseClient: (0, awilix_1.asValue)(clickhouse_1.clientClickHouse),
     clientRedis: (0, awilix_1.asValue)(redis_1.clientRedis),
     databaseKnex: (0, awilix_1.asValue)(knex_1.databaseKnex),
@@ -41,12 +48,14 @@ container.register({
     userService: (0, awilix_1.asClass)(user_service_1.UserService).singleton(),
     searchService: (0, awilix_1.asClass)(search_service_1.SearchService).singleton(),
     logService: (0, awilix_1.asClass)(log_service_1.LogService).singleton(),
+    companyService: (0, awilix_1.asClass)(company_service_1.CompanyService).singleton(),
     dashRepository: (0, awilix_1.asClass)(dash_repository_1.DashRepository).singleton(),
     queriesRepository: (0, awilix_1.asClass)(queries_repository_1.QueriesRepository).singleton(),
     requestsRepository: (0, awilix_1.asClass)(requests_repository_1.RequestsRepository).singleton(),
     userRepository: (0, awilix_1.asClass)(user_repository_1.UserRepository).singleton(),
     projectsRepository: (0, awilix_1.asClass)(projects_repository_1.ProjectsRepository).singleton(),
     logsRepository: (0, awilix_1.asClass)(logs_repository_1.LogsRepository).singleton(),
+    companyRepository: (0, awilix_1.asClass)(company_repository_1.CompanyRepository).singleton(),
     traceJobProcessor: (0, awilix_1.asClass)(traces_1.TraceJobProcessor).singleton(),
     queueTraces: (0, awilix_1.asValue)(bull_1.queueTraces),
     normalizeOTLP: (0, awilix_1.asValue)(normalizeOtlpHttpJsonTrace_1.normalizeOTLP),

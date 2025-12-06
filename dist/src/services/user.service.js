@@ -5,12 +5,15 @@ const crypto_1 = require("crypto");
 const user_entity_1 = require("../entities/user.entity");
 const NotFound_1 = require("../erros/NotFound");
 const auth_1 = require("../middlewares/auth");
+const company_entity_1 = require("../entities/company.entity");
+const env_1 = require("../env");
 class UserService {
-    constructor({ userRepository, projectService, clientRedis, hashService }) {
+    constructor({ userRepository, projectService, clientRedis, hashService, companyService }) {
         this.userRepository = userRepository;
         this.hashService = hashService;
         this.clientRedis = clientRedis;
         this.projectService = projectService;
+        this.companyService = companyService;
     }
     async authenticate(email, password) {
         const user = await this.userRepository.findByEmailWithoutIdEmpresa(email);
@@ -21,9 +24,9 @@ class UserService {
         if (!isPasswordValid) {
             throw new NotFound_1.NotFound('Invalid credentials');
         }
+        const projects = await this.projectService.list(user.idEmpresa);
         user.password = '*******';
         user.idEmpresa = undefined;
-        const projects = await this.projectService.list(user.idEmpresa);
         return {
             user,
             tokens: projects.map((project) => (0, auth_1.generateToken)({
@@ -38,6 +41,21 @@ class UserService {
         user.password = await this.hashPassword(data.password);
         user.active = false;
         await this.userRepository.create(user);
+        const usersExistsByIdEmpresa = await this.userRepository.findAll(user.idEmpresa);
+        if (usersExistsByIdEmpresa.length === 1) {
+            await this.companyService.create(new company_entity_1.CompanyEntity({
+                idEmpresa: user.idEmpresa,
+                name: user.name,
+                contactEmail: '',
+                contactPhone: '',
+                documentNumber: '',
+                plan: company_entity_1.CompanyPlan.FREE,
+                status: company_entity_1.CompanyStatus.ACTIVE,
+                countAlerts: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+                countRegisters: 0,
+                limitRegisters: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN
+            }));
+        }
         return this.authenticate(user.email, data.password);
     }
     async findByEmail(idEmpresa, email) {
@@ -54,9 +72,6 @@ class UserService {
             user.password = '*******';
         });
         return users;
-    }
-    async incrementCountRegisters(idEmpresa, count = 1) {
-        return await this.userRepository.incrementCountRegisters(idEmpresa, count);
     }
     async findByIdWithoutIdEmpresa(id) {
         const cacheKey = `user_id:${id}`;
