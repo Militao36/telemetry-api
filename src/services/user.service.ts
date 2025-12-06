@@ -9,6 +9,7 @@ import { generateToken } from '../middlewares/auth';
 import { ProjectService } from './project.service';
 import { CompanyService } from './company.service';
 import { CompanyEntity, CompanyPlan, CompanyStatus } from '../entities/company.entity';
+import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from '../env';
 
 export class UserService {
   userRepository: UserRepository;
@@ -74,7 +75,10 @@ export class UserService {
         contactPhone: '',
         documentNumber: '',
         plan: CompanyPlan.FREE,
-        status: CompanyStatus.INACTIVE,
+        status: CompanyStatus.ACTIVE,
+        countAlerts: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+        countRegisters: 0,
+        limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN
       }));
     }
 
@@ -101,10 +105,6 @@ export class UserService {
     });
 
     return users;
-  }
-
-  async incrementCountRegisters(idEmpresa: string, count: number = 1) {
-    return await this.userRepository.incrementCountRegisters(idEmpresa, count);
   }
 
   async findByIdWithoutIdEmpresa(id: string) {

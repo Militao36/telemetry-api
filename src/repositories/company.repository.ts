@@ -8,6 +8,13 @@ export class CompanyRepository {
     this.databaseKnex = databaseKnex;
   }
 
+  async incrementCountRegisters(idEmpresa: string, count: number = 1) {
+    return await this.databaseKnex<CompanyEntity>('companies')
+      .where({ idEmpresa: idEmpresa })
+      .increment('countRegisters', count)
+      .returning('*') as CompanyEntity[];
+  }
+
   async create(data: CompanyEntity): Promise<CompanyEntity> {
     const [company] = await this.databaseKnex<CompanyEntity>('companies').insert(data).returning('*');
     return new CompanyEntity(company, company.id);

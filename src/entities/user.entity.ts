@@ -7,9 +7,6 @@ export class UserEntity extends Entity {
   email: string;
   password: string;
   active: boolean;
-  countRegisters: number;
-  countAlerts: number;
-  limitRegisters: number;
 
   constructor(body: Omit<UserEntity, 'id'>, id?: string) {
     super(body, id)
@@ -18,8 +15,5 @@ export class UserEntity extends Entity {
     this.email = body.email
     this.password = body.password
     this.active = body.active
-    this.countRegisters = body.countRegisters
-    this.countAlerts = body.countAlerts
-    this.limitRegisters = body.limitRegisters
   }
 }

@@ -9,6 +9,10 @@ export class CompanyService {
     this.companyRepository = companyRepository;
   }
 
+  async incrementCountRegisters(idEmpresa: string, count: number = 1) {
+    return await this.companyRepository.incrementCountRegisters(idEmpresa, count);
+  }
+
   async create(data: CompanyEntity): Promise<CompanyEntity> {
     const company = new CompanyEntity(data);
     return this.companyRepository.create(company);
