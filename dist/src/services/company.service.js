@@ -13,8 +13,8 @@ class CompanyService {
     }
     async generatePay(id, plan) {
         const pricingMapper = {
-            [company_entity_1.CompanyPlan.BASIC]: 7990,
-            [company_entity_1.CompanyPlan.COMPLETE]: 13990,
+            [company_entity_1.CompanyPlan.BASIC]: 5990,
+            [company_entity_1.CompanyPlan.COMPLETE]: 9990,
         };
         const company = await this.findById(id);
         const payQrcode = await this.abacatePayService.generatePaymentQrCode(company, pricingMapper[plan]);

@@ -30,11 +30,19 @@ class UserService {
         user.idEmpresa = undefined;
         return {
             user,
-            tokens: projects.map((project) => (0, auth_1.generateToken)({
-                idProject: project.id,
-                idEmpresa: user.idEmpresa,
-                idUser: user.id,
-            })),
+            tokens: projects.map((project) => {
+                return {
+                    token: (0, auth_1.generateToken)({
+                        idProject: project.id,
+                        idEmpresa: user.idEmpresa,
+                        idUser: user.id,
+                    }),
+                    project: {
+                        id: project.id,
+                        name: project.name,
+                    }
+                };
+            }),
         };
     }
     async register(data) {

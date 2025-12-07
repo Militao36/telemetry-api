@@ -90,11 +90,11 @@ export class AbacatePayJobbProcessor implements QueueInterface {
       }
 
       const pricingMapper = {
-        [7990]: {
+        [5990]: {
           plan: CompanyPlan.BASIC,
           limitRegisters: 100000,
         },
-        [13990]: {
+        [9990]: {
           plan: CompanyPlan.COMPLETE,
           limitRegisters: 250000,
         },

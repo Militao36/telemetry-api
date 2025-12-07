@@ -8,8 +8,7 @@ class LogsRepository {
     async list(idEmpresa, idProject, qs) {
         let query = `
       SELECT l.*
-      FROM telemetry.logs_tokens t
-      JOIN telemetry.logs l ON concat(l.trace_id, '-', l.span_id) = t.log_key
+      FROM telemetry.logs
     `;
         query += ` WHERE id_empresa = {id_empresa: String}`;
         if (qs.traceId) {
@@ -25,15 +24,7 @@ class LogsRepository {
             query += ` AND timestamp <= toDateTime({end_time: String}) `;
         }
         if (qs.message) {
-            const args = qs.message.split(' ');
-            query += ` AND (`;
-            for (let i = 0; i < args.length; i++) {
-                query += ` t.token = '${args[i].toLowerCase()}' or`;
-                if (i === args.length - 1) {
-                    query = query.slice(0, -2);
-                }
-            }
-            query += `)`;
+            query += ` AND lower(message) LIKE concat('%', {message: String}, '%') `;
         }
         const limit = qs.limit || 100;
         const offset = qs.offset || 0;

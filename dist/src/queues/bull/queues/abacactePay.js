@@ -49,11 +49,11 @@ class AbacatePayJobbProcessor {
                 return;
             }
             const pricingMapper = {
-                [7990]: {
+                [5990]: {
                     plan: company_entity_js_1.CompanyPlan.BASIC,
                     limitRegisters: 100000,
                 },
-                [13990]: {
+                [9990]: {
                     plan: company_entity_js_1.CompanyPlan.COMPLETE,
                     limitRegisters: 250000,
                 },
