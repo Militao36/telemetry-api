@@ -19,8 +19,8 @@ export class CompanyService {
 
   async generatePay(id: string, plan: CompanyPlan): Promise<string> {
     const pricingMapper = {
-      [CompanyPlan.BASIC]: 799,
-      [CompanyPlan.COMPLETE]: 1399,
+      [CompanyPlan.BASIC]: 7990,
+      [CompanyPlan.COMPLETE]: 13990,
     }
 
     const company = await this.findById(id);

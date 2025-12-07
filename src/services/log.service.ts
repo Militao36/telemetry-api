@@ -6,6 +6,8 @@ import { LIMIT_ITEM_QUEUE_DEFAULT } from '../env';
 import { ADD_LOG_SCRIPT } from '../databases/redis/lua/log';
 import { NormalizedLog, RawLog, ResourceLog } from '../queues/bull/utils/normalizeLog';
 import { LogsRepository } from '../repositories/logs.repository';
+import { CompanyService } from './company.service';
+import { CompanyStatus } from '../entities/company.entity';
 
 export class LogService {
   queueLogs: Queue;
@@ -14,20 +16,34 @@ export class LogService {
   logger: Logger;
   LIMIT_ITEM_QUEUE: number;
   logsRepository: LogsRepository
+  companyService: CompanyService;
 
-  constructor({ queueLogs, logger, logsRepository, clientRedis, normalizeLog }) {
+  constructor({ queueLogs, logger, logsRepository, clientRedis, normalizeLog, companyService }) {
     this.queueLogs = queueLogs;
     this.normalizeLog = normalizeLog;
     this.clientRedis = clientRedis;
     this.LIMIT_ITEM_QUEUE = LIMIT_ITEM_QUEUE_DEFAULT;
     this.logger = logger;
     this.logsRepository = logsRepository;
+    this.companyService = companyService;
   }
 
   async create(idEmpresa: string, idProject: string, logsRaw: Array<Record<string, any>>) {
     const logs = this.normalizeLog(idProject, idEmpresa, logsRaw as any);
 
-    if (logs.length === 0) {
+    await this.companyService.resetCountRegisters(idEmpresa);
+    const company = await this.companyService.findById(idEmpresa);
+
+    if (company.status === CompanyStatus.INACTIVE) {
+      this.logger.warn(`Company ${idEmpresa} is inactive. Skipping trace processing.`);
+      return;
+    }
+
+    const countLogs = logs.length;
+
+    await this.companyService.incrementCountRegisters(idEmpresa, countLogs);
+
+    if (countLogs === 0) {
       return;
     }
 
