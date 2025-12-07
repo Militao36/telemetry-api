@@ -11,6 +11,7 @@ import { QueriesService } from './queries.service';
 import { RequestsService } from './requests.service';
 import { UserService } from './user.service';
 import { CompanyService } from './company.service';
+import { CompanyStatus } from '../entities/company.entity';
 
 export class TracesService {
   queueTraces: Queue;
@@ -46,15 +47,18 @@ export class TracesService {
 
     const spans = this.normalizeOTLP(idEmpresa, idProject, resourceSpans);
 
+    // muito importante resetar o countRegisters antes de incrementar se tiver passado um mês
+    await this.companyService.resetCountRegisters(idEmpresa);
     const company = await this.companyService.findById(idEmpresa);
-    const countSpans = (spans.spans_database.length || 0) + (spans?.spans_http?.length || 0)
 
-    if ((company.countRegisters + countSpans) > company.limitRegisters) {
-      this.logger.warn(`Company has exceeded the limit of registers: ${company.countRegisters}/${company.limitRegisters}`);
+    if (company.status === CompanyStatus.INACTIVE) {
+      this.logger.warn(`Company ${idEmpresa} is inactive. Skipping trace processing.`);
       return;
     }
 
-    await this.companyService.incrementCountRegisters(idEmpresa, (spans.spans_database.length || 0) + (spans?.spans_http?.length || 0));
+    const countSpans = (spans.spans_database.length || 0) + (spans?.spans_http?.length || 0)
+
+    await this.companyService.incrementCountRegisters(idEmpresa, countSpans);
 
     if (spans?.spans_database?.length === 0 && spans?.spans_http?.length === 0) {
       this.logger.info(`No spans to process for company ${idEmpresa}`);

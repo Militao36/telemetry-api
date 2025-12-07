@@ -4,6 +4,7 @@ import { TraceJobProcessor } from './queues/traces';
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from '../../env';
 import { LogJobProcessor } from './queues/logs';
 import { clientClickHouse } from '../../databases/clickhouse';
+import { AbacatePayJobbProcessor } from './queues/abacactePay';
 
 const REDIS_CONFIG = {
   host: REDIS_HOST,
@@ -16,6 +17,10 @@ export const queueTraces = new Queue('traces', {
 });
 
 export const queueLogs = new Queue('logs', {
+  redis: REDIS_CONFIG,
+});
+
+export const queueAbacatePay = new Queue('abacatepay', {
   redis: REDIS_CONFIG,
 });
 
@@ -34,3 +39,9 @@ const logJobProcessor = new LogJobProcessor({
 
 queueLogs.process(logJobProcessor.handle.bind(logJobProcessor));
 //#endregion Log Processor
+
+//#regiion AbacatePay Processor
+const abacatePayJobbProcessor = new AbacatePayJobbProcessor()
+
+queueAbacatePay.process(abacatePayJobbProcessor.handle.bind(abacatePayJobbProcessor));
+//#endregion AbacatePay Processor

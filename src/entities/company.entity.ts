@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from '../env'
 import { Entity } from './base/Entity'
 
@@ -23,6 +24,7 @@ export class CompanyEntity extends Entity {
   countRegisters: number;
   countAlerts: number;
   limitRegisters: number;
+  expirationDate: string;
 
   constructor(body: Omit<CompanyEntity, 'id'>, id?: string) {
     super(body, id)
@@ -35,5 +37,6 @@ export class CompanyEntity extends Entity {
     this.countRegisters = body.countRegisters || 0;
     this.countAlerts = body.countAlerts || DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
     this.limitRegisters = body.limitRegisters || DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
+    this.expirationDate = body.expirationDate
   }
 }

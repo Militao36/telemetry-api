@@ -1,15 +1,20 @@
-import { CompanyEntity, CompanyPlan } from '../entities/company.entity';
+import { DateTime } from 'luxon';
+import { CompanyEntity, CompanyPlan, CompanyStatus } from '../entities/company.entity';
 import { NotFound } from '../erros/NotFound';
 import { CompanyRepository } from '../repositories/company.repository';
 import { AbacatePayService } from './abacatePay.service';
+import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from '../env';
+import { Logger } from 'pino';
 
 export class CompanyService {
   companyRepository: CompanyRepository;
   abacatePayService: AbacatePayService
+  logger: Logger
 
-  constructor({ companyRepository, abacatePayService }) {
+  constructor({ companyRepository, abacatePayService, logger }) {
     this.companyRepository = companyRepository;
     this.abacatePayService = abacatePayService;
+    this.logger = logger;
   }
 
   async generatePay(id: string, plan: CompanyPlan): Promise<string> {
@@ -36,13 +41,47 @@ export class CompanyService {
 
   async update(id: string, updateData: Partial<CompanyEntity>): Promise<void> {
     const exists = await this.findById(id);
+
     await this.companyRepository.update(id, {
       ...updateData,
       plan: exists.plan,
       countRegisters: exists.countRegisters,
       limitRegisters: exists.limitRegisters,
       status: exists.status,
+      expirationDate: exists.expirationDate,
     });
+  }
+
+  async updateCompanyBeforePayment(id: string, company: CompanyEntity): Promise<void> {
+    await this.companyRepository.update(id, company);
+  }
+
+  async resetCountRegisters(id: string): Promise<void> {
+    const company = await this.findById(id);
+
+    const currentDate = DateTime.now();
+    const expirationDate = DateTime.fromISO(company.expirationDate);
+
+    if (currentDate >= expirationDate) {
+      let newLimitRegisters = company.limitRegisters;
+
+      if (company.plan === CompanyPlan.FREE) {
+        newLimitRegisters = DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
+      }
+
+      await this.companyRepository.update(id, {
+        countRegisters: 0,
+        limitRegisters: newLimitRegisters,
+        status: CompanyStatus.INACTIVE,
+      });
+    }
+
+    if (company.countRegisters >= company.limitRegisters && company.status !== CompanyStatus.INACTIVE) {
+      this.logger.warn(`Company has exceeded the limit of registers: ${company.countRegisters}/${company.limitRegisters}`);
+      await this.companyRepository.update(id, {
+        status: CompanyStatus.INACTIVE,
+      });
+    }
   }
 
   async findById(id: string): Promise<CompanyEntity> {

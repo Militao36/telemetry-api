@@ -1,9 +1,7 @@
-import { TracesService } from './services/trace.service';
-
 import { createContainer, asClass, asValue } from 'awilix';
 import axios from 'axios'
 import { clientClickHouse } from './databases/clickhouse';
-import { queueLogs, queueTraces } from './queues/bull';
+import { queueAbacatePay, queueLogs, queueTraces } from './queues/bull';
 import { TraceJobProcessor } from './queues/bull/queues/traces';
 import { normalizeOTLP } from './queues/bull/utils/normalizeOtlpHttpJsonTrace';
 import { logger } from './config/logger';
@@ -27,6 +25,7 @@ import { LogsRepository } from './repositories/logs.repository';
 import { CompanyService } from './services/company.service';
 import { CompanyRepository } from './repositories/company.repository';
 import { AbacatePayService } from './services/abacatePay.service';
+import { TracesService } from './services/trace.service';
 
 const container = createContainer();
 
@@ -68,6 +67,7 @@ container.register({
   normalizeOTLP: asValue(normalizeOTLP),
   normalizeLog: asValue(normalizeLog),
   queueLogs: asValue(queueLogs),
+  queueAbacatePay: asValue(queueAbacatePay),
 });
 
 export { container };
