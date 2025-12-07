@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_LIMIT_REGISTERS_FREE_PLAN = exports.URL_ABACATE_PAY = exports.SECRET_JWT = exports.REDIS_PORT = exports.REDIS_PASSWORD = exports.REDIS_HOST = exports.PORT = exports.PG_USER = exports.PG_PORT = exports.PG_PASSWORD = exports.PG_HOST = exports.PG_DATABASE = exports.LOG_LEVEL = exports.LIMIT_ITEM_QUEUE_DEFAULT = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_DATABASE = exports.AWILIX_CONTROLLERS = void 0;
+exports.TOKEN_ABACATE_PAY = exports.DEFAULT_LIMIT_REGISTERS_FREE_PLAN = exports.URL_ABACATE_PAY = exports.SECRET_JWT = exports.REDIS_PORT = exports.REDIS_PASSWORD = exports.REDIS_HOST = exports.PORT = exports.PG_USER = exports.PG_PORT = exports.PG_PASSWORD = exports.PG_HOST = exports.PG_DATABASE = exports.LOG_LEVEL = exports.LIMIT_ITEM_QUEUE_DEFAULT = exports.CLICKHOUSE_USER = exports.CLICKHOUSE_URL = exports.CLICKHOUSE_PASSWORD = exports.CLICKHOUSE_DATABASE = exports.AWILIX_CONTROLLERS = void 0;
 exports.AWILIX_CONTROLLERS = process.env.AWILIX_CONTROLLERS || 'controllers/**/*.ts';
 exports.CLICKHOUSE_DATABASE = process.env.CLICKHOUSE_DATABASE || 'telemetry';
 exports.CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD || '';
@@ -20,3 +20,4 @@ exports.REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) :
 exports.SECRET_JWT = process.env.SECRET_JWT || 'your_jwt_secret';
 exports.URL_ABACATE_PAY = process.env.URL_ABACATE_PAY || 'https://api.abacatepay.com/v1';
 exports.DEFAULT_LIMIT_REGISTERS_FREE_PLAN = process.env.DEFAULT_LIMIT_REGISTERS_FREE_PLAN ? parseInt(process.env.DEFAULT_LIMIT_REGISTERS_FREE_PLAN) : 5000;
+exports.TOKEN_ABACATE_PAY = process.env.TOKEN_ABACATE_PAY || 'your_abacate_pay_token';

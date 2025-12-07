@@ -26,6 +26,7 @@ class CompanyEntity extends Entity_1.Entity {
         this.countRegisters = body.countRegisters || 0;
         this.countAlerts = body.countAlerts || env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
         this.limitRegisters = body.limitRegisters || env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
+        this.expirationDate = body.expirationDate;
     }
 }
 exports.CompanyEntity = CompanyEntity;

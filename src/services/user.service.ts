@@ -10,6 +10,7 @@ import { ProjectService } from './project.service';
 import { CompanyService } from './company.service';
 import { CompanyEntity, CompanyPlan, CompanyStatus } from '../entities/company.entity';
 import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from '../env';
+import { DateTime } from 'luxon';
 
 export class UserService {
   userRepository: UserRepository;
@@ -72,7 +73,8 @@ export class UserService {
       status: CompanyStatus.ACTIVE,
       countAlerts: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
       countRegisters: 0,
-      limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN
+      limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+      expirationDate: DateTime.now().plus({ months: 1 }).toISODate() as string,
     }));
 
     user.idEmpresa = company.id;

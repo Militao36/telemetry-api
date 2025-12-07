@@ -11,10 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompanyController = void 0;
 const awilix_express_1 = require("awilix-express");
-const company_service_1 = require("../services/company.service");
 let CompanyController = class CompanyController {
-    constructor(companyService) {
+    constructor({ companyService }) {
         this.companyService = companyService;
+    }
+    async generatePay(request, response) {
+        const idEmpresa = request.idEmpresa;
+        const { plan } = request.body;
+        const qrcode = await this.companyService.generatePay(idEmpresa, plan);
+        return response.status(200).json({ qrcode });
     }
     async findById(request, response) {
         const idEmpresa = request.idEmpresa;
@@ -29,7 +34,14 @@ let CompanyController = class CompanyController {
 };
 exports.CompanyController = CompanyController;
 __decorate([
-    (0, awilix_express_1.route)('/:id'),
+    (0, awilix_express_1.route)('/pay'),
+    (0, awilix_express_1.POST)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], CompanyController.prototype, "generatePay", null);
+__decorate([
+    (0, awilix_express_1.route)('/me'),
     (0, awilix_express_1.GET)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
@@ -44,5 +56,5 @@ __decorate([
 ], CompanyController.prototype, "update", null);
 exports.CompanyController = CompanyController = __decorate([
     (0, awilix_express_1.route)('/companies'),
-    __metadata("design:paramtypes", [company_service_1.CompanyService])
+    __metadata("design:paramtypes", [Object])
 ], CompanyController);

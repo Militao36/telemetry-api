@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.container = void 0;
-const trace_service_1 = require("./services/trace.service");
 const awilix_1 = require("awilix");
 const axios_1 = __importDefault(require("axios"));
 const clickhouse_1 = require("./databases/clickhouse");
@@ -31,6 +30,8 @@ const log_service_1 = require("./services/log.service");
 const logs_repository_1 = require("./repositories/logs.repository");
 const company_service_1 = require("./services/company.service");
 const company_repository_1 = require("./repositories/company.repository");
+const abacatePay_service_1 = require("./services/abacatePay.service");
+const trace_service_1 = require("./services/trace.service");
 const container = (0, awilix_1.createContainer)();
 exports.container = container;
 container.register({
@@ -49,6 +50,7 @@ container.register({
     searchService: (0, awilix_1.asClass)(search_service_1.SearchService).singleton(),
     logService: (0, awilix_1.asClass)(log_service_1.LogService).singleton(),
     companyService: (0, awilix_1.asClass)(company_service_1.CompanyService).singleton(),
+    abacatePayService: (0, awilix_1.asClass)(abacatePay_service_1.AbacatePayService).singleton(),
     dashRepository: (0, awilix_1.asClass)(dash_repository_1.DashRepository).singleton(),
     queriesRepository: (0, awilix_1.asClass)(queries_repository_1.QueriesRepository).singleton(),
     requestsRepository: (0, awilix_1.asClass)(requests_repository_1.RequestsRepository).singleton(),
@@ -61,4 +63,5 @@ container.register({
     normalizeOTLP: (0, awilix_1.asValue)(normalizeOtlpHttpJsonTrace_1.normalizeOTLP),
     normalizeLog: (0, awilix_1.asValue)(normalizeLog_1.normalizeLog),
     queueLogs: (0, awilix_1.asValue)(bull_1.queueLogs),
+    queueAbacatePay: (0, awilix_1.asValue)(bull_1.queueAbacatePay),
 });

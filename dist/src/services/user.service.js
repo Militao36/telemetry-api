@@ -7,6 +7,7 @@ const NotFound_1 = require("../erros/NotFound");
 const auth_1 = require("../middlewares/auth");
 const company_entity_1 = require("../entities/company.entity");
 const env_1 = require("../env");
+const luxon_1 = require("luxon");
 class UserService {
     constructor({ userRepository, projectService, clientRedis, hashService, companyService }) {
         this.userRepository = userRepository;
@@ -49,7 +50,8 @@ class UserService {
             status: company_entity_1.CompanyStatus.ACTIVE,
             countAlerts: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
             countRegisters: 0,
-            limitRegisters: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN
+            limitRegisters: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+            expirationDate: luxon_1.DateTime.now().plus({ months: 1 }).toISODate(),
         }));
         user.idEmpresa = company.id;
         await this.userRepository.create(user);
