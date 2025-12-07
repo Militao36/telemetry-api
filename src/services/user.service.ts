@@ -47,11 +47,19 @@ export class UserService {
 
     return {
       user,
-      tokens: projects.map((project) => generateToken({
-        idProject: project.id,
-        idEmpresa: user.idEmpresa,
-        idUser: user.id,
-      })),
+      tokens: projects.map((project) => {
+        return {
+          token: generateToken({
+            idProject: project.id,
+            idEmpresa: user.idEmpresa,
+            idUser: user.id,
+          }),
+          project: {
+            id: project.id,
+            name: project.name,
+          }
+        }
+      }),
     };
   }
 
