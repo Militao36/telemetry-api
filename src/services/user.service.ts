@@ -70,7 +70,7 @@ export class UserService {
     });
 
     user.password = await this.hashPassword(data.password);
-    user.active = false;
+    user.active = true;
 
     const company = await this.companyService.create(new CompanyEntity({
       name: user.name,
@@ -84,6 +84,15 @@ export class UserService {
       limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
       expirationDate: DateTime.now().plus({ months: 1 }).toISODate() as string,
     }));
+
+    await this.projectService.create({
+      idEmpresa: company.id,
+      name: 'Default Project',
+      description: 'Default project created upon user registration',
+      active:true,
+      enviroment: 'development',
+      languageOrFramework: 'unknown',
+    })
 
     user.idEmpresa = company.id;
 

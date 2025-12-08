@@ -12,7 +12,7 @@ export class ProjectService {
     this.clientRedis = clientRedis;
   }
 
-  async create(data: ProjectEntity) {
+  async create(data: Omit<ProjectEntity, 'id' | 'token'>) {
     const project = new ProjectEntity(data);
 
     project.token = this.generateToken(project.idEmpresa);

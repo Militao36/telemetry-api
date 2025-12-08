@@ -7,7 +7,7 @@ export class ProjectEntity extends Entity {
   description: string;
   enviroment: string;
   languageOrFramework: string;
-  token: string;
+  token?: string;
   active: boolean;
 
   constructor(body: Omit<ProjectEntity, 'id'>, id?: string) {
