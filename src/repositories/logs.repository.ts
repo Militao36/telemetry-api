@@ -19,7 +19,7 @@ export class LogsRepository {
       query += ` AND trace_id = {trace_id: String} `;
     }
 
-    if (qs.severityText) {
+    if (qs.severityText && qs.severityText !== 'all') {
       query += ` AND severity_text = {severity_text: String} `;
     }
 
