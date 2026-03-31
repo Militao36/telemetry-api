@@ -35,9 +35,10 @@ export class LogsRepository {
       query += ` AND lower(message) LIKE concat('%', {message: String}, '%') `;
     }
 
-    const limit = qs.limit || 100;
+    const limit = qs.limit || 50;
     const offset = qs.offset || 0;
 
+    query += ` LIMIT {limit: Int} OFFSET {offset: Int} `;
     const resultSet = await this.clickHouseClient.query({
       query,
       query_params: {
