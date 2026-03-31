@@ -49,7 +49,7 @@ export class LogsRepository {
         severity_text: qs.severityText,
         start_time: qs.startTime,
         end_time: qs.endTime,
-        message: qs.message.toLocaleLowerCase(),
+        message: qs?.message?.toLocaleLowerCase(),
       },
     });
 
