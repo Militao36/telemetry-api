@@ -30,6 +30,16 @@ export class UserController {
     return response.status(200).json(authResult);
   }
 
+  @route('/reset-password')
+  @POST()
+  async resetPassword(request: Request, response: Response) {
+    const { email } = request.body;
+
+    await this.userService.resetPassword(email);
+
+    return response.status(204).json({});
+  }
+
   @route('/:id')
   @GET()
   async findById(request: Request, response: Response) {

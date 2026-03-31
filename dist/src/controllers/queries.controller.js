@@ -24,7 +24,8 @@ let DashController = class DashController {
     }
     async dashboardQueries(request, response) {
         const idEmpresa = request.idEmpresa;
-        const data = await this.queriesService.dashboardQueries(idEmpresa, request.idProject, +'12');
+        const { hour } = request.query;
+        const data = await this.queriesService.dashboardQueries(idEmpresa, request.idProject, +(hour || '12'));
         return response.status(200).json(data);
     }
     async getTraces(request, response) {

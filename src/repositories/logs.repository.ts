@@ -9,7 +9,7 @@ export class LogsRepository {
 
   async list(idEmpresa: string, idProject: string, qs: Record<string, string>) {
     let query = `
-      SELECT l.*
+      SELECT *
       FROM telemetry.logs
     `;
 

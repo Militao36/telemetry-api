@@ -26,6 +26,11 @@ let UserController = class UserController {
         const authResult = await this.userService.authenticate(email, password);
         return response.status(200).json(authResult);
     }
+    async resetPassword(request, response) {
+        const { email } = request.body;
+        await this.userService.resetPassword(email);
+        return response.status(204).json({});
+    }
     async findById(request, response) {
         const idEmpresa = request.idEmpresa;
         const { id } = request.params;
@@ -66,6 +71,13 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "authenticate", null);
+__decorate([
+    (0, awilix_express_1.route)('/reset-password'),
+    (0, awilix_express_1.POST)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "resetPassword", null);
 __decorate([
     (0, awilix_express_1.route)('/:id'),
     (0, awilix_express_1.GET)(),

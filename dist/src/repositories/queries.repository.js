@@ -99,7 +99,7 @@ class QueriesRepository {
           telemetry.spans_database_slowest
       WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
       AND db_statement <> ''
-      ${queryType !== 'all' ? `AND db_statement like {queryType:String}` : ''}
+      ${queryType !== 'all' ? `AND db_statement ilike {queryType:String}` : ''}
       AND id_empresa = {idEmpresa:String}
       AND project_id = {idProject:String}
       GROUP BY
@@ -115,7 +115,7 @@ class QueriesRepository {
             query: query,
             query_params: {
                 hour,
-                queryType: queryType !== 'all' ? `${queryType.toUpperCase()}%` : undefined,
+                queryType: queryType !== 'all' ? `${queryType.toLowerCase()}%` : undefined,
                 idEmpresa,
                 idProject,
             },

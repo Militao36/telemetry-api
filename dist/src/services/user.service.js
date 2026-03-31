@@ -45,10 +45,17 @@ class UserService {
             }),
         };
     }
+    async resetPassword(email) {
+        const user = await this.userRepository.findByEmailWithoutIdEmpresa(email);
+        if (!user) {
+            throw new NotFound_1.NotFound('User not found');
+        }
+        return { message: 'Password reset instructions have been sent to your email.' };
+    }
     async register(data) {
         const user = new user_entity_1.UserEntity(Object.assign(Object.assign({}, data), { idEmpresa: (0, crypto_1.randomUUID)() }));
         user.password = await this.hashPassword(data.password);
-        user.active = false;
+        user.active = true;
         const company = await this.companyService.create(new company_entity_1.CompanyEntity({
             name: user.name,
             contactEmail: '',
@@ -61,6 +68,14 @@ class UserService {
             limitRegisters: env_1.DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
             expirationDate: luxon_1.DateTime.now().plus({ months: 1 }).toISODate(),
         }));
+        await this.projectService.create({
+            idEmpresa: company.id,
+            name: 'Default Project',
+            description: 'Default project created upon user registration',
+            active: true,
+            enviroment: 'development',
+            languageOrFramework: 'unknown',
+        });
         user.idEmpresa = company.id;
         await this.userRepository.create(user);
         return this.authenticate(user.email, data.password);

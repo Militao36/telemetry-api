@@ -63,6 +63,18 @@ export class UserService {
     };
   }
 
+  async resetPassword(email: string) {
+    const user = await this.userRepository.findByEmailWithoutIdEmpresa(email);
+
+    if (!user) {
+      throw new NotFound('User not found');
+    }
+
+    // Implement password reset logic here (e.g., send email with reset link)
+
+    return { message: 'Password reset instructions have been sent to your email.' };
+  }
+
   async register(data: UserEntity) {
     const user = new UserEntity({
       ...data,
@@ -89,7 +101,7 @@ export class UserService {
       idEmpresa: company.id,
       name: 'Default Project',
       description: 'Default project created upon user registration',
-      active:true,
+      active: true,
       enviroment: 'development',
       languageOrFramework: 'unknown',
     })

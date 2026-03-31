@@ -9,7 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../env");
 const container_1 = require("../container");
 async function auth(req, res, next) {
-    const excludes = ['/api/v1/users', '/api/v1/users/auth'];
+    const excludes = ['/api/v1/users', '/api/v1/users/auth', '/api/v1/users/reset-password'];
     if (excludes.includes(req.url)) {
         next();
         return;

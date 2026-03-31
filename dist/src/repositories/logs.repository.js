@@ -7,7 +7,7 @@ class LogsRepository {
     }
     async list(idEmpresa, idProject, qs) {
         let query = `
-      SELECT l.*
+      SELECT *
       FROM telemetry.logs
     `;
         query += ` WHERE id_empresa = {id_empresa: String}`;
