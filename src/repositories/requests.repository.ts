@@ -157,7 +157,7 @@ export class RequestsRepository {
     }));
   }
 
-  public async getResponseStatusDistribution(idEmpresa: string, hour: number, httpMethod: string = 'ALL'): Promise<any[]> {
+  public async getResponseStatusDistribution(idEmpresa: string, hour: number, httpMethod: string = 'ALL', idProject: string): Promise<any[]> {
     const query = `
       SELECT
           http_status,
@@ -167,6 +167,7 @@ export class RequestsRepository {
       WHERE id_empresa = {idEmpresa:String}
       and time_bucket >= now() - toIntervalHour({hour:Int32})
        ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
+      and project_id = {idProject:String}
       GROUP BY http_status
       ORDER BY count DESC;
     `;
@@ -177,6 +178,7 @@ export class RequestsRepository {
         idEmpresa,
         hour,
         httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
+        idProject
       },
       format: 'JSON',
     });
