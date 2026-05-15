@@ -194,9 +194,9 @@ export class RequestsRepository {
     });
   }
 
-  public async list(idEmpresa: string, filters: SearchFilters): Promise<any[]> {
+  public async list(idEmpresa: string, idProject: string, filters: SearchFilters): Promise<any[]> {
     const where: string[] = [];
-    const queryParams: Record<string, any> = { idEmpresa };
+    const queryParams: Record<string, any> = { idEmpresa, idProject };
 
     if (filters.httpFilter?.method) {
       where.push(`http_method = {method:String}`);
@@ -241,6 +241,7 @@ export class RequestsRepository {
       FROM telemetry.spans_http
       ${whereClause}
       ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
+      AND project_id = {idProject:String}
       ORDER BY start_time DESC
       LIMIT {limit:Int32}
       OFFSET {offset:Int32}
