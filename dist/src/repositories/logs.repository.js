@@ -5,9 +5,67 @@ class LogsRepository {
     constructor({ clickHouseClient }) {
         this.clickHouseClient = clickHouseClient;
     }
+    parseJsonSafely(value) {
+        if (typeof value !== 'string')
+            return value;
+        try {
+            return JSON.parse(value);
+        }
+        catch (_a) {
+            return value;
+        }
+    }
+    tokenizeSearch(message) {
+        return Array.from(new Set(message
+            .toLowerCase()
+            .split(/[^\p{L}\p{N}]+/u)
+            .map((t) => t.trim())
+            .filter((t) => t.length >= 2)));
+    }
+    async findCandidateLogKeysByTokens(args) {
+        const { idEmpresa, idProject, tokens, searchMode, startTime, endTime, candidateLimit } = args;
+        const preWhere = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
+        const where = ['token IN {tokens:Array(String)}'];
+        if (startTime) {
+            preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
+        }
+        if (endTime) {
+            preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
+        }
+        const having = searchMode === 'all' ? 'HAVING uniqExact(token) = {token_count:UInt32}' : '';
+        const resultSet = await this.clickHouseClient.query({
+            query: `
+        SELECT
+          log_key,
+          max(timestamp) AS last_seen
+        FROM telemetry.logs_tokens
+        PREWHERE ${preWhere.join(' AND ')}
+        WHERE ${where.join(' AND ')}
+        GROUP BY log_key
+        ${having}
+        ORDER BY last_seen DESC
+        LIMIT {candidate_limit:Int32}
+      `,
+            query_params: {
+                id_empresa: idEmpresa,
+                project_id: idProject,
+                tokens,
+                token_count: tokens.length,
+                start_time: startTime,
+                end_time: endTime,
+                candidate_limit: candidateLimit,
+            },
+        });
+        const result = await resultSet.json();
+        return result.data.map((row) => row.log_key);
+    }
     async list(idEmpresa, idProject, qs) {
         const traceId = (qs.traceId || "").trim();
         const message = (qs.message || "").trim();
+        const rawSearchMode = (qs.searchMode || 'all').toLowerCase();
+        const searchMode = ['all', 'any', 'substring'].includes(rawSearchMode)
+            ? rawSearchMode
+            : 'all';
         const severityText = (qs.severityText || "ALL").toUpperCase();
         const startTime = (qs.startTime || qs.startDate || "").trim();
         const endTime = (qs.endTime || qs.endDate || "").trim();
@@ -24,29 +82,73 @@ class LogsRepository {
         const parsedOffset = Number(qs.offset || 0);
         const limit = Number.isFinite(parsedLimit) ? Math.min(Math.max(parsedLimit, 1), 200) : 50;
         const offset = Number.isFinite(parsedOffset) ? Math.max(parsedOffset, 0) : 0;
-        let query = `
-      SELECT *
-      FROM telemetry.logs
-    `;
-        query += ` WHERE id_empresa = {id_empresa: String}`;
-        query += ` AND project_id = {project_id: String}`;
-        if (traceId) {
-            query += ` AND trace_id = {trace_id: String} `;
-        }
-        if (severityText !== 'ALL') {
-            query += ` AND severity_text = {severity_text: String} `;
-        }
+        const candidateLimit = 10000;
+        let candidateLogKeys;
+        const useTokenSearch = message.length > 0 && searchMode !== 'substring';
+        const searchTokens = useTokenSearch ? this.tokenizeSearch(message) : [];
+        const preWhere = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
+        const where = [];
         if (startTime) {
-            query += ` AND timestamp >= toDateTime({start_time: String}) `;
+            preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
         }
         if (endTime) {
-            query += ` AND timestamp <= toDateTime({end_time: String}) `;
+            preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
         }
-        if (message) {
-            query += ` AND lower(message) LIKE concat('%', {message: String}, '%') `;
+        if (traceId) {
+            where.push(`trace_id = {trace_id: String}`);
         }
-        query += ` ORDER BY timestamp DESC `;
-        query += ` LIMIT {limit: Int} OFFSET {offset: Int} `;
+        if (severityText !== 'ALL') {
+            where.push(`severity_text = {severity_text: String}`);
+        }
+        if (message && (!useTokenSearch || searchTokens.length === 0)) {
+            where.push(`message LIKE concat('%', {message: String}, '%')`);
+        }
+        if (useTokenSearch && searchTokens.length > 0) {
+            const logKeys = await this.findCandidateLogKeysByTokens({
+                idEmpresa,
+                idProject,
+                tokens: searchTokens,
+                searchMode: searchMode === 'any' ? 'any' : 'all',
+                startTime,
+                endTime,
+                candidateLimit,
+            });
+            if (logKeys.length === 0) {
+                return [];
+            }
+            where.push(`concat(trace_id, '-', span_id) IN {log_keys:Array(String)}`);
+            if (!startTime && !endTime) {
+                preWhere.push(`timestamp >= now() - INTERVAL 7 DAY`);
+            }
+            candidateLogKeys = logKeys;
+        }
+        const query = `
+      SELECT
+        id_empresa,
+        project_id,
+        timestamp,
+        trace_id,
+        span_id,
+        severity_text,
+        severity_number,
+        service_name,
+        environment,
+        host,
+        app_version,
+        logger_name,
+        message,
+        attributes,
+        body,
+        exception_type,
+        exception_message,
+        exception_stacktrace,
+        ingestion_time
+      FROM telemetry.logs
+      PREWHERE ${preWhere.join(' AND ')}
+      ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+      ORDER BY timestamp DESC
+      LIMIT {limit: Int32} OFFSET {offset: Int32}
+    `;
         const resultSet = await this.clickHouseClient.query({
             query,
             query_params: {
@@ -58,7 +160,8 @@ class LogsRepository {
                 severity_text: severityText,
                 start_time: startTime,
                 end_time: endTime,
-                message: message.toLocaleLowerCase(),
+                message,
+                log_keys: candidateLogKeys,
             },
         });
         const result = await resultSet.json();
@@ -76,8 +179,8 @@ class LogsRepository {
             appVersion: row.app_version,
             loggerName: row.logger_name,
             message: row.message,
-            attributes: JSON.parse(row.attributes),
-            body: JSON.parse(row.body),
+            attributes: this.parseJsonSafely(row.attributes),
+            body: this.parseJsonSafely(row.body),
             exceptionType: row.exception_type,
             exceptionMessage: row.exception_message,
             exceptionStacktrace: row.exception_stacktrace,

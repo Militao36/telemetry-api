@@ -346,12 +346,15 @@ CREATE TABLE telemetry.logs
 
     ingestion_time DateTime64(9, 'UTC') DEFAULT now('UTC'),
 
+    INDEX idx_trace_id_bf trace_id TYPE bloom_filter(0.01) GRANULARITY 4,
+    INDEX idx_span_id_bf span_id TYPE bloom_filter(0.01) GRANULARITY 4,
+
     /* 🔥 ÍNDICE FULL TEXT (ngrambf) */
     INDEX idx_message_ngrambf message TYPE ngrambf_v1(3, 256, 3, 0) GRANULARITY 1
 )
 ENGINE = MergeTree()
 PARTITION BY toDate(timestamp)
-ORDER BY (id_empresa, project_id, severity_number, timestamp)
+ORDER BY (id_empresa, project_id, timestamp, severity_number)
 TTL timestamp + INTERVAL 30 DAY
 SETTINGS index_granularity = 8192;
 
