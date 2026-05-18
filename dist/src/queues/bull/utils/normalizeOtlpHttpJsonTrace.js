@@ -86,8 +86,24 @@ function toCHDateTime64(nanos) {
     return iso.replace('T', ' ').replace('Z', '');
 }
 function toEnumKind(kind) {
-    const valid = new Set(['UNSPECIFIED', 'INTERNAL', 'SERVER', 'CLIENT', 'PRODUCER', 'CONSUMER']);
-    return valid.has(kind) ? kind : 'UNSPECIFIED';
+    const enumByCode = ['UNSPECIFIED', 'INTERNAL', 'SERVER', 'CLIENT', 'PRODUCER', 'CONSUMER'];
+    if (typeof kind === 'number' && Number.isInteger(kind) && kind >= 0 && kind <= 5) {
+        return enumByCode[kind];
+    }
+    if (typeof kind === 'string') {
+        const normalized = kind.toUpperCase().replace('SPAN_KIND_', '').trim();
+        const valid = new Set(enumByCode);
+        if (valid.has(normalized)) {
+            return normalized;
+        }
+        if (/^\d+$/.test(normalized)) {
+            const numericCode = Number(normalized);
+            if (numericCode >= 0 && numericCode <= 5) {
+                return enumByCode[numericCode];
+            }
+        }
+    }
+    return 'UNSPECIFIED';
 }
 function findAttr(span, key) {
     if (!span.attributes)

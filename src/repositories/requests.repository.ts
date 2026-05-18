@@ -118,10 +118,12 @@ export class RequestsRepository {
          *
       FROM telemetry.spans_http
       WHERE id_empresa = {idEmpresa:String}
-      AND trace_id = {traceId:String}
-      or parent_span_id = {traceId:String}
-      or span_id = {traceId:String}
-      and project_id = {idProject:String}
+      AND project_id = {idProject:String}
+      AND (
+        trace_id = {traceId:String}
+        OR parent_span_id = {traceId:String}
+        OR span_id = {traceId:String}
+      )
     `;
 
     const result = await this.clickHouseClient.query({

@@ -26,7 +26,7 @@ class RequestsService {
     }
     async getMetrics(idEmpresa, idProject, hour = 1, httpMethod = 'ALL') {
         const requestPerTimeSeries = await this.dashRepository.getRequestPerTimeSeries(idEmpresa, idProject, hour, httpMethod);
-        const responseStatusDistribution = await this.requestsRepository.getResponseStatusDistribution(idEmpresa, hour, httpMethod);
+        const responseStatusDistribution = await this.requestsRepository.getResponseStatusDistribution(idEmpresa, hour, httpMethod, idProject);
         return {
             requestPerTimeSeries,
             responseStatusDistribution,

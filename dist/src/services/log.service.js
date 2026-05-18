@@ -32,7 +32,7 @@ class LogService {
         try {
             const result = (await this.clientRedis.eval(log_1.ADD_LOG_SCRIPT, {
                 keys: [countKey, logsKey],
-                arguments: ['10', JSON.stringify(logs), logs.length.toString()],
+                arguments: [this.LIMIT_ITEM_QUEUE.toString(), JSON.stringify(logs), logs.length.toString()],
             }));
             const [shouldQueue, logsToQueue] = result;
             if (shouldQueue === 1 && logsToQueue) {

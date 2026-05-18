@@ -317,9 +317,11 @@ export class QueriesRepository {
       FROM telemetry.spans_database
       WHERE id_empresa = {idEmpresa:String}
       AND project_id = {idProject:String}
-      AND trace_id = {traceId:String}
-      or parent_span_id = {traceId:String}
-      or span_id = {traceId:String};
+      AND (
+        trace_id = {traceId:String}
+        OR parent_span_id = {traceId:String}
+        OR span_id = {traceId:String}
+      );
     `;
 
     const result = await this.clickHouseClient.query({

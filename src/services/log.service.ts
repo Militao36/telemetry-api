@@ -53,7 +53,7 @@ export class LogService {
     try {
       const result = (await this.clientRedis.eval(ADD_LOG_SCRIPT, {
         keys: [countKey, logsKey],
-        arguments: ['10', JSON.stringify(logs), logs.length.toString()],
+        arguments: [this.LIMIT_ITEM_QUEUE.toString(), JSON.stringify(logs), logs.length.toString()],
       })) as [number, string];
 
       const [shouldQueue, logsToQueue] = result;

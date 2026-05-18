@@ -177,11 +177,33 @@ function toCHDateTime64(nanos: string) {
   return iso.replace('T', ' ').replace('Z', '');
 }
 
-function toEnumKind(kind: string): string {
+function toEnumKind(kind: unknown): string {
   // Bate com o Enum8 da migration:
   // 'UNSPECIFIED'=0, 'INTERNAL'=1, 'SERVER'=2, 'CLIENT'=3, 'PRODUCER'=4, 'CONSUMER'=5
-  const valid = new Set(['UNSPECIFIED', 'INTERNAL', 'SERVER', 'CLIENT', 'PRODUCER', 'CONSUMER']);
-  return valid.has(kind) ? kind : 'UNSPECIFIED';
+  const enumByCode = ['UNSPECIFIED', 'INTERNAL', 'SERVER', 'CLIENT', 'PRODUCER', 'CONSUMER'] as const;
+
+  if (typeof kind === 'number' && Number.isInteger(kind) && kind >= 0 && kind <= 5) {
+    return enumByCode[kind];
+  }
+
+  if (typeof kind === 'string') {
+    const normalized = kind.toUpperCase().replace('SPAN_KIND_', '').trim();
+    const valid = new Set(enumByCode);
+
+    if (valid.has(normalized as (typeof enumByCode)[number])) {
+      return normalized;
+    }
+
+    if (/^\d+$/.test(normalized)) {
+      const numericCode = Number(normalized);
+
+      if (numericCode >= 0 && numericCode <= 5) {
+        return enumByCode[numericCode];
+      }
+    }
+  }
+
+  return 'UNSPECIFIED';
 }
 
 function findAttr(span: any, key: any): string | number | boolean | null {

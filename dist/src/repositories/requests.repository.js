@@ -107,10 +107,12 @@ class RequestsRepository {
          *
       FROM telemetry.spans_http
       WHERE id_empresa = {idEmpresa:String}
-      AND trace_id = {traceId:String}
-      or parent_span_id = {traceId:String}
-      or span_id = {traceId:String}
-      and project_id = {idProject:String}
+      AND project_id = {idProject:String}
+      AND (
+        trace_id = {traceId:String}
+        OR parent_span_id = {traceId:String}
+        OR span_id = {traceId:String}
+      )
     `;
         const result = await this.clickHouseClient.query({
             query,
@@ -142,7 +144,7 @@ class RequestsRepository {
             ingestionTime: row.ingestion_time,
         }));
     }
-    async getResponseStatusDistribution(idEmpresa, hour, httpMethod = 'ALL') {
+    async getResponseStatusDistribution(idEmpresa, hour, httpMethod = 'ALL', idProject) {
         const query = `
       SELECT
           http_status,
@@ -152,6 +154,7 @@ class RequestsRepository {
       WHERE id_empresa = {idEmpresa:String}
       and time_bucket >= now() - toIntervalHour({hour:Int32})
        ${httpMethod !== 'ALL' ? `and http_method = {httpMethod:String}` : ''}
+      and project_id = {idProject:String}
       GROUP BY http_status
       ORDER BY count DESC;
     `;
@@ -161,6 +164,7 @@ class RequestsRepository {
                 idEmpresa,
                 hour,
                 httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
+                idProject
             },
             format: 'JSON',
         });
@@ -173,10 +177,10 @@ class RequestsRepository {
             };
         });
     }
-    async list(idEmpresa, filters) {
+    async list(idEmpresa, idProject, filters) {
         var _a, _b, _c, _d, _e;
         const where = [];
-        const queryParams = { idEmpresa };
+        const queryParams = { idEmpresa, idProject };
         if ((_a = filters.httpFilter) === null || _a === void 0 ? void 0 : _a.method) {
             where.push(`http_method = {method:String}`);
             queryParams.method = filters.httpFilter.method;
@@ -212,6 +216,7 @@ class RequestsRepository {
       FROM telemetry.spans_http
       ${whereClause}
       ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
+      AND project_id = {idProject:String}
       ORDER BY start_time DESC
       LIMIT {limit:Int32}
       OFFSET {offset:Int32}
