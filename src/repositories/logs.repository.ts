@@ -9,80 +9,6 @@ export class LogsRepository {
     this.clickHouseClient = clickHouseClient;
   }
 
-  private parseJsonSafely(value: unknown) {
-    if (typeof value !== 'string') return value;
-
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
-  }
-
-  private tokenizeSearch(message: string): string[] {
-    return Array.from(
-      new Set(
-        message
-          .toLowerCase()
-          .split(/[^\p{L}\p{N}]+/u)
-          .map((t) => t.trim())
-          .filter((t) => t.length >= 2),
-      ),
-    );
-  }
-
-  private async findCandidateLogKeysByTokens(args: {
-    idEmpresa: string;
-    idProject: string;
-    tokens: string[];
-    searchMode: Exclude<SearchMode, 'substring'>;
-    startTime: string;
-    endTime: string;
-    candidateLimit: number;
-  }): Promise<string[]> {
-    const { idEmpresa, idProject, tokens, searchMode, startTime, endTime, candidateLimit } = args;
-
-    const preWhere: string[] = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
-    const where: string[] = ['token IN {tokens:Array(String)}'];
-
-    if (startTime) {
-      preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
-    }
-
-    if (endTime) {
-      preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
-    }
-
-    const having = searchMode === 'all' ? 'HAVING uniqExact(token) = {token_count:UInt32}' : '';
-
-    const resultSet = await this.clickHouseClient.query({
-      query: `
-        SELECT
-          log_key,
-          max(timestamp) AS last_seen
-        FROM telemetry.logs_tokens
-        PREWHERE ${preWhere.join(' AND ')}
-        WHERE ${where.join(' AND ')}
-        GROUP BY log_key
-        ${having}
-        ORDER BY last_seen DESC
-        LIMIT {candidate_limit:Int32}
-      `,
-      query_params: {
-        id_empresa: idEmpresa,
-        project_id: idProject,
-        tokens,
-        token_count: tokens.length,
-        start_time: startTime,
-        end_time: endTime,
-        candidate_limit: candidateLimit,
-      },
-    });
-
-    const result = await resultSet.json();
-    return result.data.map((row: any) => row.log_key as string);
-  }
-
   async list(idEmpresa: string, idProject: string, qs: Record<string, string>) {
     const traceId = (qs.traceId || "").trim();
     const message = (qs.message || "").trim();
@@ -230,5 +156,79 @@ export class LogsRepository {
       exceptionStacktrace: row.exception_stacktrace,
       ingestionTime: row.ingestion_time,
     }));
+  }
+
+  private parseJsonSafely(value: unknown) {
+    if (typeof value !== 'string') return value;
+
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+
+  private tokenizeSearch(message: string): string[] {
+    return Array.from(
+      new Set(
+        message
+          .toLowerCase()
+          .split(/[^\p{L}\p{N}]+/u)
+          .map((t) => t.trim())
+          .filter((t) => t.length >= 2),
+      ),
+    );
+  }
+
+  private async findCandidateLogKeysByTokens(args: {
+    idEmpresa: string;
+    idProject: string;
+    tokens: string[];
+    searchMode: Exclude<SearchMode, 'substring'>;
+    startTime: string;
+    endTime: string;
+    candidateLimit: number;
+  }): Promise<string[]> {
+    const { idEmpresa, idProject, tokens, searchMode, startTime, endTime, candidateLimit } = args;
+
+    const preWhere: string[] = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
+    const where: string[] = ['token IN {tokens:Array(String)}'];
+
+    if (startTime) {
+      preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
+    }
+
+    if (endTime) {
+      preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
+    }
+
+    const having = searchMode === 'all' ? 'HAVING uniqExact(token) = {token_count:UInt32}' : '';
+
+    const resultSet = await this.clickHouseClient.query({
+      query: `
+        SELECT
+          log_key,
+          max(timestamp) AS last_seen
+        FROM telemetry.logs_tokens
+        PREWHERE ${preWhere.join(' AND ')}
+        WHERE ${where.join(' AND ')}
+        GROUP BY log_key
+        ${having}
+        ORDER BY last_seen DESC
+        LIMIT {candidate_limit:Int32}
+      `,
+      query_params: {
+        id_empresa: idEmpresa,
+        project_id: idProject,
+        tokens,
+        token_count: tokens.length,
+        start_time: startTime,
+        end_time: endTime,
+        candidate_limit: candidateLimit,
+      },
+    });
+
+    const result = await resultSet.json();
+    return result.data.map((row: any) => row.log_key as string);
   }
 }
