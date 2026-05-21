@@ -1,4 +1,4 @@
-import { ClickHouseClient } from "@clickhouse/client";
+import { ClickHouseClient } from '@clickhouse/client';
 
 type SearchMode = 'all' | 'any' | 'substring';
 
@@ -10,26 +10,24 @@ export class LogsRepository {
   }
 
   async list(idEmpresa: string, idProject: string, qs: Record<string, string>) {
-    const traceId = (qs.traceId || "").trim();
-    const message = (qs.message || "").trim();
+    const traceId = (qs.traceId || '').trim();
+    const message = (qs.message || '').trim();
     const rawSearchMode = ((qs.searchMode || 'all') as string).toLowerCase();
-    const searchMode: SearchMode = ['all', 'any', 'substring'].includes(rawSearchMode)
-      ? (rawSearchMode as SearchMode)
-      : 'all';
-    const severityText = (qs.severityText || "ALL").toUpperCase();
-    const startTime = (qs.startTime || qs.startDate || "").trim();
-    const endTime = (qs.endTime || qs.endDate || "").trim();
+    const searchMode: SearchMode = ['all', 'any', 'substring'].includes(rawSearchMode) ? (rawSearchMode as SearchMode) : 'all';
+    const severityText = (qs.severityText || 'ALL').toUpperCase();
+    const startTime = (qs.startTime || qs.startDate || '').trim();
+    const endTime = (qs.endTime || qs.endDate || '').trim();
 
     if (startTime && Number.isNaN(new Date(startTime).getTime())) {
-      throw new Error("Invalid startTime");
+      throw new Error('Invalid startTime');
     }
 
     if (endTime && Number.isNaN(new Date(endTime).getTime())) {
-      throw new Error("Invalid endTime");
+      throw new Error('Invalid endTime');
     }
 
     if (startTime && endTime && new Date(startTime) > new Date(endTime)) {
-      throw new Error("startTime cannot be greater than endTime");
+      throw new Error('startTime cannot be greater than endTime');
     }
 
     const parsedLimit = Number(qs.limit || 50);
@@ -43,7 +41,7 @@ export class LogsRepository {
     const searchTokens = useTokenSearch ? this.tokenizeSearch(message) : [];
 
     const preWhere: string[] = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
-    const where: string[] = [];
+    const where: string[] = ['project_id = {project_id: String}'];
 
     if (startTime) {
       preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
@@ -192,7 +190,7 @@ export class LogsRepository {
     const { idEmpresa, idProject, tokens, searchMode, startTime, endTime, candidateLimit } = args;
 
     const preWhere: string[] = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
-    const where: string[] = ['token IN {tokens:Array(String)}'];
+    const where: string[] = ['token IN {tokens:Array(String)}', 'project_id = {project_id: String}'];
 
     if (startTime) {
       preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
