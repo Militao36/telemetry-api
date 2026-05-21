@@ -35,7 +35,6 @@ export class LogsRepository {
     const limit = Number.isFinite(parsedLimit) ? Math.min(Math.max(parsedLimit, 1), 200) : 50;
     const offset = Number.isFinite(parsedOffset) ? Math.max(parsedOffset, 0) : 0;
     const candidateLimit = 10000;
-    let candidateLogKeys: string[] | undefined;
 
     const useTokenSearch = message.length > 0 && searchMode !== 'substring';
     const searchTokens = useTokenSearch ? this.tokenizeSearch(message) : [];
@@ -64,27 +63,16 @@ export class LogsRepository {
     }
 
     if (useTokenSearch && searchTokens.length > 0) {
-      const logKeys = await this.findCandidateLogKeysByTokens({
-        idEmpresa,
-        idProject,
-        tokens: searchTokens,
+      where.push(this.buildTokenSearchCondition({
         searchMode: searchMode === 'any' ? 'any' : 'all',
+        traceId,
         startTime,
         endTime,
-        candidateLimit,
-      });
-
-      if (logKeys.length === 0) {
-        return [];
-      }
-
-      where.push(`concat(trace_id, '-', span_id) IN {log_keys:Array(String)}`);
+      }));
 
       if (!startTime && !endTime) {
         preWhere.push(`timestamp >= now() - INTERVAL 7 DAY`);
       }
-
-      candidateLogKeys = logKeys;
     }
 
     const query = `
@@ -127,7 +115,9 @@ export class LogsRepository {
         start_time: startTime,
         end_time: endTime,
         message,
-        log_keys: candidateLogKeys,
+        tokens: searchTokens,
+        token_count: searchTokens.length,
+        candidate_limit: candidateLimit,
       },
     });
 
@@ -178,16 +168,13 @@ export class LogsRepository {
     );
   }
 
-  private async findCandidateLogKeysByTokens(args: {
-    idEmpresa: string;
-    idProject: string;
-    tokens: string[];
+  private buildTokenSearchCondition(args: {
     searchMode: Exclude<SearchMode, 'substring'>;
+    traceId: string;
     startTime: string;
     endTime: string;
-    candidateLimit: number;
-  }): Promise<string[]> {
-    const { idEmpresa, idProject, tokens, searchMode, startTime, endTime, candidateLimit } = args;
+  }): string {
+    const { searchMode, traceId, startTime, endTime } = args;
 
     const preWhere: string[] = ['id_empresa = {id_empresa: String}', 'project_id = {project_id: String}'];
     const where: string[] = ['token IN {tokens:Array(String)}', 'project_id = {project_id: String}'];
@@ -200,33 +187,22 @@ export class LogsRepository {
       preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
     }
 
+    if (traceId) {
+      where.push(`log_key LIKE concat({trace_id: String}, '-%')`);
+    }
+
     const having = searchMode === 'all' ? 'HAVING uniqExact(token) = {token_count:UInt32}' : '';
 
-    const resultSet = await this.clickHouseClient.query({
-      query: `
+    return `concat(trace_id, '-', span_id) IN (
         SELECT
-          log_key,
-          max(timestamp) AS last_seen
+          log_key
         FROM telemetry.logs_tokens
         PREWHERE ${preWhere.join(' AND ')}
         WHERE ${where.join(' AND ')}
         GROUP BY log_key
         ${having}
-        ORDER BY last_seen DESC
+        ORDER BY max(timestamp) DESC
         LIMIT {candidate_limit:Int32}
-      `,
-      query_params: {
-        id_empresa: idEmpresa,
-        project_id: idProject,
-        tokens,
-        token_count: tokens.length,
-        start_time: startTime,
-        end_time: endTime,
-        candidate_limit: candidateLimit,
-      },
-    });
-
-    const result = await resultSet.json();
-    return result.data.map((row: any) => row.log_key as string);
+      )`;
   }
 }
