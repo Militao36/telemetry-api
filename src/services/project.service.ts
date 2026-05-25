@@ -2,6 +2,7 @@ import { RedisClientType } from 'redis';
 import { ProjectEntity } from '../entities/project.entity';
 import { NotFound } from '../erros/NotFound';
 import { ProjectsRepository } from '../repositories/projects.repository';
+import { DateTime } from 'luxon';
 
 export class ProjectService {
   projectsRepository: ProjectsRepository;
@@ -98,6 +99,7 @@ export class ProjectService {
         languageOrFramework: updateData.languageOrFramework,
         active: updateData.active,
         redactionFields: this.normalizeRedactionFields(updateData.redactionFields),
+        updatedAt: DateTime.utc().toFormat('yyyy-MM-dd HH:mm:ss'),
       }).filter(([, value]) => value !== undefined),
     ) as Partial<ProjectEntity>;
   }
