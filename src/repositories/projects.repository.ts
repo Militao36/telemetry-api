@@ -9,12 +9,12 @@ export class ProjectsRepository {
   }
 
   async create(data: ProjectEntity) {
-    const [project] = await this.databaseKnex<ProjectEntity>('projects').insert(data).returning('*');
+    const [project] = await this.databaseKnex<ProjectEntity>('projects').insert(this.prepareJsonFields(data)).returning('*');
     return new ProjectEntity(project, project.id);
   }
 
   async update(idEmpresa: string, id: string, updateData: Partial<ProjectEntity>) {
-    const [project] = await this.databaseKnex<ProjectEntity>('projects').where({ idEmpresa: idEmpresa, id }).update(updateData).returning('*');
+    const [project] = await this.databaseKnex<ProjectEntity>('projects').where({ idEmpresa: idEmpresa, id }).update(this.prepareJsonFields(updateData)).returning('*');
 
     return new ProjectEntity(project, project.id);
   }
@@ -47,5 +47,16 @@ export class ProjectsRepository {
 
   async delete(idEmpresa: string, id: string) {
     await this.databaseKnex<ProjectEntity>('projects').where({ idEmpresa: idEmpresa, id }).del();
+  }
+
+  private prepareJsonFields<T extends Partial<ProjectEntity>>(data: T): T {
+    if (!Array.isArray(data.redactionFields)) {
+      return data;
+    }
+
+    return {
+      ...data,
+      redactionFields: JSON.stringify(data.redactionFields) as any,
+    };
   }
 }

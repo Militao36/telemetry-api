@@ -24,7 +24,10 @@ export class ProjectService {
 
   async update(idEmpresa: string, id: string, updateData: Partial<ProjectEntity>) {
     await this.findById(idEmpresa, id);
-    await this.projectsRepository.update(idEmpresa, id, this.pickUpdateData(updateData));
+    const project = await this.projectsRepository.update(idEmpresa, id, this.pickUpdateData(updateData));
+
+    await this.clientRedis.del(`project:${idEmpresa}:${id}`);
+    await this.clientRedis.del(`project_token:${project.token}`);
   }
 
   async findById(idEmpresa: string, id: string) {
