@@ -41,9 +41,10 @@ export class CompanyService {
 
   async update(id: string, updateData: Partial<CompanyEntity>): Promise<void> {
     const exists = await this.findById(id);
+    const safeUpdateData = this.pickUpdateData(updateData);
 
     await this.companyRepository.update(id, {
-      ...updateData,
+      ...safeUpdateData,
       plan: exists.plan,
       countRegisters: exists.countRegisters,
       limitRegisters: exists.limitRegisters,
@@ -92,5 +93,16 @@ export class CompanyService {
     }
 
     return company;
+  }
+
+  private pickUpdateData(updateData: Partial<CompanyEntity>): Partial<CompanyEntity> {
+    return Object.fromEntries(
+      Object.entries({
+        name: updateData.name,
+        documentNumber: updateData.documentNumber,
+        contactPhone: updateData.contactPhone,
+        contactEmail: updateData.contactEmail,
+      }).filter(([, value]) => value !== undefined),
+    ) as Partial<CompanyEntity>;
   }
 }

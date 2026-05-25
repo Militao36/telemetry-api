@@ -22,7 +22,7 @@ export class ProjectService {
 
   async update(idEmpresa: string, id: string, updateData: Partial<ProjectEntity>) {
     await this.findById(idEmpresa, id);
-    await this.projectsRepository.update(idEmpresa, id, updateData);
+    await this.projectsRepository.update(idEmpresa, id, this.pickUpdateData(updateData));
   }
 
   async findById(idEmpresa: string, id: string) {
@@ -77,5 +77,17 @@ export class ProjectService {
     });
 
     return `proj_${combined.join('')}`;
+  }
+
+  private pickUpdateData(updateData: Partial<ProjectEntity>): Partial<ProjectEntity> {
+    return Object.fromEntries(
+      Object.entries({
+        name: updateData.name,
+        description: updateData.description,
+        enviroment: updateData.enviroment,
+        languageOrFramework: updateData.languageOrFramework,
+        active: updateData.active,
+      }).filter(([, value]) => value !== undefined),
+    ) as Partial<ProjectEntity>;
   }
 }

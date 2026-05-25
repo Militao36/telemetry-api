@@ -1,6 +1,7 @@
 import { Cacheable } from '../decorators/Cacheable';
 import { QueriesRepository } from '../repositories/queries.repository';
 import { RequestsRepository } from '../repositories/requests.repository';
+import { clampInt, optionalClampInt, truncateString } from '../utils/queryParams';
 
 export interface SearchFilters {
   type: 'HTTP' | 'DATABASE' | 'CACHE';
@@ -43,20 +44,20 @@ export class SearchService {
       ...qs,
       type: qs.type,
       httpFilter: {
-        method: qs.httpFilter?.method || qs.method,
-        statusCode: qs.httpFilter?.statusCode || qs.statusCode,
-        pathContains: qs.httpFilter?.pathContains || qs.pathContains || qs.q,
+        method: truncateString(qs.httpFilter?.method || qs.method, 16)?.toUpperCase(),
+        statusCode: optionalClampInt(qs.httpFilter?.statusCode || qs.statusCode, 100, 599),
+        pathContains: truncateString(qs.httpFilter?.pathContains || qs.pathContains || qs.q, 250),
       },
       databaseFilter: {
-        queryContains: qs.databaseFilter?.queryContains || qs.queryContains,
-        tableName: qs.databaseFilter?.tableName || qs.tableName,
+        queryContains: truncateString(qs.databaseFilter?.queryContains || qs.queryContains, 500),
+        tableName: truncateString(qs.databaseFilter?.tableName || qs.tableName, 128),
       },
-      limit: qs.limit,
-      offset: qs.offset,
-      environment: qs.environment,
-      traceId: qs.traceId,
-      startTimeFrom: qs.startTimeFrom,
-      startTimeTo: qs.startTimeTo,
+      limit: clampInt(qs.limit, 20, 1, 200),
+      offset: clampInt(qs.offset, 0, 0, 10000),
+      environment: truncateString(qs.environment, 128),
+      traceId: truncateString(qs.traceId, 128),
+      startTimeFrom: truncateString(qs.startTimeFrom, 64),
+      startTimeTo: truncateString(qs.startTimeTo, 64),
     };
 
     if (normalizedFilters.type === 'HTTP') {

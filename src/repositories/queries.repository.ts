@@ -1,6 +1,7 @@
 import { ClickHouseClient } from '@clickhouse/client';
 import { SearchFilters } from '../services/search.service';
 import _ from 'lodash';
+import { clampInt } from '../utils/queryParams';
 
 export class QueriesRepository {
   clickHouseClient: ClickHouseClient;
@@ -108,6 +109,8 @@ export class QueriesRepository {
   }
 
   async slowestQueries(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all', limit: number = 10) {
+    const safeLimit = clampInt(limit, 10, 1, 100);
+
     const query = `
       SELECT
         db_statement,
@@ -134,7 +137,7 @@ export class QueriesRepository {
           start_time
       ORDER BY
           max_duration_ms DESC
-      LIMIT ${limit};
+      LIMIT {limit:Int32};
     `;
 
     const resultSet = await this.clickHouseClient.query({
@@ -144,6 +147,7 @@ export class QueriesRepository {
         queryType: queryType !== 'all' ? `${queryType.toLowerCase()}%` : undefined,
         idEmpresa,
         idProject,
+        limit: safeLimit,
       },
       format: 'JSON',
     });
