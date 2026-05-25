@@ -54,7 +54,8 @@ CREATE TABLE telemetry.logs_tokens
 )
 ENGINE = MergeTree()
 PARTITION BY toDate(timestamp)
-ORDER BY (id_empresa, project_id, token, timestamp);
+ORDER BY (id_empresa, project_id, token, timestamp)
+TTL timestamp + INTERVAL 30 DAY;
 
 CREATE MATERIALIZED VIEW telemetry.mv_logs_tokens
 TO telemetry.logs_tokens AS

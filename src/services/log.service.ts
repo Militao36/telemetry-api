@@ -11,7 +11,7 @@ import { CompanyStatus } from '../entities/company.entity';
 
 export class LogService {
   queueLogs: Queue;
-  normalizeLog: (idProject: string, idEmpresa: string, logs: RawLog[] | ResourceLog[]) => Array<NormalizedLog>;
+  normalizeLog: (idProject: string, idEmpresa: string, logs: RawLog[] | ResourceLog[], redactionFields?: string[]) => Array<NormalizedLog>;
   clientRedis: RedisClientType;
   logger: Logger;
   LIMIT_ITEM_QUEUE: number;
@@ -28,8 +28,8 @@ export class LogService {
     this.companyService = companyService;
   }
 
-  async create(idEmpresa: string, idProject: string, logsRaw: Array<Record<string, any>>) {
-    const logs = this.normalizeLog(idProject, idEmpresa, logsRaw as any);
+  async create(idEmpresa: string, idProject: string, logsRaw: Array<Record<string, any>>, redactionFields: string[] = []) {
+    const logs = this.normalizeLog(idProject, idEmpresa, logsRaw as any, redactionFields);
 
     await this.companyService.resetCountRegisters(idEmpresa);
     const company = await this.companyService.findById(idEmpresa);
@@ -47,8 +47,8 @@ export class LogService {
       return;
     }
 
-    const countKey = `log_count:${idEmpresa}`;
-    const logsKey = `log_logs:${idEmpresa}`;
+    const countKey = `log_count:${idEmpresa}:${idProject}`;
+    const logsKey = `log_logs:${idEmpresa}:${idProject}`;
 
     try {
       const result = (await this.clientRedis.eval(ADD_LOG_SCRIPT, {

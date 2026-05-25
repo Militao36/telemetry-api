@@ -1,3 +1,5 @@
+import { redactJsonString, redactSensitiveData } from '../../../utils/redactSensitiveData';
+
 export interface NormalizedSpanHttp {
   id_empresa: string;
 
@@ -52,7 +54,7 @@ export interface NormalizedSpanDatabase {
 
 const EXCLUDES_ROUTES = ['/health', '/favicon.ico'];
 
-export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpans: any[]) {
+export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpans: any[], redactionFields: string[] = []) {
   const spans_http: Partial<NormalizedSpanHttp>[] = [];
   const spans_database: Partial<NormalizedSpanDatabase>[] = [];
 
@@ -94,6 +96,7 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
 
         const duration_ns = Number(endNano) - Number(startNano);
 
+        const redactedAttributes = redactSensitiveData(span.attributes || [], redactionFields);
         const baseFields = {
           id_empresa: idEmpresa,
           project_id: idProject,
@@ -109,7 +112,7 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
           start_time: start,
           end_time: end,
           duration_ns,
-          attributes: span.attributes,
+          attributes: JSON.stringify(redactedAttributes),
         };
 
         // ------------------------------------------------------------------
@@ -130,9 +133,9 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
 
           spans_http.push({
             ...baseFields,
-            http_url: http_url as any,
+            http_url: redactJsonString(http_url || '', redactionFields),
             http_method: http_method as any,
-            http_target: http_target as any,
+            http_target: redactJsonString(http_target || '', redactionFields),
             http_status: Number.isFinite(http_status) && (http_status || 0) >= 0 ? http_status : 0,
           });
         } else if (spanType === 'Database') {
@@ -150,13 +153,13 @@ export function normalizeOTLP(idEmpresa: string, idProject: string, resourceSpan
             spans_database.push({
               ...baseFields,
               db_system: db_system as any as any,
-              db_statement: db_statement || (null as any),
+              db_statement: db_statement ? redactJsonString(db_statement, redactionFields) : (null as any),
               db_duration: db_duration ? Number(db_duration) : (duration_ns as any),
               db_table: db_table || (null as any),
               db_operation: db_statement ? db_statement.trim().split(' ')[0].toLowerCase().trim() : (null as any),
               db_user: db_user || (null as any),
               db_name: db_name || (null as any),
-              db_params: db_params ? JSON.stringify(db_params) : (null as any),
+              db_params: db_params ? redactJsonString(db_params, redactionFields) : (null as any),
             });
           }
         }

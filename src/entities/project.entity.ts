@@ -9,6 +9,7 @@ export class ProjectEntity extends Entity {
   languageOrFramework: string;
   token?: string;
   active: boolean;
+  redactionFields?: string[];
 
   constructor(body: Omit<ProjectEntity, 'id'>, id?: string) {
     super(body, id);
@@ -19,5 +20,6 @@ export class ProjectEntity extends Entity {
     this.languageOrFramework = body.languageOrFramework;
     this.token = body.token;
     this.active = body.active;
+    this.redactionFields = Array.isArray(body.redactionFields) ? body.redactionFields : [];
   }
 }

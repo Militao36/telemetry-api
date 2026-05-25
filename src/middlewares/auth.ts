@@ -46,6 +46,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 
         req.idEmpresa = project.idEmpresa;
         req.idProject = project.id;
+        req.projectRedactionFields = project.redactionFields || [];
         req.idUser = null;
         req.user = null;
 
@@ -69,14 +70,23 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         return res.status(401).json({ message: 'Access denied' });
       }
 
-      const user = await container.resolve<UserService>('userService').findByIdWithoutIdEmpresa(decoded.idUser);
+      if (!decoded?.idProject) {
+        return res.status(401).json({ message: 'Access denied' });
+      }
 
-      req.idEmpresa = user?.idEmpresa;
-      req.idProject = decoded.idProject;
-      req.idUser = user?.id;
-      req.user = user;
+      try {
+        const user = await container.resolve<UserService>('userService').findByIdWithoutIdEmpresa(decoded.idUser);
+        const project = await container.resolve<ProjectService>('projectService').findById(user.idEmpresa, decoded.idProject);
 
-      next();
+        req.idEmpresa = user?.idEmpresa;
+        req.idProject = project.id;
+        req.idUser = user?.id;
+        req.user = user;
+
+        next();
+      } catch {
+        return res.status(401).json({ message: 'Access denied' });
+      }
     });
   } else {
     return res.status(401).json({ message: 'Access denied' });

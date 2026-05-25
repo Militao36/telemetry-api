@@ -17,7 +17,7 @@ export class LogsController {
 
     const { resourceLogs } = request.body;
 
-    await this.logService.create(idEmpresa, request.idProject, resourceLogs);
+    await this.logService.create(idEmpresa, request.idProject, resourceLogs, request.projectRedactionFields);
 
     return response.status(200).json({});
   }

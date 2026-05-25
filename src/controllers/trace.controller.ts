@@ -17,7 +17,7 @@ export class TraceController {
 
     const { resourceSpans } = request.body;
 
-    await this.traceService.create(idEmpresa, request.idProject!, resourceSpans);
+    await this.traceService.create(idEmpresa, request.idProject!, resourceSpans, request.projectRedactionFields);
 
     return response.status(200).json({});
   }

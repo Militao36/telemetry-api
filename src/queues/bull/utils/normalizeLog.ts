@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { redactJsonString, redactSensitiveData } from '../../../utils/redactSensitiveData';
 
 export interface RawLog {
   timestamp?: string;
@@ -19,6 +20,8 @@ export interface RawLog {
 }
 
 export interface NormalizedLog {
+  id_empresa?: string;
+  project_id?: string;
   timestamp: string;
   trace_id: string;
   span_id: string;
@@ -75,7 +78,7 @@ export interface ResourceLog {
   }[]
 }
 
-export function normalizeLog(idProject: string, idEmpresa: string, raw: ResourceLog[]): NormalizedLog[] {
+export function normalizeLog(idProject: string, idEmpresa: string, raw: ResourceLog[], redactionFields: string[] = []): NormalizedLog[] {
   return raw.flatMap(resourceLog => {
     const resourceAttributes = Object.fromEntries(
       resourceLog.resource.attributes.map(attr => [
@@ -99,9 +102,12 @@ export function normalizeLog(idProject: string, idEmpresa: string, raw: Resource
           { zone: 'UTC' }
         ).toFormat("yyyy-MM-dd HH:mm:ss.SSS")
 
+        const attributes = redactSensitiveData({ ...resourceAttributes, ...logAttributes }, redactionFields);
+        const redactedLogRecord = redactSensitiveData(logRecord, redactionFields);
+        const message = redactJsonString(logRecord.body.stringValue || '', redactionFields);
         const exceptionType = logAttributes['exception.type'] as string || '';
-        const exceptionMessage = logAttributes['exception.message'] as string || '';
-        const exceptionStacktrace = logAttributes['exception.stacktrace'] as string || '';
+        const exceptionMessage = redactJsonString(logAttributes['exception.message'] as string || '', redactionFields);
+        const exceptionStacktrace = redactJsonString(logAttributes['exception.stacktrace'] as string || '', redactionFields);
 
 
         if (!logRecord.traceId || !logRecord.spanId) {
@@ -125,9 +131,9 @@ export function normalizeLog(idProject: string, idEmpresa: string, raw: Resource
           app_version:
             (resourceAttributes['service.version'] as string) || 'unknown',
           logger_name: scopeLog.scope.name || 'unknown',
-          message: logRecord.body.stringValue || '',
-          attributes: JSON.stringify({ ...resourceAttributes, ...logAttributes }),
-          body: JSON.stringify(logRecord),
+          message,
+          attributes: JSON.stringify(attributes),
+          body: JSON.stringify(redactedLogRecord),
           exception_type: exceptionType,
           exception_message: exceptionMessage,
           exception_stacktrace: exceptionStacktrace,

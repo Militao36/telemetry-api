@@ -21,9 +21,9 @@ export class LogJobProcessor implements QueueInterface {
 
     const values = logs.map(log => ({
       ...log,
-      id_empresa: idEmpresa,
-      project_id: idProject,
-      attributes: JSON.stringify(log.attributes),
+      id_empresa: log.id_empresa || idEmpresa,
+      project_id: log.project_id || idProject,
+      attributes: typeof log.attributes === 'string' ? log.attributes : JSON.stringify(log.attributes),
     }))
 
     await this.clickHouseClient.insert({

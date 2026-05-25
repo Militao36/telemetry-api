@@ -13,6 +13,7 @@ export class ProjectService {
   }
 
   async create(data: Omit<ProjectEntity, 'id' | 'token'>) {
+    data.redactionFields = this.normalizeRedactionFields(data.redactionFields) || [];
     const project = new ProjectEntity(data);
 
     project.token = this.generateToken(project.idEmpresa);
@@ -26,11 +27,20 @@ export class ProjectService {
   }
 
   async findById(idEmpresa: string, id: string) {
+    const key = `project:${idEmpresa}:${id}`;
+    const cachedProject = await this.clientRedis.get(key);
+
+    if (cachedProject) {
+      return JSON.parse(cachedProject as string) as ProjectEntity;
+    }
+
     const project = await this.projectsRepository.findById(idEmpresa, id);
 
     if (!project) {
       throw new NotFound('Project not found');
     }
+
+    await this.clientRedis.set(key, JSON.stringify(project));
 
     return project;
   }
@@ -87,7 +97,23 @@ export class ProjectService {
         enviroment: updateData.enviroment,
         languageOrFramework: updateData.languageOrFramework,
         active: updateData.active,
+        redactionFields: this.normalizeRedactionFields(updateData.redactionFields),
       }).filter(([, value]) => value !== undefined),
     ) as Partial<ProjectEntity>;
+  }
+
+  private normalizeRedactionFields(redactionFields: unknown): string[] | undefined {
+    if (!Array.isArray(redactionFields)) {
+      return undefined;
+    }
+
+    return Array.from(
+      new Set(
+        redactionFields
+          .filter((field): field is string => typeof field === 'string')
+          .map((field) => field.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ).slice(0, 100);
   }
 }

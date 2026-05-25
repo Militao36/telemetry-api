@@ -118,7 +118,8 @@ CREATE TABLE IF NOT EXISTS telemetry.spans_database_hourly_summary
 )
 ENGINE = AggregatingMergeTree()
 PARTITION BY toYYYYMM(start_time)
-ORDER BY (id_empresa, project_id, query_type, start_time);
+ORDER BY (id_empresa, project_id, query_type, start_time)
+TTL start_time + INTERVAL 30 DAY;
 
 
 /* ============================================================
@@ -177,7 +178,8 @@ CREATE TABLE telemetry.spans_database_slowest
 )
 ENGINE = AggregatingMergeTree()
 PARTITION BY day
-ORDER BY (id_empresa, project_id, db_table, db_statement);
+ORDER BY (id_empresa, project_id, db_table, db_statement)
+TTL day + INTERVAL 30 DAY;
 
 
 /* ============================================================
@@ -236,7 +238,8 @@ CREATE TABLE telemetry.spans_http_slowest_by_target
 )
 ENGINE = AggregatingMergeTree()
 PARTITION BY toDate(latest_start_time)
-ORDER BY (id_empresa, project_id, http_method, http_target);
+ORDER BY (id_empresa, project_id, http_method, http_target)
+TTL latest_start_time + INTERVAL 30 DAY;
 
 
 /* ============================================================
@@ -288,7 +291,8 @@ CREATE TABLE telemetry.spans_http_metrics_by_minute
 )
 ENGINE = AggregatingMergeTree()
 PARTITION BY toDate(time_bucket)
-ORDER BY (id_empresa, project_id, http_method, http_status, time_bucket);
+ORDER BY (id_empresa, project_id, http_method, http_status, time_bucket)
+TTL time_bucket + INTERVAL 30 DAY;
 
 
 /* ============================================================
@@ -373,7 +377,8 @@ CREATE TABLE telemetry.logs_tokens
 )
 ENGINE = MergeTree()
 PARTITION BY toDate(timestamp)
-ORDER BY (id_empresa, project_id, token, timestamp);
+ORDER BY (id_empresa, project_id, token, timestamp)
+TTL timestamp + INTERVAL 30 DAY;
 
 
 /* ============================================================

@@ -19,6 +19,7 @@ export class TracesService {
     idEmpresa: string,
     idProject: string,
     resourceSpans: any[],
+    redactionFields?: string[],
   ) => {
     spans_http: Partial<NormalizedSpanHttp>[];
     spans_database: Partial<NormalizedSpanDatabase>[];
@@ -42,10 +43,10 @@ export class TracesService {
     this.companyService = companyService;
   }
 
-  async create(idEmpresa: string, idProject: string, resourceSpans: Array<Record<string, any>>) {
+  async create(idEmpresa: string, idProject: string, resourceSpans: Array<Record<string, any>>, redactionFields: string[] = []) {
     this.logger.info(`Creating traces for company ${idEmpresa} with ${resourceSpans.length} resourceSpans, for project ${idProject}`);
 
-    const spans = this.normalizeOTLP(idEmpresa, idProject, resourceSpans);
+    const spans = this.normalizeOTLP(idEmpresa, idProject, resourceSpans, redactionFields);
 
     // muito importante resetar o countRegisters antes de incrementar se tiver passado um mês
     await this.companyService.resetCountRegisters(idEmpresa);

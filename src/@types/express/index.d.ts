@@ -8,6 +8,7 @@ declare global {
       idEmpresa?: string;
       idProject?: string;
       idUser?: string;
+      projectRedactionFields?: string[];
       user: UserEntity;
     }
   }
