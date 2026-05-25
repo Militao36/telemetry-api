@@ -1,7 +1,7 @@
-@baseUrl = https://telemetry-telemetry-api.qltz9y.easypanel.host/api/v1
+@baseUrl = http://localhost:3333/api/v1
 @projectId = {{createProject.response.body.id}}
 
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+@token=
 
 ### Create Project
 # @name createProject
@@ -14,6 +14,24 @@ Authorization: Bearer {{token}}
   "description": "Descrição do projeto de teste",
   "enviroment": "production",
   "languageOrFramework": "Node.js"
+}
+
+### Update Project
+# @name update
+PUT {{baseUrl}}/projects/2be5f4f2-2c3a-4bd8-bce1-7140762f0634
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Zordon",
+    "description": "Default project created upon user registration",
+    "enviroment": "production",
+    "languageOrFramework": "unknown",
+    "token": "proj_5creaaibv1-y46esh-l4c-xrpc4bw2ahr16fd3v22aea21ctfc3f4-o6cn",
+    "redactionFields": [
+        "token",
+        "authorization"
+    ]
 }
 
 ### List Projects
