@@ -62,11 +62,17 @@ export class LogService {
         const parsedLogs = JSON.parse(logsToQueue);
 
         if (parsedLogs.length > 0) {
-          await this.queueLogs.add({
-            idEmpresa,
-            idProject,
-            logs: parsedLogs,
-          });
+          await this.queueLogs.add(
+            {
+              idEmpresa,
+              idProject,
+              logs: parsedLogs,
+            },
+            {
+              removeOnComplete: true,
+              removeOnFail: 1000,
+            },
+          );
         }
       }
     } catch (error) {

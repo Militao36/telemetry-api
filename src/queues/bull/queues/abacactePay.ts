@@ -74,6 +74,8 @@ export class AbacatePayJobbProcessor implements QueueInterface {
         }, {
           delay: 15000,
           attempts: 10,
+          removeOnComplete: true,
+          removeOnFail: 1000,
         });
 
         return;

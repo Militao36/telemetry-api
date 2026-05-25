@@ -94,6 +94,7 @@ export class TracesService {
             },
             {
               removeOnComplete: true,
+              removeOnFail: 1000,
             },
           );
 
