@@ -84,4 +84,8 @@ export class LogService {
   async list(idEmpresa: string, idProject: string, qs: Record<string, any>) {
     return await this.logsRepository.list(idEmpresa, idProject, qs);
   }
+
+  async findOne(idEmpresa: string, idProject: string, traceId: string, spanId: string, qs: Record<string, any>) {
+    return await this.logsRepository.findOne(idEmpresa, idProject, traceId, spanId, qs);
+  }
 }

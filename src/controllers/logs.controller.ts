@@ -31,4 +31,19 @@ export class LogsController {
 
     return response.status(200).json(logs);
   }
+
+  @GET()
+  @route('/:traceId/:spanId')
+  async findOne(request: Request, response: Response) {
+    const idEmpresa = request.idEmpresa;
+    const { traceId, spanId } = request.params;
+
+    const log = await this.logService.findOne(idEmpresa, request.idProject, traceId, spanId, request.query);
+
+    if (!log) {
+      return response.status(404).json({ message: 'Log not found' });
+    }
+
+    return response.status(200).json(log);
+  }
 }
