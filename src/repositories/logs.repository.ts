@@ -52,13 +52,13 @@ export class LogsRepository {
     const where: string[] = ['project_id = {project_id: String}'];
 
     if (startTime) {
-      preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
+      preWhere.push(`timestamp >= parseDateTime64BestEffort({start_time: String}, 9, 'UTC')`);
     } else if (!traceId) {
       preWhere.push(`timestamp >= now64(9, 'UTC') - INTERVAL ${DEFAULT_LOG_WINDOW_HOURS} HOUR`);
     }
 
     if (endTime) {
-      preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
+      preWhere.push(`timestamp <= parseDateTime64BestEffort({end_time: String}, 9, 'UTC')`);
     }
 
     if (traceId) {
@@ -70,7 +70,7 @@ export class LogsRepository {
     }
 
     if (cursor) {
-      where.push(`(timestamp, trace_id, span_id) < (toDateTime64({cursor_timestamp: String}, 9, 'UTC'), {cursor_trace_id: String}, {cursor_span_id: String})`);
+      where.push(`(timestamp, trace_id, span_id) < (parseDateTime64BestEffort({cursor_timestamp: String}, 9, 'UTC'), {cursor_trace_id: String}, {cursor_span_id: String})`);
     }
 
     if (message && (!useTokenSearch || searchTokens.length === 0)) {
@@ -172,7 +172,7 @@ export class LogsRepository {
         throw new Error('Invalid timestamp');
       }
 
-      preWhere.push(`timestamp = toDateTime64({timestamp: String}, 9, 'UTC')`);
+      preWhere.push(`timestamp = parseDateTime64BestEffort({timestamp: String}, 9, 'UTC')`);
     }
 
     const query = `
@@ -277,13 +277,13 @@ export class LogsRepository {
     const where: string[] = ['token IN {tokens:Array(String)}', 'project_id = {project_id: String}'];
 
     if (startTime) {
-      preWhere.push(`timestamp >= toDateTime64({start_time: String}, 9, 'UTC')`);
+      preWhere.push(`timestamp >= parseDateTime64BestEffort({start_time: String}, 9, 'UTC')`);
     } else if (!traceId) {
       preWhere.push(`timestamp >= now64(9, 'UTC') - INTERVAL ${DEFAULT_LOG_WINDOW_HOURS} HOUR`);
     }
 
     if (endTime) {
-      preWhere.push(`timestamp <= toDateTime64({end_time: String}, 9, 'UTC')`);
+      preWhere.push(`timestamp <= parseDateTime64BestEffort({end_time: String}, 9, 'UTC')`);
     }
 
     if (traceId) {
