@@ -22,7 +22,7 @@ export class DashController {
       idEmpresa,
       request.idProject,
       +(hour || 720),
-      queryTy as 'select' | 'insert' | 'update' | 'del' | 'all',
+      queryTy as 'select' | 'insert' | 'update' | 'delete' | 'all',
     );
 
     return response.status(200).json(data);

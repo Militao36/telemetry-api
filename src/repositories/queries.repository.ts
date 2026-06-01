@@ -3,6 +3,10 @@ import { SearchFilters } from '../services/search.service';
 import _ from 'lodash';
 import { clampInt } from '../utils/queryParams';
 
+export type QueryType = 'select' | 'insert' | 'update' | 'delete' | 'all';
+
+export const QUERY_TYPES: QueryType[] = ['select', 'insert', 'update', 'delete', 'all'];
+
 export class QueriesRepository {
   clickHouseClient: ClickHouseClient;
 
@@ -11,7 +15,7 @@ export class QueriesRepository {
   }
 
   // TODO
-  async avgQueryTimeByType(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
+  async avgQueryTimeByType(idEmpresa: string, idProject: string, hour: number, queryType: QueryType) {
     const query = `
       SELECT
         count(*) AS total_queries,
@@ -58,7 +62,7 @@ export class QueriesRepository {
   }
 
   // TODO
-  async avgQueryTimeByHour(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all' = 'all') {
+  async avgQueryTimeByHour(idEmpresa: string, idProject: string, hour: number, queryType: QueryType) {
     const query = `
       SELECT
         toStartOfInterval(start_time, INTERVAL 1 hour) AS interval_hour,

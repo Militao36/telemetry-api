@@ -1,11 +1,7 @@
 import { orderBy } from 'lodash';
-import { QueriesRepository } from '../repositories/queries.repository';
+import { QueriesRepository, QUERY_TYPES, QueryType } from '../repositories/queries.repository';
 import { Cacheable } from '../decorators/Cacheable';
 import { clampInt } from '../utils/queryParams';
-
-type QueryType = 'select' | 'insert' | 'update' | 'delete' | 'all';
-
-const QUERY_TYPES: QueryType[] = ['select', 'insert', 'update', 'delete', 'all'];
 
 export class QueriesService {
   queriesRepository: QueriesRepository;
