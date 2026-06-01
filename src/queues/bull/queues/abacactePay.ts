@@ -11,7 +11,6 @@ import { container } from '../../../container.js';
 import { DateTime } from 'luxon';
 import { Logger } from 'pino';
 
-
 export interface IAbacatePayJobData {
   id: string;
   amount: number;
@@ -25,12 +24,11 @@ export interface IAbacatePayJobData {
   expiresAt: string;
 }
 
-
 export class AbacatePayJobbProcessor implements QueueInterface {
-  companyService: CompanyService
-  abacatePayService: AbacatePayService
-  clientRedis: RedisClientType
-  logger: Logger
+  companyService: CompanyService;
+  abacatePayService: AbacatePayService;
+  clientRedis: RedisClientType;
+  logger: Logger;
   constructor() {
     this.companyService = null;
     this.abacatePayService = null;
@@ -40,9 +38,9 @@ export class AbacatePayJobbProcessor implements QueueInterface {
 
   async handle(
     job: Bull.Job<{
-      company: CompanyEntity,
-      payment: IAbacatePayJobData
-    }>
+      company: CompanyEntity;
+      payment: IAbacatePayJobData;
+    }>,
   ): Promise<void> {
     try {
       this.abacatePayService = container.resolve<AbacatePayService>('abacatePayService');
@@ -50,8 +48,10 @@ export class AbacatePayJobbProcessor implements QueueInterface {
       this.clientRedis = container.resolve<RedisClientType>('clientRedis');
       this.logger = container.resolve<Logger>('logger');
 
-      const { payment: { id, amount }, company } = job.data
-
+      const {
+        payment: { id, amount },
+        company,
+      } = job.data;
 
       const key = await this.clientRedis.get(`abacatepay:waiting_payment:${company.id}`);
 
@@ -65,29 +65,35 @@ export class AbacatePayJobbProcessor implements QueueInterface {
 
       const response = await this.abacatePayService.checkPaymentStatus(id);
 
-      const data = response.data
+      const data = response.data;
 
       if (['PENDING'].includes(data.status)) {
-        await job.queue.add({
-          company,
-          payment: job.data.payment,
-        }, {
-          delay: 15000,
-          attempts: 10,
-          removeOnComplete: true,
-          removeOnFail: 1000,
-        });
+        await job.queue.add(
+          {
+            company,
+            payment: job.data.payment,
+          },
+          {
+            delay: 15000,
+            attempts: 10,
+            removeOnComplete: true,
+            removeOnFail: 1000,
+          },
+        );
 
         return;
       }
 
       if (['EXPIRED', 'CANCELLED', 'REFUNDED'].includes(data.status)) {
-        await this.clientRedis.set(`abacatepay:waiting_payment:${company.id}`, JSON.stringify({
-          companyId: company.id,
-          amount: data.amount,
-          createdAt: new Date().toISOString(),
-          status: data.status,
-        }));
+        await this.clientRedis.set(
+          `abacatepay:waiting_payment:${company.id}`,
+          JSON.stringify({
+            companyId: company.id,
+            amount: data.amount,
+            createdAt: new Date().toISOString(),
+            status: data.status,
+          }),
+        );
         return;
       }
 
@@ -100,15 +106,15 @@ export class AbacatePayJobbProcessor implements QueueInterface {
           plan: CompanyPlan.COMPLETE,
           limitRegisters: 250000,
         },
-      }
+      };
 
-      let plan = pricingMapper[amount]
+      let plan = pricingMapper[amount];
 
       if (!plan) {
         plan = {
           plan: CompanyPlan.FREE,
           limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
-        }
+        };
       }
 
       if (data.status === 'PAID') {
@@ -120,14 +126,16 @@ export class AbacatePayJobbProcessor implements QueueInterface {
           expirationDate: DateTime.now().plus({ months: 1 }).toISODate() as string,
         });
 
-        await this.clientRedis.set(`abacatepay:waiting_payment:${company.id}`, JSON.stringify({
-          companyId: company.id,
-          amount: data.amount,
-          createdAt: new Date().toISOString(),
-          status: data.status,
-        }));
+        await this.clientRedis.set(
+          `abacatepay:waiting_payment:${company.id}`,
+          JSON.stringify({
+            companyId: company.id,
+            amount: data.amount,
+            createdAt: new Date().toISOString(),
+            status: data.status,
+          }),
+        );
       }
-
     } catch (error) {
       console.log('AbacatePayJobbProcessor error', error);
     }

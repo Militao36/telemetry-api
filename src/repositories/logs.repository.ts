@@ -70,7 +70,9 @@ export class LogsRepository {
     }
 
     if (cursor) {
-      where.push(`(timestamp, trace_id, span_id) < (parseDateTime64BestEffort({cursor_timestamp: String}, 9, 'UTC'), {cursor_trace_id: String}, {cursor_span_id: String})`);
+      where.push(
+        `(timestamp, trace_id, span_id) < (parseDateTime64BestEffort({cursor_timestamp: String}, 9, 'UTC'), {cursor_trace_id: String}, {cursor_span_id: String})`,
+      );
     }
 
     if (message && (!useTokenSearch || searchTokens.length === 0)) {
@@ -78,13 +80,14 @@ export class LogsRepository {
     }
 
     if (useTokenSearch && searchTokens.length > 0) {
-      where.push(this.buildTokenSearchCondition({
-        searchMode: searchMode === 'any' ? 'any' : 'all',
-        traceId,
-        startTime,
-        endTime,
-      }));
-
+      where.push(
+        this.buildTokenSearchCondition({
+          searchMode: searchMode === 'any' ? 'any' : 'all',
+          traceId,
+          startTime,
+          endTime,
+        }),
+      );
     }
 
     const query = `
@@ -108,7 +111,7 @@ export class LogsRepository {
       FROM telemetry.logs
       PREWHERE ${preWhere.join(' AND ')}
       ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
-      ORDER BY timestamp DESC, trace_id DESC, span_id DESC
+      ORDER BY timestamp ${traceId ? 'ASC' : 'DESC'}, trace_id DESC, span_id DESC
       LIMIT {limit: Int32}
     `;
 

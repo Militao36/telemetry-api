@@ -1,5 +1,5 @@
 import { createContainer, asClass, asValue } from 'awilix';
-import axios from 'axios'
+import axios from 'axios';
 import { clientClickHouse } from './databases/clickhouse';
 import { queueAbacatePay, queueLogs, queueTraces } from './queues/bull';
 import { TraceJobProcessor } from './queues/bull/queues/traces';

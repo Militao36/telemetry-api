@@ -4,7 +4,7 @@ import { ClickHouseClient } from '@clickhouse/client';
 import { NormalizedLog } from '../utils/normalizeLog.js';
 
 export class LogJobProcessor implements QueueInterface {
-  clickHouseClient: ClickHouseClient
+  clickHouseClient: ClickHouseClient;
 
   constructor({ clickHouseClient }) {
     this.clickHouseClient = clickHouseClient;
@@ -12,24 +12,24 @@ export class LogJobProcessor implements QueueInterface {
 
   async handle(
     job: Bull.Job<{
-      logs: NormalizedLog[]
-      idEmpresa: string
-      idProject: string
-    }>
+      logs: NormalizedLog[];
+      idEmpresa: string;
+      idProject: string;
+    }>,
   ): Promise<void> {
-    const { logs, idEmpresa, idProject } = job.data
+    const { logs, idEmpresa, idProject } = job.data;
 
-    const values = logs.map(log => ({
+    const values = logs.map((log) => ({
       ...log,
       id_empresa: log.id_empresa || idEmpresa,
       project_id: log.project_id || idProject,
       attributes: typeof log.attributes === 'string' ? log.attributes : JSON.stringify(log.attributes),
-    }))
+    }));
 
     await this.clickHouseClient.insert({
       table: 'telemetry.logs',
       values,
       format: 'JSONEachRow',
-    })
+    });
   }
 }

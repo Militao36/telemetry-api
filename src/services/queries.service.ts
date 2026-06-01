@@ -3,9 +3,9 @@ import { QueriesRepository } from '../repositories/queries.repository';
 import { Cacheable } from '../decorators/Cacheable';
 import { clampInt } from '../utils/queryParams';
 
-type QueryType = 'select' | 'insert' | 'update' | 'del' | 'all';
+type QueryType = 'select' | 'insert' | 'update' | 'delete' | 'all';
 
-const QUERY_TYPES: QueryType[] = ['select', 'insert', 'update', 'del', 'all'];
+const QUERY_TYPES: QueryType[] = ['select', 'insert', 'update', 'delete', 'all'];
 
 export class QueriesService {
   queriesRepository: QueriesRepository;
@@ -25,7 +25,7 @@ export class QueriesService {
     const slowesTypeSelect = await this.queriesRepository.slowestQueries(idEmpresa, idProject, safeHour, 'select', 10);
     const slowesTypeInsert = await this.queriesRepository.slowestQueries(idEmpresa, idProject, safeHour, 'insert', 10);
     const slowesTypeUpdate = await this.queriesRepository.slowestQueries(idEmpresa, idProject, safeHour, 'update', 10);
-    const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, idProject, safeHour, 'del', 10);
+    const slowesTypeDelete = await this.queriesRepository.slowestQueries(idEmpresa, idProject, safeHour, 'delete', 10);
 
     const slowestQuery = orderBy(
       [slowesTypeSelect[0], slowesTypeInsert[0], slowesTypeUpdate[0], slowesTypeDelete[0]].filter((e) => !!e),

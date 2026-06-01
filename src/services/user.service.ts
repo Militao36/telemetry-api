@@ -57,8 +57,8 @@ export class UserService {
           project: {
             id: project.id,
             name: project.name,
-          }
-        }
+          },
+        };
       }),
     };
   }
@@ -84,18 +84,20 @@ export class UserService {
     user.password = await this.hashPassword(data.password);
     user.active = true;
 
-    const company = await this.companyService.create(new CompanyEntity({
-      name: user.name,
-      contactEmail: '',
-      contactPhone: '',
-      documentNumber: '',
-      plan: CompanyPlan.FREE,
-      status: CompanyStatus.ACTIVE,
-      countAlerts: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
-      countRegisters: 0,
-      limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
-      expirationDate: DateTime.now().plus({ months: 1 }).toISODate() as string,
-    }));
+    const company = await this.companyService.create(
+      new CompanyEntity({
+        name: user.name,
+        contactEmail: '',
+        contactPhone: '',
+        documentNumber: '',
+        plan: CompanyPlan.FREE,
+        status: CompanyStatus.ACTIVE,
+        countAlerts: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+        countRegisters: 0,
+        limitRegisters: DEFAULT_LIMIT_REGISTERS_FREE_PLAN,
+        expirationDate: DateTime.now().plus({ months: 1 }).toISODate() as string,
+      }),
+    );
 
     await this.projectService.create({
       idEmpresa: company.id,
@@ -104,7 +106,7 @@ export class UserService {
       active: true,
       enviroment: 'development',
       languageOrFramework: 'unknown',
-    })
+    });
 
     user.idEmpresa = company.id;
 

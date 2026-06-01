@@ -8,8 +8,8 @@ import { Logger } from 'pino';
 
 export class CompanyService {
   companyRepository: CompanyRepository;
-  abacatePayService: AbacatePayService
-  logger: Logger
+  abacatePayService: AbacatePayService;
+  logger: Logger;
 
   constructor({ companyRepository, abacatePayService, logger }) {
     this.companyRepository = companyRepository;
@@ -21,7 +21,7 @@ export class CompanyService {
     const pricingMapper = {
       [CompanyPlan.BASIC]: 5990,
       [CompanyPlan.COMPLETE]: 9990,
-    }
+    };
 
     const company = await this.findById(id);
 

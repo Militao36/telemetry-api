@@ -21,7 +21,12 @@ export class RequestsService {
 
   @Cacheable({ ttl: 60 })
   public async getSlowestRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string) {
-    const requests = await this.requestsRepository.getSlowestRequests(idEmpresa, idProject, clampInt(hour, 1, 1, 720), this.safeHttpMethod(httpMethod));
+    const requests = await this.requestsRepository.getSlowestRequests(
+      idEmpresa,
+      idProject,
+      clampInt(hour, 1, 1, 720),
+      this.safeHttpMethod(httpMethod),
+    );
 
     return requests;
   }

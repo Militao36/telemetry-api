@@ -14,7 +14,10 @@ export class ProjectsRepository {
   }
 
   async update(idEmpresa: string, id: string, updateData: Partial<ProjectEntity>) {
-    const [project] = await this.databaseKnex<ProjectEntity>('projects').where({ idEmpresa: idEmpresa, id }).update(this.prepareJsonFields(updateData)).returning('*');
+    const [project] = await this.databaseKnex<ProjectEntity>('projects')
+      .where({ idEmpresa: idEmpresa, id })
+      .update(this.prepareJsonFields(updateData))
+      .returning('*');
 
     return new ProjectEntity(project, project.id);
   }

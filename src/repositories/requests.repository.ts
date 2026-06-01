@@ -131,7 +131,7 @@ export class RequestsRepository {
       query_params: {
         idEmpresa,
         traceId,
-        idProject
+        idProject,
       },
       format: 'JSON',
     });
@@ -180,7 +180,7 @@ export class RequestsRepository {
         idEmpresa,
         hour,
         httpMethod: httpMethod !== 'ALL' ? httpMethod : undefined,
-        idProject
+        idProject,
       },
       format: 'JSON',
     });

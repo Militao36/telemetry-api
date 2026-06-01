@@ -67,9 +67,7 @@ function redactValue(value: unknown, sensitiveFields: Set<string>): unknown {
 
 function redactOtelAttribute(attribute: Record<string, any>, sensitiveFields: Set<string>): Record<string, any> {
   if (!sensitiveFields.has(normalizeFieldName(attribute.key))) {
-    return Object.fromEntries(
-      Object.entries(attribute).map(([key, value]) => [key, redactValue(value, sensitiveFields)]),
-    );
+    return Object.fromEntries(Object.entries(attribute).map(([key, value]) => [key, redactValue(value, sensitiveFields)]));
   }
 
   return {
@@ -105,7 +103,9 @@ function buildSensitiveFields(extraFields: string[]): Set<string> {
 }
 
 function normalizeFieldName(value: unknown): string {
-  return String(value || '').trim().toLowerCase();
+  return String(value || '')
+    .trim()
+    .toLowerCase();
 }
 
 function redactSensitiveText(value: string, sensitiveFields: Set<string>): string {

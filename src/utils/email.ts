@@ -28,5 +28,3 @@ export async function sendMail(email: string) {
     console.log('Error: send mail', error, email);
   }
 }
-
-

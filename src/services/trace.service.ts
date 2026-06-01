@@ -57,7 +57,7 @@ export class TracesService {
       return;
     }
 
-    const countSpans = (spans.spans_database.length || 0) + (spans?.spans_http?.length || 0)
+    const countSpans = (spans.spans_database.length || 0) + (spans?.spans_http?.length || 0);
 
     await this.companyService.incrementCountRegisters(idEmpresa, countSpans);
 

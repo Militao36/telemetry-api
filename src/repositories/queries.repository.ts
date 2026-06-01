@@ -108,7 +108,13 @@ export class QueriesRepository {
     }));
   }
 
-  async slowestQueries(idEmpresa: string, idProject: string, hour: number, queryType: 'select' | 'insert' | 'update' | 'del' | 'all', limit: number = 10) {
+  async slowestQueries(
+    idEmpresa: string,
+    idProject: string,
+    hour: number,
+    queryType: 'select' | 'insert' | 'update' | 'delete' | 'all',
+    limit: number = 10,
+  ) {
     const safeLimit = clampInt(limit, 10, 1, 100);
 
     const query = `

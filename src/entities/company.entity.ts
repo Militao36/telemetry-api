@@ -1,6 +1,6 @@
-import { DateTime } from 'luxon'
-import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from '../env'
-import { Entity } from './base/Entity'
+import { DateTime } from 'luxon';
+import { DEFAULT_LIMIT_REGISTERS_FREE_PLAN } from '../env';
+import { Entity } from './base/Entity';
 
 export enum CompanyStatus {
   ACTIVE = 'active',
@@ -14,29 +14,29 @@ export enum CompanyPlan {
 }
 
 export class CompanyEntity extends Entity {
-  id: string
-  name: string
-  documentNumber: string
-  contactPhone: string
-  contactEmail: string
-  status: CompanyStatus
-  plan: CompanyPlan
+  id: string;
+  name: string;
+  documentNumber: string;
+  contactPhone: string;
+  contactEmail: string;
+  status: CompanyStatus;
+  plan: CompanyPlan;
   countRegisters: number;
   countAlerts: number;
   limitRegisters: number;
   expirationDate: string;
 
   constructor(body: Omit<CompanyEntity, 'id'>, id?: string) {
-    super(body, id)
-    this.name = body.name
-    this.documentNumber = body.documentNumber
-    this.contactPhone = body.contactPhone
-    this.contactEmail = body.contactEmail
-    this.status = body.status || CompanyStatus.ACTIVE
-    this.plan = body.plan || CompanyPlan.FREE
+    super(body, id);
+    this.name = body.name;
+    this.documentNumber = body.documentNumber;
+    this.contactPhone = body.contactPhone;
+    this.contactEmail = body.contactEmail;
+    this.status = body.status || CompanyStatus.ACTIVE;
+    this.plan = body.plan || CompanyPlan.FREE;
     this.countRegisters = body.countRegisters || 0;
     this.countAlerts = body.countAlerts || DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
     this.limitRegisters = body.limitRegisters || DEFAULT_LIMIT_REGISTERS_FREE_PLAN;
-    this.expirationDate = body.expirationDate
+    this.expirationDate = body.expirationDate;
   }
 }

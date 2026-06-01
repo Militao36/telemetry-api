@@ -4,7 +4,7 @@ import { CompanyService } from '../services/company.service';
 
 @route('/companies')
 export class CompanyController {
-  companyService: CompanyService
+  companyService: CompanyService;
 
   constructor({ companyService }) {
     this.companyService = companyService;

@@ -34,14 +34,14 @@ queueTraces.process(traceJobProcessor.handle.bind(traceJobProcessor));
 
 //#region Log Processor
 const logJobProcessor = new LogJobProcessor({
-  clickHouseClient: clientClickHouse
-})
+  clickHouseClient: clientClickHouse,
+});
 
 queueLogs.process(logJobProcessor.handle.bind(logJobProcessor));
 //#endregion Log Processor
 
 //#regiion AbacatePay Processor
-const abacatePayJobbProcessor = new AbacatePayJobbProcessor()
+const abacatePayJobbProcessor = new AbacatePayJobbProcessor();
 
 queueAbacatePay.process(abacatePayJobbProcessor.handle.bind(abacatePayJobbProcessor));
 //#endregion AbacatePay Processor

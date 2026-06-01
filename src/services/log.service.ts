@@ -15,7 +15,7 @@ export class LogService {
   clientRedis: RedisClientType;
   logger: Logger;
   LIMIT_ITEM_QUEUE: number;
-  logsRepository: LogsRepository
+  logsRepository: LogsRepository;
   companyService: CompanyService;
 
   constructor({ queueLogs, logger, logsRepository, clientRedis, normalizeLog, companyService }) {

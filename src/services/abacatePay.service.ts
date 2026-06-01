@@ -1,14 +1,14 @@
-import { AxiosStatic } from "axios";
-import { BadRequest } from "../erros/BadRequest";
-import { TOKEN_ABACATE_PAY, URL_ABACATE_PAY } from "../env";
-import { CompanyEntity, CompanyPlan } from "../entities/company.entity";
-import { RedisClientType } from "redis";
-import { Queue } from "bull";
-import { DateTime } from "luxon";
+import { AxiosStatic } from 'axios';
+import { BadRequest } from '../erros/BadRequest';
+import { TOKEN_ABACATE_PAY, URL_ABACATE_PAY } from '../env';
+import { CompanyEntity, CompanyPlan } from '../entities/company.entity';
+import { RedisClientType } from 'redis';
+import { Queue } from 'bull';
+import { DateTime } from 'luxon';
 
 export class AbacatePayService {
-  axios: AxiosStatic
-  clientRedis: RedisClientType
+  axios: AxiosStatic;
+  clientRedis: RedisClientType;
   queueAbacatePay: Queue;
 
   constructor({ axios, clientRedis, queueAbacatePay }) {
@@ -34,7 +34,7 @@ export class AbacatePayService {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + TOKEN_ABACATE_PAY,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: {
         amount: +amount,
@@ -44,9 +44,9 @@ export class AbacatePayService {
           name: company.name,
           cellphone: company.contactPhone,
           email: company.contactEmail,
-          taxId: company.documentNumber
+          taxId: company.documentNumber,
         },
-      }
+      },
     };
 
     const key = await this.clientRedis.get(`abacatepay:waiting_payment:${company.id}`);
@@ -59,30 +59,37 @@ export class AbacatePayService {
     }
 
     const response = await this.axios.post(`${URL_ABACATE_PAY}/pixQrCode/create`, options.body, {
-      headers: options.headers
-    })
+      headers: options.headers,
+    });
 
     if (response.status === 200) {
       const { data } = response.data;
 
-      await this.clientRedis.set(`abacatepay:waiting_payment:${data.id}`, JSON.stringify({
-        companyId: company.id,
-        amount: data.amount,
-        createdAt: new Date().toISOString(),
-        status: data.status,
-      }), {
-        EX: 60 * 30, // 15 minutes
-      });
+      await this.clientRedis.set(
+        `abacatepay:waiting_payment:${data.id}`,
+        JSON.stringify({
+          companyId: company.id,
+          amount: data.amount,
+          createdAt: new Date().toISOString(),
+          status: data.status,
+        }),
+        {
+          EX: 60 * 30, // 15 minutes
+        },
+      );
 
-      await this.queueAbacatePay.add({
-        company,
-        payment: data,
-      }, {
-        delay: 15000,
-        attempts: 10,
-        removeOnComplete: true,
-        removeOnFail: 1000,
-      });
+      await this.queueAbacatePay.add(
+        {
+          company,
+          payment: data,
+        },
+        {
+          delay: 15000,
+          attempts: 10,
+          removeOnComplete: true,
+          removeOnFail: 1000,
+        },
+      );
 
       return data.brCodeBase64;
     }
@@ -95,13 +102,13 @@ export class AbacatePayService {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + TOKEN_ABACATE_PAY,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
     };
 
     const response = await this.axios.get(`${URL_ABACATE_PAY}/pixQrCode/check?id=${paymentId}`, {
-      headers: options.headers
-    })
+      headers: options.headers,
+    });
 
     if (response.status === 200) {
       return response.data;

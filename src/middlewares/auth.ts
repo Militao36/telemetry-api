@@ -93,7 +93,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
-export function generateToken(args: { idEmpresa: string; idProject: string, idUser: string }): string {
+export function generateToken(args: { idEmpresa: string; idProject: string; idUser: string }): string {
   return jwt.sign(args, SECRET_JWT, {
     expiresIn: 86400 * 30,
   });

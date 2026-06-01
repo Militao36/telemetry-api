@@ -9,10 +9,7 @@ export class CompanyRepository {
   }
 
   async incrementCountRegisters(id: string, count: number = 1) {
-    return await this.databaseKnex<CompanyEntity>('companies')
-      .where({ id })
-      .increment('countRegisters', count)
-      .returning('*') as CompanyEntity[];
+    return (await this.databaseKnex<CompanyEntity>('companies').where({ id }).increment('countRegisters', count).returning('*')) as CompanyEntity[];
   }
 
   async create(data: CompanyEntity): Promise<CompanyEntity> {
