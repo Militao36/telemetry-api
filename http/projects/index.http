@@ -1,45 +1,43 @@
 @baseUrl = http://localhost:3333/api/v1
+@authToken = paste-your-auth-token-here
 @projectId = {{createProject.response.body.id}}
-
-@token=
 
 ### Create Project
 # @name createProject
 POST {{baseUrl}}/projects
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 
 {
-  "name": "ZORDON API",
-  "description": "Descrição do projeto de teste",
+  "name": "Example API",
+  "description": "Example project",
   "enviroment": "production",
   "languageOrFramework": "Node.js"
 }
 
 ### Update Project
-# @name update
-PUT {{baseUrl}}/projects/2be5f4f2-2c3a-4bd8-bce1-7140762f0634
+# @name updateProject
+PUT {{baseUrl}}/projects/{{projectId}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 
 {
-    "name": "Zordon",
-    "description": "Default project created upon user registration",
-    "enviroment": "production",
-    "languageOrFramework": "unknown",
-    "token": "proj_5creaaibv1-y46esh-l4c-xrpc4bw2ahr16fd3v22aea21ctfc3f4-o6cn",
-    "redactionFields": [
-        "token",
-        "authorization"
-    ]
+  "name": "Example API",
+  "description": "Updated example project",
+  "enviroment": "production",
+  "languageOrFramework": "Node.js",
+  "token": "proj_example_token",
+  "redactionFields": ["token", "authorization"]
 }
 
 ### List Projects
 GET {{baseUrl}}/projects
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 
 ### Get Project By ID
 GET {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{authToken}}
 
 ### Delete Project
 DELETE {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{authToken}}

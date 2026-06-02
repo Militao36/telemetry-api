@@ -1,19 +1,22 @@
-### Dash tela inicial
-GET http://localhost:3333/api/v1/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+@baseUrl = http://localhost:3333/api/v1
+@authToken = paste-your-auth-token-here
 
-### Dash de queries
-GET http://localhost:3333/api/v1/queries/dashboard
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+### Current user
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{authToken}}
 
-### queries
-GET http://localhost:3333/api/v1/queries
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+### Queries dashboard
+GET {{baseUrl}}/queries/dashboard
+Authorization: Bearer {{authToken}}
 
+### Queries list
+GET {{baseUrl}}/queries
+Authorization: Bearer {{authToken}}
 
-### Get traces
-GET http://localhost:3333/api/v1/traces/328ee43e4fe9bcc33cfe74838f8d8ff9
+### Get trace by ID
+GET {{baseUrl}}/traces/00000000000000000000000000000001
+Authorization: Bearer {{authToken}}
 
-### get search
-GET http://localhost:3333/api/v1/search?httpMethod=GET&dbName=my_database&dbTable=users&type=HTTP
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZEVtcHJlc2EiOiJhZjhmYjIzNS1lYThmLTQ3MGMtYThmYy1hNzFkYjg3ZDgzNjciLCJpZFVzZXIiOiI4YzczODNjZi1mNTcwLTQ0NzEtODI1Ny1mZDIxOGUxZGQ3YTUiLCJpYXQiOjE3NjM3NjYwNjIsImV4cCI6MTc2NjM1ODA2Mn0.CUuKO1x53HB0VoBtRudDhn0zByho8fjtLuOC8v6b0XY
+### Search telemetry data
+GET {{baseUrl}}/search?httpMethod=GET&dbName=my_database&dbTable=users&type=HTTP
+Authorization: Bearer {{authToken}}

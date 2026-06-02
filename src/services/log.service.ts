@@ -8,6 +8,7 @@ import { NormalizedLog, RawLog, ResourceLog } from '../queues/bull/utils/normali
 import { LogsRepository } from '../repositories/logs.repository';
 import { CompanyService } from './company.service';
 import { CompanyStatus } from '../entities/company.entity';
+import { Cacheable } from '../decorators/Cacheable';
 
 export class LogService {
   queueLogs: Queue;
@@ -81,6 +82,23 @@ export class LogService {
     }
   }
 
+  @Cacheable({
+    ttl: 30,
+    prefix: 'cache:logs:list',
+    keyBuilder: (idEmpresa: string, idProject: string, qs: Record<string, any>) => {
+      const sortedQuery = Object.keys(qs || {})
+        .sort()
+        .reduce(
+          (acc, key) => {
+            acc[key] = qs[key];
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+
+      return JSON.stringify({ idEmpresa, idProject, qs: sortedQuery });
+    },
+  })
   async list(idEmpresa: string, idProject: string, qs: Record<string, any>) {
     return await this.logsRepository.list(idEmpresa, idProject, qs);
   }

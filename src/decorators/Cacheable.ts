@@ -4,6 +4,40 @@ import crypto from 'crypto';
 interface CacheOptions {
   ttl?: number; // Time to live in seconds
   prefix?: string;
+  keyBuilder?: (...args: any[]) => string;
+}
+
+function stableSerialize(value: any): string {
+  const normalize = (input: any): any => {
+    if (input === null || input === undefined) return input;
+
+    if (input instanceof Date) {
+      return input.toISOString();
+    }
+
+    if (typeof input === 'bigint') {
+      return input.toString();
+    }
+
+    if (Array.isArray(input)) {
+      return input.map(normalize);
+    }
+
+    if (typeof input === 'object') {
+      const sortedKeys = Object.keys(input).sort();
+      const output: Record<string, any> = {};
+
+      for (const key of sortedKeys) {
+        output[key] = normalize(input[key]);
+      }
+
+      return output;
+    }
+
+    return input;
+  };
+
+  return JSON.stringify(normalize(value));
 }
 
 export function Cacheable(options: CacheOptions = {}) {
@@ -13,14 +47,14 @@ export function Cacheable(options: CacheOptions = {}) {
     descriptor.value = async function (...args: any[]) {
       const className = typeof target === 'function' ? target.name : target.constructor.name;
 
-      let argsString = '';
+      let rawKey = '';
       try {
-        argsString = JSON.stringify(args);
-      } catch (e) {
-        argsString = String(args);
+        rawKey = options.keyBuilder ? options.keyBuilder.apply(this, args) : stableSerialize(args);
+      } catch (_error) {
+        rawKey = String(args);
       }
 
-      const hash = crypto.createHash('md5').update(argsString).digest('hex');
+      const hash = crypto.createHash('sha256').update(rawKey).digest('hex');
 
       const prefix = options.prefix || `cache:${className}:${propertyKey}`;
       const key = `${prefix}:${hash}`;

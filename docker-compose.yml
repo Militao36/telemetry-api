@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # Aplicação AdonisJS
   app:
     build: .
     container_name: telemetry-app
@@ -11,17 +8,21 @@ services:
       - NODE_ENV=production
       - PORT=3333
       - HOST=0.0.0.0
-      - APP_KEY=your-super-secret-app-key-32-characters-long
       - LOG_LEVEL=info
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=telemetry_user
-      - DB_PASSWORD=telemetry_password
-      - DB_DATABASE=telemetry_db
+      - SECRET_JWT=${SECRET_JWT:-change-this-secret-before-production}
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_USER=${PG_USER:-telemetry_user}
+      - PG_PASSWORD=${PG_PASSWORD:-telemetry_password}
+      - PG_DATABASE=${PG_DATABASE:-telemetry}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - CLICKHOUSE_HOST=clickhouse
-      - CLICKHOUSE_PORT=8123
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - CLICKHOUSE_DATABASE=${CLICKHOUSE_DATABASE:-telemetry}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-default}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-}
+      - TOKEN_ABACATE_PAY=${TOKEN_ABACATE_PAY:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -40,16 +41,15 @@ services:
     image: postgres:15-alpine
     container_name: telemetry-postgres
     environment:
-      - POSTGRES_DB=telemetry_db
-      - POSTGRES_USER=telemetry_user
-      - POSTGRES_PASSWORD=telemetry_password
+      - POSTGRES_DB=${PG_DATABASE:-telemetry}
+      - POSTGRES_USER=${PG_USER:-telemetry_user}
+      - POSTGRES_PASSWORD=${PG_PASSWORD:-telemetry_password}
     ports:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U telemetry_user -d telemetry_db']
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -65,8 +65,7 @@ services:
       - '6379:6379'
     volumes:
       - redis_data:/data
-      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+    command: redis-server --appendonly yes
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
@@ -81,9 +80,9 @@ services:
     image: clickhouse/clickhouse-server:24.1-alpine
     container_name: telemetry-clickhouse
     environment:
-      - CLICKHOUSE_DB=telemetry_analytics
-      - CLICKHOUSE_USER=analytics_user
-      - CLICKHOUSE_PASSWORD=analytics_password
+      - CLICKHOUSE_DB=${CLICKHOUSE_DATABASE:-telemetry}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-default}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-}
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     ports:
       - '8123:8123'
@@ -95,6 +94,9 @@ services:
       retries: 3
     networks:
       - telemetry-network
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
     restart: unless-stopped
 
   # PgAdmin (Opcional - para gerenciar PostgreSQL)
@@ -102,8 +104,8 @@ services:
     image: dpage/pgadmin4:latest
     container_name: telemetry-pgadmin
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@telemetry.com
-      - PGADMIN_DEFAULT_PASSWORD=admin123
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-change-me}
       - PGADMIN_CONFIG_SERVER_MODE=False
     ports:
       - '8080:80'

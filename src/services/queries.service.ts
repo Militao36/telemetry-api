@@ -10,7 +10,17 @@ export class QueriesService {
     this.queriesRepository = queriesRepository;
   }
 
-  @Cacheable({ ttl: 60 })
+  @Cacheable({
+    ttl: 60,
+    prefix: 'cache:queries:reportQueries',
+    keyBuilder: (idEmpresa: string, idProject: string, hour: number, queryType: QueryType) => {
+      const safeHour = clampInt(hour, 720, 1, 720);
+      const normalizedQueryType = String(queryType || 'all').toLowerCase() as QueryType;
+      const safeQueryType = QUERY_TYPES.includes(normalizedQueryType) ? normalizedQueryType : 'all';
+
+      return JSON.stringify({ idEmpresa, idProject, hour: safeHour, queryType: safeQueryType });
+    },
+  })
   public async reportQueries(idEmpresa: string, idProject: string, hour: number, queryType: QueryType) {
     const safeHour = clampInt(hour, 720, 1, 720);
     const normalizedQueryType = String(queryType || 'all').toLowerCase() as QueryType;
@@ -46,7 +56,14 @@ export class QueriesService {
     };
   }
 
-  @Cacheable({ ttl: 60 })
+  @Cacheable({
+    ttl: 60,
+    prefix: 'cache:queries:dashboardQueries',
+    keyBuilder: (idEmpresa: string, idProject: string, hour: number) => {
+      const safeHour = clampInt(hour, 12, 1, 720);
+      return JSON.stringify({ idEmpresa, idProject, hour: safeHour });
+    },
+  })
   public async dashboardQueries(idEmpresa: string, idProject: string, hour: number) {
     const queriesPerTimeSeries = await this.queriesRepository.getQueriesPerTimeSeries(idEmpresa, idProject, clampInt(hour, 12, 1, 720));
 
@@ -55,7 +72,13 @@ export class QueriesService {
     };
   }
 
-  @Cacheable({ ttl: 60 })
+  @Cacheable({
+    ttl: 60,
+    prefix: 'cache:queries:getTraces',
+    keyBuilder: (idEmpresa: string, idProject: string, traceId: string) => {
+      return JSON.stringify({ idEmpresa, idProject, traceId: String(traceId || '') });
+    },
+  })
   public async getTraces(idEmpresa: string, idProject: string, traceId: string) {
     const traces = await this.queriesRepository.getTraces(idEmpresa, idProject, traceId);
 
