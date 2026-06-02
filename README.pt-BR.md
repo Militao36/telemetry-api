@@ -6,6 +6,22 @@ API da UnTelemetry, uma plataforma de observabilidade baseada em OpenTelemetry p
 
 O projeto recebe dados no formato OTLP, armazena eventos analiticos no ClickHouse e usa PostgreSQL para entidades da aplicacao, como usuarios, empresas e projetos.
 
+## Frontend
+
+Este repositorio contem apenas a API backend. Para usar a interface completa da UnTelemetry, rode tambem o projeto frontend.
+
+Repositorio do frontend:
+
+```text
+https://github.com/Militao36/telemetry-front
+```
+
+Ao rodar os dois projetos localmente, configure o `NEXT_PUBLIC_API_URL` do frontend apontando para esta API:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3333/api/v1
+```
+
 ## Versao Hospedada
 
 Se voce nao quiser rodar uma instancia self-hosted, pode usar a plataforma hospedada da UnTelemetry:
