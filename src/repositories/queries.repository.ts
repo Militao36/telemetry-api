@@ -123,28 +123,26 @@ export class QueriesRepository {
 
     const query = `
       SELECT
-        db_statement,
+        argMaxMerge(db_statement) AS db_statement,
         db_table,
-        db_params,
-        start_time,
+        argMaxMerge(slowest_db_params) AS db_params,
         countMerge(execution_count) AS total_executions,
-        (sumMerge(sum_duration) / total_executions) / 1000000 AS average_duration_ms,
+        (sumMerge(sum_duration) / countMerge(execution_count)) / 1000000 AS average_duration_ms,
         maxMerge(max_duration) / 1000000 AS max_duration_ms,
 
         argMaxMerge(slowest_trace_id) AS slowest_trace_id,
         argMaxMerge(slowest_span_id) AS slowest_span_id
       FROM
           telemetry.spans_database_slowest
-      WHERE start_time >= now() - INTERVAL {hour:Int32} HOUR
-      AND db_statement <> ''
-      ${queryType !== 'all' ? `AND db_statement ilike {queryType:String}` : ''}
+      WHERE day >= toDate(now() - INTERVAL {hour:Int32} HOUR)
+      AND hour >= now() - INTERVAL {hour:Int32} HOUR
+      AND normalized_statement <> ''
+      ${queryType !== 'all' ? `AND normalized_statement ilike {queryType:String}` : ''}
       AND id_empresa = {idEmpresa:String}
       AND project_id = {idProject:String}
       GROUP BY
-          db_statement,
-          db_params,
           db_table,
-          start_time
+          normalized_statement
       ORDER BY
           max_duration_ms DESC
       LIMIT {limit:Int32};

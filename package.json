@@ -9,7 +9,8 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "clickhouse:migrate": "tsx src/databases/clickhouse/runMigration.ts"
   },
   "dependencies": {
     "@clickhouse/client": "^1.13.0",

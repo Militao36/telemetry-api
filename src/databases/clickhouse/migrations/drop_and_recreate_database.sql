@@ -1,4 +1,16 @@
 /* ============================================================
+   DROP/RECREATE DATABASE COMPLETO
+
+   ATENÇÃO:
+   - Este script apaga todo o banco ClickHouse `telemetry`.
+   - Pare API/workers/filas antes de executar.
+   - Use apenas se você realmente quer recriar tudo do zero.
+   ============================================================ */
+
+DROP DATABASE IF EXISTS telemetry;
+CREATE DATABASE telemetry;
+
+/* ============================================================
    DROPs INICIAIS
    ============================================================ */
 
