@@ -82,23 +82,6 @@ export class LogService {
     }
   }
 
-  @Cacheable({
-    ttl: 30,
-    prefix: 'cache:logs:list',
-    keyBuilder: (idEmpresa: string, idProject: string, qs: Record<string, any>) => {
-      const sortedQuery = Object.keys(qs || {})
-        .sort()
-        .reduce(
-          (acc, key) => {
-            acc[key] = qs[key];
-            return acc;
-          },
-          {} as Record<string, any>,
-        );
-
-      return JSON.stringify({ idEmpresa, idProject, qs: sortedQuery });
-    },
-  })
   async list(idEmpresa: string, idProject: string, qs: Record<string, any>) {
     return await this.logsRepository.list(idEmpresa, idProject, qs);
   }

@@ -19,12 +19,10 @@ export class DashController {
       const idEmpresa = request.idEmpresa;
 
       const { hour = '12' } = request.query as { hour?: string };
+      const parsedHour = Number(hour);
+      const safeHour = Number.isNaN(parsedHour) ? 12 : parsedHour;
 
-      if (isNaN(+hour)) {
-        return response.status(400).json({ error: 'Hour must be a number' });
-      }
-
-      const data = await this.dashService.reportRequests(idEmpresa, request.idProject, +hour);
+      const data = await this.dashService.reportRequests(idEmpresa, request.idProject, safeHour);
 
       return response.status(200).json(data);
     } catch (error) {

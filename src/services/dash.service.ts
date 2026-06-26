@@ -9,7 +9,6 @@ export class DashService {
     this.dashRepository = dashRepository;
   }
 
-  // @Cacheable({ ttl: 60 * 5 }) // Cache for 5 minutes
   public async reportRequests(idEmpresa: string, idProject: string, hour: number) {
     const safeHour = clampInt(hour, 12, 1, 720);
     const {

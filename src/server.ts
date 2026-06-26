@@ -11,7 +11,7 @@ import { auth } from './middlewares/auth';
 
 const server = express();
 
-server.use(express.json({ limit: '500mb' }));
+server.use(express.json({ limit: '1gb' }));
 server.use(cors());
 server.use(auth);
 server.use(scopePerRequest(container));
