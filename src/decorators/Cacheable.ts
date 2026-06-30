@@ -7,6 +7,8 @@ interface CacheOptions {
   keyBuilder?: (...args: any[]) => string;
 }
 
+export const DEFAULT_CACHE_TTL_SECONDS = 60;
+
 function stableSerialize(value: any): string {
   const normalize = (input: any): any => {
     if (input === null || input === undefined) return input;
@@ -58,7 +60,7 @@ export function Cacheable(options: CacheOptions = {}) {
 
       const prefix = options.prefix || `cache:${className}:${propertyKey}`;
       const key = `${prefix}:${hash}`;
-      const ttl = options.ttl || 60 * 5; // Default 5 minutes
+      const ttl = options.ttl || DEFAULT_CACHE_TTL_SECONDS;
 
       try {
         const cachedResult = await clientRedis.get(key);

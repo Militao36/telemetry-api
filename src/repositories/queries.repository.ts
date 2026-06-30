@@ -2,10 +2,22 @@ import { ClickHouseClient } from '@clickhouse/client';
 import { SearchFilters } from '../services/search.service';
 import _ from 'lodash';
 import { clampInt } from '../utils/queryParams';
+import { buildSearchWhere, SearchFieldConfig } from '../utils/searchWhere';
 
 export type QueryType = 'select' | 'insert' | 'update' | 'delete' | 'all';
 
 export const QUERY_TYPES: QueryType[] = ['select', 'insert', 'update', 'delete', 'all'];
+
+const DATABASE_SEARCH_FIELDS: Record<string, SearchFieldConfig> = {
+  query: { column: 'db_statement', type: 'string' },
+  tableName: { column: 'db_table', type: 'string' },
+  operation: { column: 'db_operation', type: 'string' },
+  traceId: { column: 'trace_id', type: 'string' },
+  environment: { column: 'service_environment', type: 'string' },
+  serviceName: { column: 'service_name', type: 'string' },
+  startTime: { column: 'start_time', type: 'datetime' },
+  durationNs: { column: 'duration_ns', type: 'number' },
+};
 
 export class QueriesRepository {
   clickHouseClient: ClickHouseClient;
@@ -400,6 +412,10 @@ export class QueriesRepository {
       queryParams.startTimeTo = filters.startTimeTo;
     }
 
+    const advancedWhere = buildSearchWhere(filters.where as any, DATABASE_SEARCH_FIELDS);
+    where.push(...advancedWhere.conditions);
+    Object.assign(queryParams, advancedWhere.params);
+
     const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
     const query = `
@@ -416,7 +432,8 @@ export class QueriesRepository {
         db_statement,
         db_operation,
         db_table,
-        db_name
+        db_name,
+        attributes
         FROM telemetry.spans_database
         ${whereClause}
         ${where.length ? 'AND' : 'WHERE'} id_empresa = {idEmpresa:String}
@@ -447,6 +464,7 @@ export class QueriesRepository {
       dbOperation: row.db_operation,
       dbTable: row.db_table,
       dbName: row.db_name,
+      attributes: row.attributes,
     }));
   }
 }

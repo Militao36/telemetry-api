@@ -1,5 +1,17 @@
 import { ClickHouseClient } from '@clickhouse/client';
 import { SearchFilters } from '../services/search.service';
+import { buildSearchWhere, SearchFieldConfig } from '../utils/searchWhere';
+
+const HTTP_SEARCH_FIELDS: Record<string, SearchFieldConfig> = {
+  path: { column: 'http_target', type: 'string' },
+  method: { column: 'http_method', type: 'string' },
+  statusCode: { column: 'http_status', type: 'number' },
+  traceId: { column: 'trace_id', type: 'string' },
+  environment: { column: 'service_environment', type: 'string' },
+  serviceName: { column: 'service_name', type: 'string' },
+  startTime: { column: 'start_time', type: 'datetime' },
+  durationNs: { column: 'duration_ns', type: 'number' },
+};
 
 export class RequestsRepository {
   clickHouseClient: ClickHouseClient;
@@ -234,6 +246,10 @@ export class RequestsRepository {
       where.push(`start_time <= parseDateTime64BestEffort({startTimeTo:String})`);
       queryParams.startTimeTo = filters.startTimeTo;
     }
+
+    const advancedWhere = buildSearchWhere(filters.where as any, HTTP_SEARCH_FIELDS);
+    where.push(...advancedWhere.conditions);
+    Object.assign(queryParams, advancedWhere.params);
 
     const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
 

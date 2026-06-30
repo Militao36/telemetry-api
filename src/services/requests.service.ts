@@ -12,12 +12,14 @@ export class RequestsService {
     this.dashRepository = dashRepository;
   }
 
+  @Cacheable()
   public async recentRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string) {
     const requests = await this.requestsRepository.recentRequests(idEmpresa, idProject, clampInt(hour, 1, 1, 720), this.safeHttpMethod(httpMethod));
 
     return requests;
   }
 
+  @Cacheable()
   public async getSlowestRequests(idEmpresa: string, idProject: string, hour: number, httpMethod: string) {
     const requests = await this.requestsRepository.getSlowestRequests(
       idEmpresa,
@@ -29,6 +31,7 @@ export class RequestsService {
     return requests;
   }
 
+  @Cacheable()
   public async getMetrics(idEmpresa: string, idProject: string, hour: number = 1, httpMethod: string = 'ALL') {
     const safeHour = clampInt(hour, 1, 1, 720);
     const safeHttpMethod = this.safeHttpMethod(httpMethod);
@@ -43,6 +46,7 @@ export class RequestsService {
     };
   }
 
+  @Cacheable()
   public async getTraces(idEmpresa: string, idProject: string, traceId: string) {
     const traces = await this.requestsRepository.getTraces(idEmpresa, idProject, traceId);
 

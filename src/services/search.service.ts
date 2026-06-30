@@ -2,6 +2,7 @@ import { Cacheable } from '../decorators/Cacheable';
 import { QueriesRepository } from '../repositories/queries.repository';
 import { RequestsRepository } from '../repositories/requests.repository';
 import { clampInt, optionalClampInt, truncateString } from '../utils/queryParams';
+import { parseSearchWhere, SearchWhere } from '../utils/searchWhere';
 
 export interface SearchFilters {
   type: 'HTTP' | 'DATABASE' | 'CACHE';
@@ -28,6 +29,7 @@ export interface SearchFilters {
   traceId?: string;
   limit?: number;
   offset?: number;
+  where?: SearchWhere | string;
 }
 
 export class SearchService {
@@ -39,6 +41,7 @@ export class SearchService {
     this.queriesRepository = queriesRepository;
   }
 
+  @Cacheable()
   public async list(idEmpresa: string, idProject: string, qs: SearchFilters) {
     const normalizedFilters: SearchFilters = {
       ...qs,
@@ -58,6 +61,7 @@ export class SearchService {
       traceId: truncateString(qs.traceId, 128),
       startTimeFrom: truncateString(qs.startTimeFrom, 64),
       startTimeTo: truncateString(qs.startTimeTo, 64),
+      where: parseSearchWhere(qs.where),
     };
 
     if (normalizedFilters.type === 'HTTP') {
